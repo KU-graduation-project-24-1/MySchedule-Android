@@ -14,14 +14,7 @@ sealed class MyScheduleScreens(
 
     data object Home : MyScheduleScreens("home")
 
-    data object MyPage : MyScheduleScreens(
-        route = "mypage",
-        navArguments = listOf(
-            navArgument("id") {
-                type = NavType.StringType
-            }
-        ),
-    )
+    data object MyPage : MyScheduleScreens(route = "mypage")
 }
 
 private fun String.appendArguments(navArguments: List<NamedNavArgument>): String {
@@ -33,5 +26,6 @@ private fun String.appendArguments(navArguments: List<NamedNavArgument>): String
         .takeIf { it.isNotEmpty() }
         ?.joinToString(separator = "&", prefix = "?") { "${it.name}={${it.name}}" }
         .orEmpty()
+
     return "$this$mandatoryArguments$optionalArguments"
 }

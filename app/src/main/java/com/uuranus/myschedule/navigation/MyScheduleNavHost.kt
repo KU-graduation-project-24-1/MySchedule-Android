@@ -1,6 +1,5 @@
 package com.uuranus.myschedule.navigation
 
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost

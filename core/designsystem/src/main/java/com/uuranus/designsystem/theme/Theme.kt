@@ -1,23 +1,20 @@
 package com.uuranus.designsystem.theme
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 
 
 private val LocalColors = compositionLocalOf<MyScheduleColors> {
-    error("No colors provided! Make sure to wrap all usages of Pokedex components in PokedexTheme.")
+    error("No colors provided!")
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

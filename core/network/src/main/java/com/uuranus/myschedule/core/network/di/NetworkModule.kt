@@ -1,6 +1,5 @@
 package com.uuranus.myschedule.core.network.di
 
-import com.uuranus.myschedule.core.network.datasource.CalendarDataSource
 import com.uuranus.myschedule.core.network.service.MyScheduleService
 import dagger.Module
 import dagger.Provides
@@ -26,7 +25,7 @@ internal object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("baseurl")
+            .baseUrl("https://wwww.mySchedule.com")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }

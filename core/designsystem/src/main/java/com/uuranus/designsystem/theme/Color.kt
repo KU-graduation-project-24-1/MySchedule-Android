@@ -3,7 +3,6 @@ package com.uuranus.designsystem.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 
 internal val White = Color(0xFFFFFFFF)
 internal val Black = Color(0xFF040706)

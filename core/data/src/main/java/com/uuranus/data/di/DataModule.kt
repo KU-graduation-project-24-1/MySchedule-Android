@@ -2,6 +2,8 @@ package com.uuranus.data.di
 
 import com.uuranus.data.repository.home.HomeRepository
 import com.uuranus.data.repository.home.HomeRepositoryImpl
+import com.uuranus.data.repository.login.LoginRepository
+import com.uuranus.data.repository.login.LoginRepositoryImpl
 import com.uuranus.myschedule.core.network.datasource.CalendarDataSource
 import com.uuranus.myschedule.core.network.datasource.CalendarDataSourceImpl
 import dagger.Binds
@@ -20,5 +22,8 @@ internal interface DataModule {
 
     @Binds
     fun bindsHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    fun bindsLoginRepository(loginRepositoryImpl: LoginRepositoryImpl): LoginRepository
 
 }
