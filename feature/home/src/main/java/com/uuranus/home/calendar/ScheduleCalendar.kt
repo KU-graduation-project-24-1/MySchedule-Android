@@ -1,8 +1,14 @@
 package com.uuranus.home.calendar
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,17 +23,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.home.ScheduleData
+import java.time.LocalDate
+import java.util.Calendar
 
 @Composable
 fun ScheduleCalendar(
@@ -35,18 +51,52 @@ fun ScheduleCalendar(
     schedules: List<ScheduleData>,
 ) {
 
-    //현재 달 remember
-    //swipe 리스너
-    Column(modifier = modifier.fillMaxSize()) {
-        ScheduleCalendarHeader()
-        ScheduleCalendarMonth(schedules)
+    var currentDate by remember { mutableStateOf(Calendar.getInstance()) }
 
+    val monthInfo =
+        rememberMonthInfo(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1)
+
+    val pagerState = rememberPagerState(pageCount = { 5 })
+
+    val currentPage = remember { mutableStateOf(0) }
+    LaunchedEffect(currentPage.value) {
+        pagerState.scrollToPage(currentPage.value)
     }
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures { _, dragAmount ->
+                    if (dragAmount > 0) {
+                        if (currentPage.value > 0) {
+                            currentPage.value--
+                        }
+                    } else if (dragAmount < 0) {
+                        if (currentPage.value < pagerState.pageCount - 1) {
+                            currentPage.value++
+                        }
+                    }
+                }
+            },
+    ) { page ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            ScheduleCalendarHeader(currentDate)
+            ScheduleCalendarMonth(monthInfo, schedules)
+        }
+    }
+
 }
 
 
 @Composable
-fun ScheduleCalendarHeader() {
+fun ScheduleCalendarHeader(
+    currentDate: Calendar,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,29 +104,32 @@ fun ScheduleCalendarHeader() {
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "2024년 4월",
-            style = MyScheduleTheme.typography.bold20
+            text = getFormattedYMDate(currentDate),
+            style = MyScheduleTheme.typography.semiBold20
         )
     }
 }
 
 @Composable
 fun ScheduleCalendarMonth(
+    monthInfo: MonthInfo,
     schedules: List<ScheduleData>,
 ) {
-
     LazyVerticalGrid(columns = GridCells.Fixed(7)) {
-        items(38) {
-            if (it < 7) {
-                ScheduleCalendarWeek(it)
-            } else {
-                ScheduleCalendarDate(
-                    modifier = Modifier,
-                    date = it + 1,
-                    isCheckNeeded = true,
-                    schedules = schedules
-                )
-            }
+        items(7) {
+            ScheduleCalendarWeek(it)
+        }
+        items(monthInfo.firstDayOfWeek) {
+            EmptyScheduleCalendarDate(modifier = Modifier)
+        }
+        items(monthInfo.numberOfDays) { dayIndex ->
+            println("monthInfo $monthInfo $dayIndex")
+            ScheduleCalendarDate(
+                modifier = Modifier,
+                date = dayIndex + 1,
+                isCheckNeeded = true,
+                schedules = schedules
+            )
         }
     }
 }
@@ -141,6 +194,33 @@ fun ScheduleCalendarDate(
         DateContent(Modifier.fillMaxHeight(), schedules)
     }
 }
+
+@Composable
+fun EmptyScheduleCalendarDate(
+    modifier: Modifier,
+) {
+    val color =
+        MyScheduleTheme.colors.gray
+    Column(
+        modifier = modifier
+            .height(100.dp)
+            .drawBehind {
+
+                val strokeWidth = 0.7f * density
+                val y = size.height - strokeWidth / 2
+
+                drawLine(
+                    color,
+                    Offset(0f, y),
+                    Offset(size.width, y),
+                    strokeWidth
+                )
+            }
+            .padding(3.dp),
+    ) {
+    }
+}
+
 
 @Composable
 fun DateHeader(

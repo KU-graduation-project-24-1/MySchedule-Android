@@ -1,6 +1,9 @@
 package com.uuranus.home
 
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,13 +23,12 @@ import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.home.calendar.ScheduleCalendar
-import com.uuranus.myschedule.feature.home.R
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
 @Composable
 fun HomeScreen(
-//    animatedVisibilityScope: AnimatedVisibilityScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
 
@@ -40,7 +43,7 @@ fun HomeScreen(
                 title = {
                     Text(
                         text = "000 떡볶이 건대입구점",
-                        style = MyScheduleTheme.typography.bold20
+                        style = MyScheduleTheme.typography.bold16
                     )
                 },
                 actions = {
@@ -59,11 +62,11 @@ fun HomeScreen(
                 },
             )
 
-//            HomeContent(
-//                animatedVisibilityScope = animatedVisibilityScope,
+            HomeContent(
+                animatedVisibilityScope = animatedVisibilityScope,
 //                uiState = uiState,
 
-//            )
+                )
         }
     }
 
@@ -72,16 +75,26 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-//    animatedVisibilityScope: AnimatedVisibilityScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     ScheduleCalendar(modifier = Modifier.fillMaxSize(), emptyList())
 }
 
 @Preview
+@ExperimentalAnimationApi
 @Composable
 fun HomeScreenPreview() {
+
     MyScheduleTheme {
+
         Column(modifier = Modifier.fillMaxSize()) {
+            val animatedVisibilityScope = remember {
+                object : AnimatedVisibilityScope {
+                    override val transition: Transition<EnterExitState>
+                        get() = TODO("Not yet implemented")
+
+                }
+            }
             MyScheduleAppBar(
                 title = {
                     Text(
@@ -104,7 +117,7 @@ fun HomeScreenPreview() {
                     }
                 },
             )
-            HomeContent()
+            HomeContent(animatedVisibilityScope)
         }
     }
 }
