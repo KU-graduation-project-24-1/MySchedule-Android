@@ -39,3 +39,9 @@ fun getFirstDayOfMonth(year: Int, month: Int): Calendar {
 fun getFirstDayOfWeek(calendar: Calendar): Int {
     return (calendar.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7
 }
+
+fun Calendar.addMonth(month: Int): Calendar {
+    val calendar = this.clone() as Calendar
+    calendar.add(Calendar.MONTH, month)
+    return calendar
+}

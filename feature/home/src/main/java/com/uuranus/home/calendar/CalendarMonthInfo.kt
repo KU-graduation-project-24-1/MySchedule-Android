@@ -9,14 +9,15 @@ import java.time.LocalDate
 import java.util.Calendar
 
 
-
 @Composable
-fun rememberMonthInfo(year: Int, month: Int): MonthInfo {
-    return remember(year, month) {
-        val numberOfDaysInMonth = getNumberOfDaysInMonth(year, month)
-        val firstDayOfMonth = getFirstDayOfMonth(year, month)
-        val firstDayOfWeek = getFirstDayOfWeek(firstDayOfMonth)
-        MonthInfo(numberOfDaysInMonth, firstDayOfWeek)
+fun rememberMonthInfo(currentDate: Calendar): MonthInfo {
+    val year = currentDate.get(Calendar.YEAR)
+    val month = currentDate.get(Calendar.MONTH) + 1
+    return remember(currentDate) {
+        MonthInfo(
+            numberOfDays = getNumberOfDaysInMonth(year, month),
+            firstDayOfWeek = getFirstDayOfWeek(getFirstDayOfMonth(year, month))
+        )
     }
 }
 

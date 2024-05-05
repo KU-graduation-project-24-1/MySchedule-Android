@@ -53,34 +53,30 @@ fun ScheduleCalendar(
 
     var currentDate by remember { mutableStateOf(Calendar.getInstance()) }
 
-    val monthInfo =
-        rememberMonthInfo(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + 1)
+    val monthInfo = rememberMonthInfo(currentDate)
 
-    val pagerState = rememberPagerState(pageCount = { 5 })
+    val pagerState = rememberPagerState(pageCount = { 5 }, initialPage = 1)
 
-    val currentPage = remember { mutableStateOf(0) }
-    LaunchedEffect(currentPage.value) {
-        pagerState.scrollToPage(currentPage.value)
+    LaunchedEffect(pagerState.currentPage) {
+        val direction = pagerState.currentPageOffsetFraction
+        if (direction < 0) { //왼쪽으로 밀면 오른쪽으로 이동
+            currentDate = currentDate.addMonth(1)
+            if (pagerState.currentPage == pagerState.pageCount - 1) {
+                pagerState.scrollToPage(pagerState.pageCount - 2)
+            }
+        } else if (direction > 0) {
+            currentDate = currentDate.addMonth(-1)
+            if (pagerState.currentPage == 0) {
+                pagerState.scrollToPage(pagerState.pageCount - 1)
+            }
+        }
     }
 
     HorizontalPager(
         state = pagerState,
         modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures { _, dragAmount ->
-                    if (dragAmount > 0) {
-                        if (currentPage.value > 0) {
-                            currentPage.value--
-                        }
-                    } else if (dragAmount < 0) {
-                        if (currentPage.value < pagerState.pageCount - 1) {
-                            currentPage.value++
-                        }
-                    }
-                }
-            },
-    ) { page ->
+            .fillMaxSize(),
+    ) { _ ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -123,7 +119,6 @@ fun ScheduleCalendarMonth(
             EmptyScheduleCalendarDate(modifier = Modifier)
         }
         items(monthInfo.numberOfDays) { dayIndex ->
-            println("monthInfo $monthInfo $dayIndex")
             ScheduleCalendarDate(
                 modifier = Modifier,
                 date = dayIndex + 1,
