@@ -8,15 +8,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uuranus.designsystem.theme.MyScheduleTheme
-import com.uuranus.home.ScheduleData
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ScheduleCalendarListItem(
+fun <T> ScheduleCalendarListItem(
     modifier: Modifier,
-    data: ScheduleData,
+    data: ScheduleData<T>,
 ) {
     Row(
         modifier = modifier.background(

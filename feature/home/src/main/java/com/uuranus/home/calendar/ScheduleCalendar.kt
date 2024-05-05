@@ -1,18 +1,10 @@
 package com.uuranus.home.calendar
 
-import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,21 +29,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.theme.MyScheduleTheme
-import com.uuranus.home.ScheduleData
-import java.time.LocalDate
 import java.util.Calendar
 
+
+internal val today = DateInfo.create(Calendar.getInstance())
+
 @Composable
-fun ScheduleCalendar(
+fun <T> ScheduleCalendar(
     modifier: Modifier,
-    schedules: List<ScheduleData>,
+    schedules: Map<DateInfo, ScheduleInfo<T>>, //DateInfo날의 스케줄 정보
+    onDayClick: (List<ScheduleData<T>>) -> Unit,
 ) {
 
-    var currentDate by remember { mutableStateOf(Calendar.getInstance()) }
+    var currentDate by remember { mutableStateOf(DateInfo.create(Calendar.getInstance())) }
 
     val monthInfo = rememberMonthInfo(currentDate)
 
@@ -82,16 +75,15 @@ fun ScheduleCalendar(
                 .fillMaxSize()
         ) {
             ScheduleCalendarHeader(currentDate)
-            ScheduleCalendarMonth(monthInfo, schedules)
+            ScheduleCalendarMonth(currentDate, monthInfo, schedules, onDayClick)
         }
     }
 
 }
 
-
 @Composable
 fun ScheduleCalendarHeader(
-    currentDate: Calendar,
+    currentDate: DateInfo,
 ) {
     Row(
         modifier = Modifier
@@ -107,30 +99,36 @@ fun ScheduleCalendarHeader(
 }
 
 @Composable
-fun ScheduleCalendarMonth(
+fun <T> ScheduleCalendarMonth(
+    currentDate: DateInfo,
     monthInfo: MonthInfo,
-    schedules: List<ScheduleData>,
+    schedules: Map<DateInfo, ScheduleInfo<T>>,
+    onDayClick: (List<ScheduleData<T>>) -> Unit,
 ) {
     LazyVerticalGrid(columns = GridCells.Fixed(7)) {
         items(7) {
-            ScheduleCalendarWeek(it)
+            ScheduleCalendarWeekDay(it)
         }
         items(monthInfo.firstDayOfWeek) {
             EmptyScheduleCalendarDate(modifier = Modifier)
         }
         items(monthInfo.numberOfDays) { dayIndex ->
+            val date = currentDate.setDate(dayIndex + 1)
+            val currentDateSchedules = schedules[date] ?: ScheduleInfo(false, emptyList())
             ScheduleCalendarDate(
                 modifier = Modifier,
-                date = dayIndex + 1,
-                isCheckNeeded = true,
-                schedules = schedules
+                date = date,
+                isCheckNeeded = currentDateSchedules.isCheckNeeded,
+                isToday = date == today && today.date == dayIndex + 1,
+                scheduleInfo = currentDateSchedules,
+                onDayClick = onDayClick
             )
         }
     }
 }
 
 @Composable
-fun ScheduleCalendarWeek(weekNum: Int) {
+fun ScheduleCalendarWeekDay(weekNum: Int) {
     val week = listOf("월", "화", "수", "목", "금", "토", "일")
     val color =
         MyScheduleTheme.colors.gray
@@ -160,13 +158,15 @@ fun ScheduleCalendarWeek(weekNum: Int) {
 }
 
 @Composable
-fun ScheduleCalendarDate(
+fun <T> ScheduleCalendarDate(
     modifier: Modifier,
-    date: Int,
+    date: DateInfo,
     isCheckNeeded: Boolean,
-    schedules: List<ScheduleData>,
+    isToday: Boolean,
+    scheduleInfo: ScheduleInfo<T>,
+    onDayClick: (List<ScheduleData<T>>) -> Unit,
 ) {
-    val color =
+    val borderColor =
         MyScheduleTheme.colors.gray
     Column(
         modifier = modifier
@@ -177,7 +177,7 @@ fun ScheduleCalendarDate(
                 val y = size.height - strokeWidth / 2
 
                 drawLine(
-                    color,
+                    borderColor,
                     Offset(0f, y),
                     Offset(size.width, y),
                     strokeWidth
@@ -185,8 +185,8 @@ fun ScheduleCalendarDate(
             }
             .padding(3.dp),
     ) {
-        DateHeader(date, isCheckNeeded)
-        DateContent(Modifier.fillMaxHeight(), schedules)
+        DateHeader(date, isCheckNeeded, isToday)
+        DateContent(Modifier.fillMaxHeight(), scheduleInfo.schedules, onDayClick = onDayClick)
     }
 }
 
@@ -219,8 +219,9 @@ fun EmptyScheduleCalendarDate(
 
 @Composable
 fun DateHeader(
-    date: Int,
+    date: DateInfo,
     isCheckNeeded: Boolean,
+    isToday: Boolean,
 ) {
     Box(
         modifier = Modifier
@@ -235,56 +236,58 @@ fun DateHeader(
             )
         }
 
-//        Box(
-//            modifier = Modifier
-//                .size(20.dp)
-//                .background(
-//                    color = MyScheduleTheme.colors.primary,
-//                    shape = CircleShape
-//                )
-//                .align(Alignment.TopCenter),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Text(
-//                text = date.toString(),
-//                style = MyScheduleTheme.typography.regular14,
-//                color = MyScheduleTheme.colors.white
-//            )
-//        }
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = date.toString(),
-                style = MyScheduleTheme.typography.regular14,
-                color = MyScheduleTheme.colors.black
-            )
+        if (isToday) {
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .background(
+                        color = MyScheduleTheme.colors.primary,
+                        shape = CircleShape
+                    )
+                    .align(Alignment.TopCenter),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = date.date.toString(),
+                    style = MyScheduleTheme.typography.regular14,
+                    color = MyScheduleTheme.colors.white
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.TopCenter),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = date.date.toString(),
+                    style = MyScheduleTheme.typography.regular14,
+                    color = MyScheduleTheme.colors.black
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DateContent(
+fun <T> DateContent(
     modifier: Modifier,
-    schedules: List<ScheduleData>,
+    schedules: List<ScheduleData<T>>,
+    onDayClick: (List<ScheduleData<T>>) -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            onDayClick(schedules)
+        },
     ) {
-        items(10) { index ->
+        items(schedules.size) { index ->
             if (index < 4) {
                 ScheduleCalendarListItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(vertical = 1.dp),
-                    data = ScheduleData(
-                        index,
-                        "AA 10:00",
-                        "AA(매니저) 10:00 ~ 18:00",
-                        MyScheduleTheme.colors.calendarPurple
-                    )
+                    data = schedules[index]
                 )
             } else if (index == 4) {
                 ScheduleCalendarMoreListItem(Modifier.fillMaxWidth(), 10 - index)
@@ -297,7 +300,84 @@ fun DateContent(
 @Preview
 @Composable
 fun PreviewCalendar() {
+    val dummyDate = HashMap<DateInfo, ScheduleInfo<MyScheduleInfo>>().apply {
+        put(
+            DateInfo.create(2024, 5, 5),
+            ScheduleInfo(
+                false,
+                listOf(
+                    ScheduleData(
+                        0,
+                        "AAA 10:00",
+                        MyScheduleTheme.colors.calendarBlue,
+                        detail = MyScheduleInfo(
+                            "10:00",
+                            "12:00",
+                            "AAA",
+                            "매니저",
+                            false,
+                            MyScheduleTheme.colors.calendarBlue,
+                            true
+                        )
+                    ),
+                    ScheduleData(
+                        1,
+                        "BBB 12:00",
+                        MyScheduleTheme.colors.calendarOrange,
+                        MyScheduleInfo(
+                            "12:00",
+                            "15:00",
+                            "BBB",
+                            "아르바이트",
+                            true,
+                            MyScheduleTheme.colors.calendarOrange,
+                            false
+                        ),
+                    ),
+                    ScheduleData(
+                        2,
+                        "KKK 15:00",
+                        MyScheduleTheme.colors.calendarPurple,
+                        MyScheduleInfo(
+                            "15:00",
+                            "18:00",
+                            "KKK",
+                            "사장",
+                            false,
+                            MyScheduleTheme.colors.calendarPurple,
+                            false
+                        ),
+                    )
+                )
+            )
+        )
+        put(
+            DateInfo.create(2024, 5, 14),
+            ScheduleInfo(
+                true,
+                listOf(
+                    ScheduleData(
+                        3,
+                        "AAA 10:00",
+                        MyScheduleTheme.colors.calendarBlue,
+                        MyScheduleInfo(
+                            "10:00",
+                            "12:00",
+                            "AAA",
+                            "매니저",
+                            false,
+                            MyScheduleTheme.colors.calendarBlue,
+                            true
+                        ),
+                    )
+                )
+            )
+        )
+    }
+
     MyScheduleTheme {
-        ScheduleCalendar(Modifier, emptyList())
+        ScheduleCalendar(Modifier, dummyDate) {
+
+        }
     }
 }

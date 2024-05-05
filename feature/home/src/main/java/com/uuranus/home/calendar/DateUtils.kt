@@ -1,24 +1,13 @@
 package com.uuranus.home.calendar
 
-import android.annotation.SuppressLint
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
-import java.util.Locale
 
-
-@SuppressLint("ConstantLocale")
-private val dateFormatYM = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
-
-@SuppressLint("ConstantLocale")
-private val dateFormatYMD = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
-
-fun getFormattedYMDate(calendar: Calendar): String {
-    return dateFormatYM.format(calendar.time)
+fun getFormattedYMDate(dateInfo: DateInfo): String {
+    return String.format("%4d년 %d월", dateInfo.year, dateInfo.month)
 }
 
-fun getFormattedYMDDate(calendar: Calendar): String {
-    return dateFormatYMD.format(calendar.time)
+fun getFormattedYMDDate(dateInfo: DateInfo): String {
+    return String.format("%4d년 %d월 %d일", dateInfo.year, dateInfo.month, dateInfo.date)
 }
 
 fun getNumberOfDaysInMonth(year: Int, month: Int): Int {

@@ -1,6 +1,8 @@
 package com.uuranus.home
 
-import androidx.compose.ui.graphics.Color
+import com.uuranus.home.calendar.DateInfo
+import com.uuranus.home.calendar.MyScheduleInfo
+import com.uuranus.home.calendar.ScheduleInfo
 
 sealed interface HomeUiState {
     object Loading : HomeUiState
@@ -8,21 +10,8 @@ sealed interface HomeUiState {
     data class Schedules(
         val year: Int,
         val month: Int,
-        val schedules: List<DateSchedule>,
+        val schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
     ) : HomeUiState
 
 }
 
-data class DateSchedule(
-    val date: String,
-    val isCheckNeeded: Boolean,
-    val title: String,
-    val details: List<ScheduleData>,
-)
-
-data class ScheduleData(
-    val scheduleId: Int,
-    val title: String,
-    val detail: String,
-    val color: Color,
-)
