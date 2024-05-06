@@ -41,7 +41,7 @@ internal val today = DateInfo.create(Calendar.getInstance())
 fun <T> ScheduleCalendar(
     modifier: Modifier,
     schedules: Map<DateInfo, ScheduleInfo<T>>, //DateInfo날의 스케줄 정보
-    onDayClick: (List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
 ) {
 
     var currentDate by remember { mutableStateOf(DateInfo.create(Calendar.getInstance())) }
@@ -103,7 +103,7 @@ fun <T> ScheduleCalendarMonth(
     currentDate: DateInfo,
     monthInfo: MonthInfo,
     schedules: Map<DateInfo, ScheduleInfo<T>>,
-    onDayClick: (List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
 ) {
     LazyVerticalGrid(columns = GridCells.Fixed(7)) {
         items(7) {
@@ -164,7 +164,7 @@ fun <T> ScheduleCalendarDate(
     isCheckNeeded: Boolean,
     isToday: Boolean,
     scheduleInfo: ScheduleInfo<T>,
-    onDayClick: (List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
 ) {
     val borderColor =
         MyScheduleTheme.colors.gray
@@ -186,7 +186,7 @@ fun <T> ScheduleCalendarDate(
             .padding(3.dp),
     ) {
         DateHeader(date, isCheckNeeded, isToday)
-        DateContent(Modifier.fillMaxHeight(), scheduleInfo.schedules, onDayClick = onDayClick)
+        DateContent(Modifier.fillMaxHeight(), date, scheduleInfo.schedules, onDayClick = onDayClick)
     }
 }
 
@@ -273,12 +273,13 @@ fun DateHeader(
 @Composable
 fun <T> DateContent(
     modifier: Modifier,
+    date: DateInfo,
     schedules: List<ScheduleData<T>>,
-    onDayClick: (List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.clickable {
-            onDayClick(schedules)
+            onDayClick(date, schedules)
         },
     ) {
         items(schedules.size) { index ->
@@ -307,10 +308,10 @@ fun PreviewCalendar() {
                 false,
                 listOf(
                     ScheduleData(
-                        0,
                         "AAA 10:00",
                         MyScheduleTheme.colors.calendarBlue,
                         detail = MyScheduleInfo(
+                            0,
                             "10:00",
                             "12:00",
                             "AAA",
@@ -321,10 +322,10 @@ fun PreviewCalendar() {
                         )
                     ),
                     ScheduleData(
-                        1,
                         "BBB 12:00",
                         MyScheduleTheme.colors.calendarOrange,
                         MyScheduleInfo(
+                            1,
                             "12:00",
                             "15:00",
                             "BBB",
@@ -335,10 +336,10 @@ fun PreviewCalendar() {
                         ),
                     ),
                     ScheduleData(
-                        2,
                         "KKK 15:00",
                         MyScheduleTheme.colors.calendarPurple,
                         MyScheduleInfo(
+                            2,
                             "15:00",
                             "18:00",
                             "KKK",
@@ -357,10 +358,10 @@ fun PreviewCalendar() {
                 true,
                 listOf(
                     ScheduleData(
-                        3,
                         "AAA 10:00",
                         MyScheduleTheme.colors.calendarBlue,
                         MyScheduleInfo(
+                            3,
                             "10:00",
                             "12:00",
                             "AAA",
@@ -376,8 +377,8 @@ fun PreviewCalendar() {
     }
 
     MyScheduleTheme {
-        ScheduleCalendar(Modifier, dummyDate) {
-
+        ScheduleCalendar(Modifier, dummyDate) { dateInfo, scheduleData ->  
+                
         }
     }
 }
