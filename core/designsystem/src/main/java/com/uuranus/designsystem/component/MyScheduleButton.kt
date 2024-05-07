@@ -37,7 +37,7 @@ fun MyScheduleFilledButton(
 fun MyScheduleOutlinedButton(
     modifier: Modifier,
     buttonState: Boolean,
-    content: @Composable (RowScope.() -> Unit) = {},
+    content: @Composable (BoxScope.() -> Unit) = {},
 ) {
     Box(
         modifier = modifier
@@ -48,6 +48,6 @@ fun MyScheduleOutlinedButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        content
+        content()
     }
 }

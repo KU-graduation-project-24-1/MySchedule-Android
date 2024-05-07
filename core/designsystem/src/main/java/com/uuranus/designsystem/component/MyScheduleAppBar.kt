@@ -45,7 +45,6 @@ fun MyScheduleAppBar(
     }
 }
 
-
 @Composable
 fun CircularImageComponent(painter: Painter, size: Int, onClick: () -> Unit) {
     Box(

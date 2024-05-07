@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Transition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -46,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleFilledButton
+import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.home.calendar.DateInfo
 import com.uuranus.home.calendar.MyScheduleInfo
@@ -53,6 +56,7 @@ import com.uuranus.home.calendar.ScheduleCalendar
 import com.uuranus.home.calendar.ScheduleData
 import com.uuranus.home.calendar.ScheduleInfo
 import com.uuranus.home.calendar.getFormattedYMDDate
+import com.uuranus.myschedule.feature.home.R
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 import java.util.Calendar
@@ -146,10 +150,22 @@ fun HomeScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             MyScheduleAppBar(
                 title = {
-                    Text(
-                        text = "000 떡볶이 건대입구점",
-                        style = MyScheduleTheme.typography.bold16
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.clickable {
+
+                            },
+                            contentDescription = "가게 목록으로 이동",
+                            painter = painterResource(
+                                id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "000 떡볶이 건대입구점",
+                            style = MyScheduleTheme.typography.bold16
+                        )
+                    }
                 },
                 actions = {
                     Box(
@@ -265,14 +281,20 @@ fun BottomSheetContent(
                 //내가 사장일 때
 
                 //아닐 때
-                Row {
-                    MyScheduleFilledButton(
-                        paddingValues = PaddingValues(
-                            horizontal = 14.dp,
-                            vertical = 5.dp
-                        ), buttonState = true
-                    ) {
-                        Text("수락", style = MyScheduleTheme.typography.regular14)
+                if (scheduleInfo[index].detail.isFillInNeeded || scheduleInfo[index].detail.isMine) {
+                    Row {
+                        MyScheduleFilledButton(
+                            paddingValues = PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 5.dp
+                            ), buttonState = true
+                        ) {
+                            if (scheduleInfo[index].detail.isMine) {
+                                Text("요청", style = MyScheduleTheme.typography.regular14)
+                            } else if (scheduleInfo[index].detail.isFillInNeeded) {
+                                Text("수락", style = MyScheduleTheme.typography.regular14)
+                            }
+                        }
                     }
                 }
             }
@@ -314,14 +336,20 @@ fun MyScheduleDetailListItem(
                 .wrapContentHeight()
                 .weight(1F)
         ) {
-            Text(
-                if (scheduleInfo.detail.isFillInNeeded) {
-                    "${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime} (대타요청중)"
-                } else {
-                    "${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime}"
-                },
-                style = MyScheduleTheme.typography.regular16
-            )
+
+            if (scheduleInfo.detail.isFillInNeeded) {
+                Text(
+                    ("${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime} ").toAnnotateString(
+                        "(대타요청중)", MyScheduleTheme.colors.errorColor
+                    ),
+                    style = MyScheduleTheme.typography.regular16
+                )
+            } else {
+                Text(
+                    "${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime}",
+                    style = MyScheduleTheme.typography.regular16
+                )
+            }
             Text(
                 if (scheduleInfo.detail.isMine) {
                     "${scheduleInfo.detail.workerName} (${scheduleInfo.detail.workerType}, 나)"
@@ -345,66 +373,69 @@ fun MyScheduleDetailListItem(
 fun HomeScreenPreview() {
 
     MyScheduleTheme {
-        MyScheduleDetailListItem(
-            modifier = Modifier
-                .fillMaxWidth(),
-            ScheduleData(
-                "AAA 10:00",
-                MyScheduleTheme.colors.calendarBlue,
-                detail = MyScheduleInfo(
-                    0,
-                    "10:00",
-                    "12:00",
-                    "AAA",
-                    "매니저",
-                    false,
-                    MyScheduleTheme.colors.calendarBlue,
-                    true
-                )
-            ),
-        ) {
-            //내가 사장일 때
-
-            //아닐 때
-            MyScheduleFilledButton(
-                paddingValues = PaddingValues(horizontal = 14.dp, vertical = 5.dp),
-                buttonState = true
-            ) {
-                Text("수락", style = MyScheduleTheme.typography.regular14)
-            }
-        }
-
-//        Column(modifier = Modifier.fillMaxSize()) {
-//            val animatedVisibilityScope = remember {
-//                object : AnimatedVisibilityScope {
-//                    override val transition: Transition<EnterExitState>
-//                        get() = TODO("Not yet implemented")
+//        MyScheduleDetailListItem(
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            ScheduleData(
+//                "AAA 10:00",
+//                MyScheduleTheme.colors.calendarBlue,
+//                detail = MyScheduleInfo(
+//                    0,
+//                    "10:00",
+//                    "12:00",
+//                    "AAA",
+//                    "매니저",
+//                    false,
+//                    MyScheduleTheme.colors.calendarBlue,
+//                    true
+//                )
+//            ),
+//        ) {
+//            //내가 사장일 때
 //
-//                }
+//            //아닐 때
+//            MyScheduleFilledButton(
+//                paddingValues = PaddingValues(horizontal = 14.dp, vertical = 5.dp),
+//                buttonState = true
+//            ) {
+//                Text("수락", style = MyScheduleTheme.typography.regular14)
 //            }
-//            MyScheduleAppBar(
-//                title = {
-//                    Text(
-//                        text = "000 떡볶이 건대입구점",
-//                        style = MyScheduleTheme.typography.semiBold16
-//                    )
-//                },
-//                actions = {
-//                    Box(
-//                        contentAlignment = Alignment.Center,
-//                        modifier = Modifier.padding(end = 8.dp)
-//                    ) {
-//                        CircularImageComponent(
-//                            painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
-//                            size = 30,
-//                            onClick = {
-////                                composeNavigator.navigate(MyScheduleScreens.MyPage.route)
-//                            }
-//                        )
-//                    }
-//                },
-//            )
-//            HomeContent(animatedVisibilityScope, emptyMap())
 //        }
+
+
+        MyScheduleAppBar(
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        modifier = Modifier.clickable {
+
+                        },
+                        contentDescription = "가게 목록으로 이동",
+                        painter = painterResource(
+                            id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "000 떡볶이 건대입구점",
+                        style = MyScheduleTheme.typography.bold16
+                    )
+                }
+            },
+            actions = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    CircularImageComponent(
+                        painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
+                        size = 30,
+                        onClick = {
+//                            composeNavigator.navigate(MyScheduleScreens.MyPage.route)
+                        }
+                    )
+                }
+            },
+        )
     }
 }
