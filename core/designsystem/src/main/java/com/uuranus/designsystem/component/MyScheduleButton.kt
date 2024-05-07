@@ -3,7 +3,10 @@ package com.uuranus.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,19 +16,20 @@ import com.uuranus.designsystem.theme.MyScheduleTheme
 
 @Composable
 fun MyScheduleFilledButton(
-    modifier: Modifier,
+    paddingValues: PaddingValues,
     buttonState: Boolean,
-    content: @Composable (RowScope.() -> Unit) = {},
+    content: @Composable (BoxScope.() -> Unit) = {},
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .background(
                 color = if (buttonState) MyScheduleTheme.colors.primary else MyScheduleTheme.colors.lightGray,
                 shape = RoundedCornerShape(12.dp)
-            ),
+            )
+            .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
-        content
+        content()
     }
 }
 
