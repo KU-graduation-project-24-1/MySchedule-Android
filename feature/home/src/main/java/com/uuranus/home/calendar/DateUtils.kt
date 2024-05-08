@@ -2,12 +2,37 @@ package com.uuranus.home.calendar
 
 import java.util.Calendar
 
-fun getFormattedYMDate(dateInfo: DateInfo): String {
+fun getLanguageYMDate(dateInfo: DateInfo): String {
     return String.format("%4d년 %d월", dateInfo.year, dateInfo.month)
 }
 
-fun getFormattedYMDDate(dateInfo: DateInfo): String {
+fun getLanguageYMDDate(dateInfo: DateInfo): String {
     return String.format("%4d년 %d월 %d일", dateInfo.year, dateInfo.month, dateInfo.date)
+}
+
+fun getDashYMDDate(dateInfo: DateInfo): String {
+    return String.format("%4d년 %d월 %d일", dateInfo.year, dateInfo.month, dateInfo.date)
+}
+
+fun String.dashToDateInfo(): DateInfo {
+    val dates = split("-").map { it.toInt() }
+    return DateInfo.create(
+        dates[0],
+        dates[1],
+        dates[2]
+    )
+}
+
+fun String.lanYDDToDateInfo(): DateInfo {
+    val year = this.substringBefore("년").toInt()
+    val month = this.substringAfter("년 ").substringBefore("월").toInt()
+    val day = this.substringAfter("월 ").substringBefore("일").toInt()
+
+    return DateInfo.create(
+        year,
+        month,
+        day
+    )
 }
 
 fun getNumberOfDaysInMonth(year: Int, month: Int): Int {

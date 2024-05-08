@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
@@ -29,9 +30,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.theme.MyScheduleTheme
+import com.uuranus.model.MyScheduleInfo
 import java.util.Calendar
 
 
@@ -48,28 +51,30 @@ fun <T> ScheduleCalendar(
 
     val monthInfo = rememberMonthInfo(currentDate)
 
-    val pagerState = rememberPagerState(pageCount = { 5 }, initialPage = 1)
+    val pagerState = rememberPagerState(pageCount = { 7 }, initialPage = 1)
 
     LaunchedEffect(pagerState.currentPage) {
         val direction = pagerState.currentPageOffsetFraction
         if (direction < 0) { //왼쪽으로 밀면 오른쪽으로 이동
             currentDate = currentDate.addMonth(1)
-            if (pagerState.currentPage == pagerState.pageCount - 1) {
-                pagerState.scrollToPage(pagerState.pageCount - 2)
+            if (pagerState.currentPage == pagerState.pageCount -1){
+                pagerState.animateScrollToPage(1)
             }
+
         } else if (direction > 0) {
             currentDate = currentDate.addMonth(-1)
-            if (pagerState.currentPage == 0) {
-                pagerState.scrollToPage(pagerState.pageCount - 1)
+            if (pagerState.currentPage == 0){
+                pagerState.animateScrollToPage(pagerState.pageCount - 2)
             }
         }
-    }
+  }
 
     HorizontalPager(
         state = pagerState,
         modifier = modifier
             .fillMaxSize(),
     ) { _ ->
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -92,7 +97,7 @@ fun ScheduleCalendarHeader(
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = getFormattedYMDate(currentDate),
+            text = getLanguageYMDate(currentDate),
             style = MyScheduleTheme.typography.semiBold20
         )
     }
@@ -183,10 +188,13 @@ fun <T> ScheduleCalendarDate(
                     strokeWidth
                 )
             }
+            .clickable {
+                onDayClick(date, scheduleInfo.schedules)
+            }
             .padding(3.dp),
     ) {
         DateHeader(date, isCheckNeeded, isToday)
-        DateContent(Modifier.fillMaxHeight(), date, scheduleInfo.schedules, onDayClick = onDayClick)
+        DateContent(Modifier.fillMaxHeight(), scheduleInfo.schedules)
     }
 }
 
@@ -263,7 +271,6 @@ fun DateHeader(
                 Text(
                     text = date.date.toString(),
                     style = MyScheduleTheme.typography.regular14,
-                    color = MyScheduleTheme.colors.black
                 )
             }
         }
@@ -273,14 +280,10 @@ fun DateHeader(
 @Composable
 fun <T> DateContent(
     modifier: Modifier,
-    date: DateInfo,
     schedules: List<ScheduleData<T>>,
-    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier.clickable {
-            onDayClick(date, schedules)
-        },
+        modifier = modifier
     ) {
         items(schedules.size) { index ->
             if (index < 4) {
@@ -314,10 +317,10 @@ fun PreviewCalendar() {
                             0,
                             "10:00",
                             "12:00",
+                            3,
                             "AAA",
                             "매니저",
                             false,
-                            MyScheduleTheme.colors.calendarBlue,
                             true
                         )
                     ),
@@ -328,10 +331,10 @@ fun PreviewCalendar() {
                             1,
                             "12:00",
                             "15:00",
+                            2,
                             "BBB",
                             "아르바이트",
                             true,
-                            MyScheduleTheme.colors.calendarOrange,
                             false
                         ),
                     ),
@@ -342,10 +345,10 @@ fun PreviewCalendar() {
                             2,
                             "15:00",
                             "18:00",
+                            1,
                             "KKK",
                             "사장",
                             false,
-                            MyScheduleTheme.colors.calendarPurple,
                             false
                         ),
                     )
@@ -364,10 +367,10 @@ fun PreviewCalendar() {
                             3,
                             "10:00",
                             "12:00",
+                            3,
                             "AAA",
                             "매니저",
                             false,
-                            MyScheduleTheme.colors.calendarBlue,
                             true
                         ),
                     )
@@ -377,8 +380,8 @@ fun PreviewCalendar() {
     }
 
     MyScheduleTheme {
-        ScheduleCalendar(Modifier, dummyDate) { dateInfo, scheduleData ->  
-                
+        ScheduleCalendar(Modifier, dummyDate) { dateInfo, scheduleData ->
+
         }
     }
 }

@@ -1,33 +1,24 @@
 package com.uuranus.home
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -45,103 +36,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.component.CircularImageComponent
+import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleFilledButton
 import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.home.calendar.DateInfo
-import com.uuranus.home.calendar.MyScheduleInfo
 import com.uuranus.home.calendar.ScheduleCalendar
 import com.uuranus.home.calendar.ScheduleData
 import com.uuranus.home.calendar.ScheduleInfo
-import com.uuranus.home.calendar.getFormattedYMDDate
-import com.uuranus.myschedule.feature.home.R
+import com.uuranus.home.calendar.getLanguageYMDDate
+import com.uuranus.model.MyScheduleInfo
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
-import java.util.Calendar
+
+internal val calendarColors = listOf(
+    Color(0xFFF3A8A8),
+    Color(0xFFA8C6E3),
+    Color(0xFFFBCFAE),
+    Color(0xFFF9EB9E),
+    Color(0xFFC8C7F6),
+    Color(0xFF9FE9B4)
+)
 
 @Composable
 fun HomeScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val dummyDate = HashMap<DateInfo, ScheduleInfo<MyScheduleInfo>>().apply {
-        put(
-            DateInfo.create(2024, 5, 5),
-            ScheduleInfo(
-                false,
-                listOf(
-                    ScheduleData(
-                        "AAA 10:00",
-                        MyScheduleTheme.colors.calendarBlue,
-                        detail = MyScheduleInfo(
-                            0,
-                            "10:00",
-                            "12:00",
-                            "AAA",
-                            "매니저",
-                            false,
-                            MyScheduleTheme.colors.calendarBlue,
-                            true
-                        )
-                    ),
-                    ScheduleData(
-                        "BBB 12:00",
-                        MyScheduleTheme.colors.calendarOrange,
-                        MyScheduleInfo(
-                            1,
-                            "12:00",
-                            "15:00",
-                            "BBB",
-                            "아르바이트",
-                            true,
-                            MyScheduleTheme.colors.calendarOrange,
-                            false
-                        ),
-                    ),
-                    ScheduleData(
-                        "KKK 15:00",
-                        MyScheduleTheme.colors.calendarPurple,
-                        MyScheduleInfo(
-                            2,
-                            "15:00",
-                            "18:00",
-                            "KKK",
-                            "사장",
-                            false,
-                            MyScheduleTheme.colors.calendarPurple,
-                            false
-                        ),
-                    )
-                )
-            )
-        )
-        put(
-            DateInfo.create(2024, 5, 14),
-            ScheduleInfo(
-                true,
-                listOf(
-                    ScheduleData(
-                        "AAA 10:00",
-                        MyScheduleTheme.colors.calendarBlue,
-                        MyScheduleInfo(
-                            0,
-                            "10:00",
-                            "12:00",
-                            "AAA",
-                            "매니저",
-                            false,
-                            MyScheduleTheme.colors.calendarBlue,
-                            true
-                        ),
-                    )
-                )
-            )
-        )
-    }
 
     val composeNavigator = currentComposeNavigator
+
+    val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
+
+    val memberIdColorMap = mutableMapOf<Int, Color>()
+
+    var currentColorIndex = remember {
+        mutableStateOf(0)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -183,11 +117,33 @@ fun HomeScreen(
                 },
             )
 
-            HomeContent(
-                animatedVisibilityScope = animatedVisibilityScope,
-//                uiState = uiState,
-                dummyDate
-            )
+            when (homeUiState) {
+                HomeUiState.Loading -> LoadingScreen()
+                is HomeUiState.Success ->
+
+                    HomeContent(
+                        schedules = (homeUiState as HomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                            scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
+                                if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
+                                        .not()
+                                ) {
+                                    memberIdColorMap.put(
+                                        scheduleData.detail.memberId,
+                                        calendarColors[currentColorIndex.value]
+                                    )
+                                    currentColorIndex.value += 1
+                                }
+
+                                scheduleData.copy(
+                                    title = "${scheduleData.detail.workerName} ${scheduleData.detail.startTime}",
+                                    color = memberIdColorMap [scheduleData.detail.memberId]
+                                        ?: MyScheduleTheme.colors.primary
+                                )
+                            }
+                            )
+                        },
+                    )
+            }
         }
     }
 
@@ -197,7 +153,6 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -263,7 +218,7 @@ fun BottomSheetContent(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = getFormattedYMDDate(dateInfo),
+                    text = getLanguageYMDDate(dateInfo),
                     style = MyScheduleTheme.typography.semiBold16
                 )
             }

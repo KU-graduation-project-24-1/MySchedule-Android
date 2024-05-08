@@ -52,6 +52,10 @@ internal val Typography = MyScheduleTypography(
         fontWeight = FontWeight.Normal,
         fontSize = 10.sp
     ),
+    regular9 = pretendardStyle.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = 9.sp
+    ),
     semiBold8 = pretendardStyle.copy(
         fontWeight = FontWeight.SemiBold,
         fontSize = 8.sp
@@ -68,6 +72,7 @@ data class MyScheduleTypography(
     val regular14: TextStyle,
     val semiBold12: TextStyle,
     val regular10: TextStyle,
+    val regular9: TextStyle,
     val semiBold8: TextStyle,
 )
 
