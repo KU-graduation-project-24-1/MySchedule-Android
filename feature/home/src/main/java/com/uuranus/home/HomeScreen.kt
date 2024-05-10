@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
+import com.uuranus.designsystem.component.MyScheduleDialog
 import com.uuranus.designsystem.component.MyScheduleFilledButton
 import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
@@ -73,8 +76,8 @@ fun HomeScreen(
 
     val memberIdColorMap = mutableMapOf<Int, Color>()
 
-    var currentColorIndex = remember {
-        mutableStateOf(0)
+    val currentColorIndex = remember {
+        mutableIntStateOf(0)
     }
 
     Surface(
@@ -122,6 +125,7 @@ fun HomeScreen(
                 is HomeUiState.Success ->
 
                     HomeContent(
+                        homeViewModel = homeViewModel,
                         schedules = (homeUiState as HomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
                             scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
                                 if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
@@ -135,8 +139,7 @@ fun HomeScreen(
                                 }
 
                                 scheduleData.copy(
-                                    title = "${scheduleData.detail.workerName} ${scheduleData.detail.startTime}",
-                                    color = memberIdColorMap [scheduleData.detail.memberId]
+                                    color = memberIdColorMap[scheduleData.detail.memberId]
                                         ?: MyScheduleTheme.colors.primary
                                 )
                             }
@@ -153,12 +156,13 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
+    homeViewModel: HomeViewModel,
     schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
 ) {
     val sheetState = rememberModalBottomSheetState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var selectedItem by remember {
+    var selectedBottomSheetItem by remember {
 
         mutableStateOf(
             Pair<DateInfo, List<ScheduleData<MyScheduleInfo>>>(
@@ -175,20 +179,24 @@ fun HomeContent(
 
         ScheduleCalendar(
             modifier = Modifier.fillMaxSize(),
-            schedules
-        ) { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
-            selectedItem = Pair(dateInfo, schedules)
-            showBottomSheet = true
+            schedules,
+            onDayClick = { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
+                selectedBottomSheetItem = Pair(dateInfo, schedules)
+                showBottomSheet = true
 
-        }
+            },
+            onPageChanged = {
+                homeViewModel.getMonthlySchedules(it)
+            }
+        )
 
         if (showBottomSheet) {
             MyScheduleBottomSheet(
                 sheetState = sheetState,
                 content = {
                     BottomSheetContent(
-                        dateInfo = selectedItem.first,
-                        scheduleInfo = selectedItem.second
+                        dateInfo = selectedBottomSheetItem.first,
+                        scheduleInfo = selectedBottomSheetItem.second
                     )
                 },
                 onDismissRequest = {
@@ -207,6 +215,23 @@ fun BottomSheetContent(
     dateInfo: DateInfo,
     scheduleInfo: List<ScheduleData<MyScheduleInfo>>,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedScheduleItem by remember {
+
+        mutableStateOf(
+            MyScheduleInfo(
+                0,
+                "10:00",
+                "12:00",
+                3,
+                "AAA",
+                "매니저",
+                false,
+                true
+            )
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -245,9 +270,20 @@ fun BottomSheetContent(
                             ), buttonState = true
                         ) {
                             if (scheduleInfo[index].detail.isMine) {
-                                Text("요청", style = MyScheduleTheme.typography.regular14)
+                                Text(
+                                    "요청", style = MyScheduleTheme.typography.regular14,
+                                    modifier = Modifier.clickable {
+
+
+                                    }
+                                )
                             } else if (scheduleInfo[index].detail.isFillInNeeded) {
-                                Text("수락", style = MyScheduleTheme.typography.regular14)
+                                Text("수락", style = MyScheduleTheme.typography.regular14,
+                                    modifier = Modifier.clickable {
+//                                        MyScheduleDialog(showDialog = true) {
+//                                            showDialog = false
+//                                        }
+                                    })
                             }
                         }
                     }
@@ -321,6 +357,53 @@ fun MyScheduleDetailListItem(
         actions()
     }
 }
+
+
+//@Composable
+//fun RequestFillInDialog(
+//    dateInfo: DateInfo,
+//    scheduleInfo: ScheduleData<MyScheduleInfo>,
+//    showDialog: Boolean,
+//    onDismissDialog: () -> Unit,
+//) {
+//    MyScheduleDialog(showDialog = showDialog,
+//        title = {
+//            Text(
+//                "대타 요청",
+//                style = MyScheduleTheme.typography.bold20
+//            )
+//        },
+//        content = {
+//            Column() {
+//                Text(
+//                    getLanguageYMDDate(dateInfo = dateInfo),
+//                    style = MyScheduleTheme.typography.regular16
+//                )
+//                MyScheduleDetailListItem(
+//                    modifier = Modifier,
+//                    scheduleInfo = scheduleInfo
+//                )
+//            }
+//
+//        },
+//        confirmButton = {
+//            MyScheduleFilledButton(
+//                paddingValues = PaddingValues(all = 13.dp),
+//                buttonState = true,
+//                content = {
+//                    Text(
+//                        "확인",
+//                        style = MyScheduleTheme.typography.semiBold16
+//                    )
+//                }
+//            )
+//        }
+//    ) {
+//        showDialog = false
+//    }
+//})
+//}
+
 
 @Preview
 @ExperimentalAnimationApi

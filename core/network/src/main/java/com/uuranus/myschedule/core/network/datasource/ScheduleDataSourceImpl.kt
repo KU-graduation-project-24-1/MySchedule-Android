@@ -61,7 +61,7 @@ class ScheduleDataSourceImpl @Inject constructor(
                     isFillInNeeded = false
                 )
             ),
-            "2024-05-30" to listOf(
+            "2024-06-30" to listOf(
                 MyScheduleInfo(
                     scheduleId = 5,
                     startTime = "08:00",

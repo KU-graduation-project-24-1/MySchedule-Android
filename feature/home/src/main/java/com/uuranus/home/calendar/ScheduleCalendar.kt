@@ -45,6 +45,7 @@ fun <T> ScheduleCalendar(
     modifier: Modifier,
     schedules: Map<DateInfo, ScheduleInfo<T>>, //DateInfo날의 스케줄 정보
     onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
+    onPageChanged: (DateInfo) -> Unit,
 ) {
 
     var currentDate by remember { mutableStateOf(DateInfo.create(Calendar.getInstance())) }
@@ -57,17 +58,19 @@ fun <T> ScheduleCalendar(
         val direction = pagerState.currentPageOffsetFraction
         if (direction < 0) { //왼쪽으로 밀면 오른쪽으로 이동
             currentDate = currentDate.addMonth(1)
-            if (pagerState.currentPage == pagerState.pageCount -1){
+            if (pagerState.currentPage == pagerState.pageCount - 1) {
                 pagerState.animateScrollToPage(1)
             }
 
         } else if (direction > 0) {
             currentDate = currentDate.addMonth(-1)
-            if (pagerState.currentPage == 0){
+            if (pagerState.currentPage == 0) {
                 pagerState.animateScrollToPage(pagerState.pageCount - 2)
             }
         }
-  }
+
+        onPageChanged(currentDate)
+    }
 
     HorizontalPager(
         state = pagerState,
@@ -380,8 +383,13 @@ fun PreviewCalendar() {
     }
 
     MyScheduleTheme {
-        ScheduleCalendar(Modifier, dummyDate) { dateInfo, scheduleData ->
+        ScheduleCalendar(
+            Modifier, dummyDate, onDayClick = { dateInfo, scheduleData ->
 
-        }
+            },
+            onPageChanged = {
+
+            }
+        )
     }
 }
