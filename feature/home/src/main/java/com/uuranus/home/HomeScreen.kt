@@ -3,10 +3,12 @@ package com.uuranus.home
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -54,6 +57,7 @@ import com.uuranus.home.calendar.getLanguageYMDDate
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
+import java.util.Date
 
 internal val calendarColors = listOf(
     Color(0xFFF3A8A8),
@@ -172,6 +176,31 @@ fun HomeContent(
         )
     }
 
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedScheduleItem by remember {
+
+        mutableStateOf(
+            Pair(
+                DateInfo(0, 0, 0),
+                ScheduleData(
+                    title = "AA 10:00",
+                    color = Color.White,
+                    MyScheduleInfo(
+                        0,
+                        "10:00",
+                        "12:00",
+                        3,
+                        "AAA",
+                        "매니저",
+                        false,
+                        true
+                    )
+                )
+            )
+
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -196,7 +225,11 @@ fun HomeContent(
                 content = {
                     BottomSheetContent(
                         dateInfo = selectedBottomSheetItem.first,
-                        scheduleInfo = selectedBottomSheetItem.second
+                        scheduleInfo = selectedBottomSheetItem.second,
+                        onClick = { dateInfo, scheduleData ->
+                            showDialog = true
+                            selectedScheduleItem = Pair(dateInfo, scheduleData)
+                        }
                     )
                 },
                 onDismissRequest = {
@@ -204,6 +237,24 @@ fun HomeContent(
                 }
 
             )
+        }
+
+        if (showDialog) {
+            if (selectedScheduleItem.second.detail.isMine) {
+                RequestFillInDialog(
+                    dateInfo = selectedScheduleItem.first,
+                    scheduleInfo = selectedScheduleItem.second
+                ) {
+                    showDialog = false
+                }
+            } else if (selectedScheduleItem.second.detail.isFillInNeeded) {
+                AcceptFillInDialog(
+                    dateInfo = selectedScheduleItem.first,
+                    scheduleInfo = selectedScheduleItem.second
+                ) {
+                    showDialog = false
+                }
+            }
         }
 
     }
@@ -214,23 +265,8 @@ fun HomeContent(
 fun BottomSheetContent(
     dateInfo: DateInfo,
     scheduleInfo: List<ScheduleData<MyScheduleInfo>>,
+    onClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit,
 ) {
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedScheduleItem by remember {
-
-        mutableStateOf(
-            MyScheduleInfo(
-                0,
-                "10:00",
-                "12:00",
-                3,
-                "AAA",
-                "매니저",
-                false,
-                true
-            )
-        )
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -264,33 +300,30 @@ fun BottomSheetContent(
                 if (scheduleInfo[index].detail.isFillInNeeded || scheduleInfo[index].detail.isMine) {
                     Row {
                         MyScheduleFilledButton(
+                            modifier = Modifier,
                             paddingValues = PaddingValues(
                                 horizontal = 14.dp,
                                 vertical = 5.dp
-                            ), buttonState = true
-                        ) {
-                            if (scheduleInfo[index].detail.isMine) {
-                                Text(
-                                    "요청", style = MyScheduleTheme.typography.regular14,
-                                    modifier = Modifier.clickable {
-
-
-                                    }
-                                )
-                            } else if (scheduleInfo[index].detail.isFillInNeeded) {
-                                Text("수락", style = MyScheduleTheme.typography.regular14,
-                                    modifier = Modifier.clickable {
-//                                        MyScheduleDialog(showDialog = true) {
-//                                            showDialog = false
-//                                        }
-                                    })
+                            ), buttonState = true,
+                            content = {
+                                if (scheduleInfo[index].detail.isMine) {
+                                    Text(
+                                        "요청", style = MyScheduleTheme.typography.regular14,
+                                    )
+                                } else if (scheduleInfo[index].detail.isFillInNeeded) {
+                                    Text("수락", style = MyScheduleTheme.typography.regular14)
+                                }
                             }
+                        ) {
+                            onClick(dateInfo, scheduleInfo[index])
                         }
                     }
                 }
             }
         }
     }
+
+
 }
 
 @Composable
@@ -359,50 +392,99 @@ fun MyScheduleDetailListItem(
 }
 
 
-//@Composable
-//fun RequestFillInDialog(
-//    dateInfo: DateInfo,
-//    scheduleInfo: ScheduleData<MyScheduleInfo>,
-//    showDialog: Boolean,
-//    onDismissDialog: () -> Unit,
-//) {
-//    MyScheduleDialog(showDialog = showDialog,
-//        title = {
-//            Text(
-//                "대타 요청",
-//                style = MyScheduleTheme.typography.bold20
-//            )
-//        },
-//        content = {
-//            Column() {
-//                Text(
-//                    getLanguageYMDDate(dateInfo = dateInfo),
-//                    style = MyScheduleTheme.typography.regular16
-//                )
-//                MyScheduleDetailListItem(
-//                    modifier = Modifier,
-//                    scheduleInfo = scheduleInfo
-//                )
-//            }
-//
-//        },
-//        confirmButton = {
-//            MyScheduleFilledButton(
-//                paddingValues = PaddingValues(all = 13.dp),
-//                buttonState = true,
-//                content = {
-//                    Text(
-//                        "확인",
-//                        style = MyScheduleTheme.typography.semiBold16
-//                    )
-//                }
-//            )
-//        }
-//    ) {
-//        showDialog = false
-//    }
-//})
-//}
+@Composable
+fun RequestFillInDialog(
+    dateInfo: DateInfo,
+    scheduleInfo: ScheduleData<MyScheduleInfo>,
+    onDismissDialog: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissDialog,
+        containerColor = MyScheduleTheme.colors.background,
+        title = {
+            Text(
+                "대타 요청",
+                style = MyScheduleTheme.typography.bold20
+            )
+        },
+        text = {
+            Column() {
+                Text(
+                    getLanguageYMDDate(dateInfo = dateInfo),
+                    style = MyScheduleTheme.typography.regular16
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                MyScheduleDetailListItem(
+                    modifier = Modifier,
+                    scheduleInfo = scheduleInfo
+                )
+            }
+        },
+        confirmButton = {
+            MyScheduleFilledButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                paddingValues = PaddingValues(all = 13.dp),
+                buttonState = true,
+                content = {
+                    Text(
+                        "요청",
+                        style = MyScheduleTheme.typography.semiBold16
+                    )
+                }
+            ) {
+                //viewModel.request()
+            }
+        }
+    )
+}
+
+@Composable
+fun AcceptFillInDialog(
+    dateInfo: DateInfo,
+    scheduleInfo: ScheduleData<MyScheduleInfo>,
+    onDismissDialog: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissDialog,
+        containerColor = MyScheduleTheme.colors.background,
+        title = {
+            Text(
+                "대타 수락",
+                style = MyScheduleTheme.typography.bold20
+            )
+        },
+        text = {
+            Column() {
+                Text(
+                    getLanguageYMDDate(dateInfo = dateInfo),
+                    style = MyScheduleTheme.typography.regular16
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                MyScheduleDetailListItem(
+                    modifier = Modifier,
+                    scheduleInfo = scheduleInfo
+                )
+            }
+
+        },
+        confirmButton = {
+            MyScheduleFilledButton(
+                modifier = Modifier.fillMaxWidth(),
+                paddingValues = PaddingValues(all = 13.dp),
+                buttonState = true,
+                content = {
+                    Text(
+                        "수락",
+                        style = MyScheduleTheme.typography.semiBold16,
+                    )
+                }
+            ) {
+                //viewModel.accept()
+            }
+        },
+    )
+}
 
 
 @Preview

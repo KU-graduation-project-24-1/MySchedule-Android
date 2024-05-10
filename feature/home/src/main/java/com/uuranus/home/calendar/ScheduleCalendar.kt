@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
@@ -30,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.theme.MyScheduleTheme
@@ -52,17 +50,17 @@ fun <T> ScheduleCalendar(
 
     val monthInfo = rememberMonthInfo(currentDate)
 
-    val pagerState = rememberPagerState(pageCount = { 7 }, initialPage = 1)
+    val pagerState =
+        rememberPagerState(pageCount = { Int.MAX_VALUE }, initialPage = Int.MAX_VALUE / 2)
 
     LaunchedEffect(pagerState.currentPage) {
-        val direction = pagerState.currentPageOffsetFraction
-        if (direction < 0) { //왼쪽으로 밀면 오른쪽으로 이동
+
+        if (pagerState.lastScrolledForward) {
             currentDate = currentDate.addMonth(1)
             if (pagerState.currentPage == pagerState.pageCount - 1) {
                 pagerState.animateScrollToPage(1)
             }
-
-        } else if (direction > 0) {
+        } else if (pagerState.lastScrolledBackward) {
             currentDate = currentDate.addMonth(-1)
             if (pagerState.currentPage == 0) {
                 pagerState.animateScrollToPage(pagerState.pageCount - 2)
@@ -323,8 +321,8 @@ fun PreviewCalendar() {
                             3,
                             "AAA",
                             "매니저",
-                            false,
-                            true
+                            isMine = false,
+                            isFillInNeeded = true
                         )
                     ),
                     ScheduleData(
@@ -337,8 +335,8 @@ fun PreviewCalendar() {
                             2,
                             "BBB",
                             "아르바이트",
-                            true,
-                            false
+                            isMine = true,
+                            isFillInNeeded = false
                         ),
                     ),
                     ScheduleData(
@@ -351,8 +349,8 @@ fun PreviewCalendar() {
                             1,
                             "KKK",
                             "사장",
-                            false,
-                            false
+                            isMine = false,
+                            isFillInNeeded = false
                         ),
                     )
                 )
@@ -373,8 +371,8 @@ fun PreviewCalendar() {
                             3,
                             "AAA",
                             "매니저",
-                            false,
-                            true
+                            isMine = false,
+                            isFillInNeeded = true
                         ),
                     )
                 )
