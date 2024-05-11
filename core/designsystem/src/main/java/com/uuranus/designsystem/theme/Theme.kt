@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 
-
 private val LocalColors = compositionLocalOf<MyScheduleColors> {
     error("No colors provided!")
 }

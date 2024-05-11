@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import java.util.Calendar
 
-
 @Composable
 fun rememberMonthInfo(currentDate: DateInfo): MonthInfo {
     return remember(currentDate) {

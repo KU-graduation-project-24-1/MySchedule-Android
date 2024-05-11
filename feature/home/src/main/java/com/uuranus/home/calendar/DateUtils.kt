@@ -1,6 +1,8 @@
 package com.uuranus.home.calendar
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 fun getLanguageYMDate(dateInfo: DateInfo): String {
     return String.format("%4d년 %d월", dateInfo.year, dateInfo.month)
@@ -59,3 +61,15 @@ fun Calendar.addMonth(month: Int): Calendar {
     calendar.add(Calendar.MONTH, month)
     return calendar
 }
+
+fun getSystemWeeks(): List<String> =
+    SimpleDateFormat("EEEEE", Locale.getDefault()).run {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        val week = mutableListOf<String>()
+        repeat(7) {
+            week.add(format(cal.time))
+            cal.add(Calendar.DAY_OF_WEEK, 1)
+        }
+        week
+    }

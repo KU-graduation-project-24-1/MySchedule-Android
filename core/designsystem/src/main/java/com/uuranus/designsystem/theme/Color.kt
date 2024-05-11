@@ -14,6 +14,7 @@ internal val DarkGray = Color(0xFF969696)
 internal val PrimaryGreen = Color(0xFFC1DAB9)
 internal val AccentGreen = Color(0xFFAACB9F)
 
+internal val AccentRed = Color(0xFFD52727)
 internal val ErrorRed = Color(0xFFD52727)
 
 //calendar colors
@@ -37,6 +38,7 @@ internal val Pink40 = Color(0xFF7D5260)
 @Immutable
 public data class MyScheduleColors(
     val primary: Color,
+    val accentColor: Color,
     val background: Color,
     val backgroundLight: Color,
     val backgroundDark: Color,
@@ -62,6 +64,7 @@ public data class MyScheduleColors(
         @Composable
         public fun defaultDarkColors(): MyScheduleColors = MyScheduleColors(
             primary = PrimaryGreen,
+            accentColor = AccentRed,
             background = White,
             backgroundLight = White,
             backgroundDark = DARK,
@@ -83,14 +86,10 @@ public data class MyScheduleColors(
             calendarPurple = Purple
         )
 
-        /**
-         * Provides the default colors for the light mode of the app.
-         *
-         * @return A [PokedexColors] instance holding our color palette.
-         */
         @Composable
         public fun defaultLightColors(): MyScheduleColors = MyScheduleColors(
             primary = PrimaryGreen,
+            accentColor = AccentRed,
             background = White,
             backgroundLight = White,
             backgroundDark = DARK,

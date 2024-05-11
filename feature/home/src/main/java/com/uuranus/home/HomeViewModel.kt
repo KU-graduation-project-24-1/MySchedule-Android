@@ -1,6 +1,5 @@
 package com.uuranus.home
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,14 +9,12 @@ import com.uuranus.home.calendar.ScheduleData
 import com.uuranus.home.calendar.ScheduleInfo
 import com.uuranus.home.calendar.dashToDateInfo
 import com.uuranus.home.calendar.getDashYMDDate
-import com.uuranus.model.MyScheduleInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -57,7 +54,6 @@ class HomeViewModel @Inject constructor(
             ) { _, schedules ->
 
                 HomeUiState.Success(
-
                     schedules = schedules.mapKeys { keys ->
                         keys.key.dashToDateInfo()
                     }.mapValues { values ->
