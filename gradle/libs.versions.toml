@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.2"
+firebaseBom = "33.0.0"
 kotlin = "1.9.23"
 ksp = "1.9.23-1.0.20"
 kotlinxImmutable = "0.3.7"
@@ -61,6 +62,7 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTes
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
 androidx-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 compose-stable-marker = { group = "com.github.skydoves", name = "compose-stable-marker", version.ref = "composeStableMarker" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 landscapist-glide = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "landscapist" }
 landscapist-animation = { group = "com.github.skydoves", name = "landscapist-animation", version.ref = "landscapist" }
 landscapist-placeholder = { group = "com.github.skydoves", name = "landscapist-placeholder", version.ref = "landscapist" }
