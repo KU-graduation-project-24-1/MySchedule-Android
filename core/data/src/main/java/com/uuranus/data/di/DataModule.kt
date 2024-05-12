@@ -4,8 +4,8 @@ import com.uuranus.data.repository.home.HomeRepository
 import com.uuranus.data.repository.home.HomeRepositoryImpl
 import com.uuranus.data.repository.login.LoginRepository
 import com.uuranus.data.repository.login.LoginRepositoryImpl
-import com.uuranus.myschedule.core.network.datasource.CalendarDataSource
-import com.uuranus.myschedule.core.network.datasource.CalendarDataSourceImpl
+import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
+import com.uuranus.myschedule.core.network.datasource.ScheduleDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,8 +17,8 @@ internal interface DataModule {
 
     @Binds
     fun bindCalendarDataSource(
-        dataSource: CalendarDataSourceImpl,
-    ): CalendarDataSource
+        dataSource: ScheduleDataSourceImpl,
+    ): ScheduleDataSource
 
     @Binds
     fun bindsHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957254484205",
+    "project_id": "scheduleproject-cc7a8",
+    "storage_bucket": "scheduleproject-cc7a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957254484205:android:54f71777eaf8242ba0cce4",
+        "android_client_info": {
+          "package_name": "com.uuranus.myschedule"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfhadR-P99sIOb0zGD02HVsmPQ4sMybw4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

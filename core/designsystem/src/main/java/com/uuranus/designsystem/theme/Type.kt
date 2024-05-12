@@ -24,8 +24,20 @@ internal val Typography = MyScheduleTypography(
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
     ),
+    bold16 = pretendardStyle.copy(
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp
+    ),
+    semiBold20 = pretendardStyle.copy(
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
+    ),
     semiBold16 = pretendardStyle.copy(
         fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+    regular16 = pretendardStyle.copy(
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     regular14 = pretendardStyle.copy(
@@ -40,6 +52,10 @@ internal val Typography = MyScheduleTypography(
         fontWeight = FontWeight.Normal,
         fontSize = 10.sp
     ),
+    regular9 = pretendardStyle.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = 9.sp
+    ),
     semiBold8 = pretendardStyle.copy(
         fontWeight = FontWeight.SemiBold,
         fontSize = 8.sp
@@ -49,10 +65,14 @@ internal val Typography = MyScheduleTypography(
 @Immutable
 data class MyScheduleTypography(
     val bold20: TextStyle,
+    val bold16: TextStyle,
+    val semiBold20: TextStyle,
     val semiBold16: TextStyle,
+    val regular16: TextStyle,
     val regular14: TextStyle,
     val semiBold12: TextStyle,
     val regular10: TextStyle,
+    val regular9: TextStyle,
     val semiBold8: TextStyle,
 )
 

@@ -3,6 +3,7 @@ plugins {
     id("myschedule.android.hilt")
     id("myschedule.android.application.compose")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -72,4 +73,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     androidTestImplementation(libs.hilt.testing)
     kspAndroidTest(libs.hilt.compiler)
+
+    implementation(platform(libs.firebase.bom))
+    implementation("com.google.firebase:firebase-analytics")
 }
