@@ -18,3 +18,16 @@ fun NavGraphBuilder.myScheduleNavigation() {
         MyPageScreen()
     }
 }
+
+fun NavGraphBuilder.bossNavigation() {
+    composable(route = MyScheduleScreens.BossHome.name) {
+//        BossHomeScreen(this)
+    }
+
+    composable(
+        route = MyScheduleScreens.BossMyPage.name,
+        arguments = MyScheduleScreens.BossMyPage.navArguments,
+    ) {
+//        BossMyPageScreen()
+    }
+}

@@ -52,6 +52,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
+    implementation(projects.core.domain)
 
     // compose
     implementation(libs.androidx.activity.compose)
@@ -76,4 +77,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-analytics")
+
+
+    implementation(libs.androidx.core.splashscreen)
 }

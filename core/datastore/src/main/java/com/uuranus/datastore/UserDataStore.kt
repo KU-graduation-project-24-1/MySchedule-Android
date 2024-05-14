@@ -1,41 +1,49 @@
 package com.uuranus.datastore
 
+import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
+import com.uuranus.model.UserData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Named
 
 class UserDataStore @Inject constructor(
-    @Named("user") private val dataStore: DataStore<Preferences>,
+    private val dataStore: DataStore<UserPreferences>,
 ) {
-    companion object {
-        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-    }
 
-    suspend fun saveIsLoggedIn(isLoggedIn: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[IS_LOGGED_IN] = isLoggedIn
-        }
-    }
-
-    val isLoggedIn: Flow<Boolean> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
+    val userData: Flow<UserData> = dataStore.data
         .map { preferences ->
-            true
-//            val isLoggedIn = preferences[IS_LOGGED_IN] ?: false
-//            isLoggedIn
+//            UserData(
+//                storeId = preferences.storeId,
+//                memberId = preferences.memberId,
+//                name = preferences.name,
+//                workerType = preferences.workerType,
+//                isLoggedIn = preferences.isLoggedIn
+//            )
+            UserData(
+                storeId = 1,
+                memberId = 1,
+                name = "김알바",
+                workerType = "아르바이트",
+                isLoggedIn = true
+            )
         }
+
+    suspend fun setUserData(userData: UserData) {
+        try {
+            dataStore.updateData {
+                it.copy {
+                    storeId = userData.storeId
+                    memberId = userData.memberId
+                    name = userData.name
+                    workerType = userData.workerType
+                    isLoggedIn = userData.isLoggedIn
+                }
+            }
+        } catch (ioException: IOException) {
+            Log.e("UserPreference", "Failed to update user preferences", ioException)
+        }
+    }
+
 }
