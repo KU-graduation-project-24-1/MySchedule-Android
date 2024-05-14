@@ -1,14 +1,14 @@
-package com.uuranus.home
+package com.uuranus.myschedule.bosshome
 
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.model.MyScheduleInfo
 
-sealed interface HomeUiState {
-    object Loading : HomeUiState
+sealed interface BossHomeUiState {
+    object Loading : BossHomeUiState
     data class Success(
         val schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
-    ) : HomeUiState
+    ) : BossHomeUiState
 
 }
 

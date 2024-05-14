@@ -1,7 +1,5 @@
-package com.uuranus.home
+package com.uuranus.myschedule.bosshome
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,7 +28,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,7 +40,12 @@ import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
+import com.uuranus.home.AcceptFillInDialog
+import com.uuranus.home.BottomSheetContent
+import com.uuranus.home.MyScheduleBottomSheet
+import com.uuranus.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
+import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
@@ -57,14 +59,13 @@ internal val calendarColors = listOf(
 )
 
 @Composable
-fun HomeScreen(
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+fun BossHomeScreen(
+    bossHomeViewModel: BossHomeViewModel = hiltViewModel(),
 ) {
 
     val composeNavigator = currentComposeNavigator
 
-    val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val homeUiState by bossHomeViewModel.homeUiState.collectAsStateWithLifecycle()
 
     val memberIdColorMap = remember {
         mutableMapOf<Int, Color>()
@@ -88,7 +89,7 @@ fun HomeScreen(
                             },
                             contentDescription = "가게 목록으로 이동",
                             painter = painterResource(
-                                id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
+                                id = R.drawable.arrow_left_icon
                             )
                         )
                         Spacer(modifier = Modifier.width(10.dp))
@@ -104,7 +105,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(end = 8.dp)
                     ) {
                         CircularImageComponent(
-                            painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
+                            painter = painterResource(id = R.drawable.baseline_person_24),
                             size = 30,
                             onClick = {
                                 composeNavigator.navigate(MyScheduleScreens.MyPage.route)
@@ -115,11 +116,12 @@ fun HomeScreen(
             )
 
             when (homeUiState) {
-                HomeUiState.Loading -> LoadingScreen()
-                is HomeUiState.Success ->
-                    HomeContent(
-                        homeViewModel = homeViewModel,
-                        schedules = (homeUiState as HomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                BossHomeUiState.Loading -> LoadingScreen()
+                is BossHomeUiState.Success ->
+
+                    BossHomeContent(
+                        homeViewModel = bossHomeViewModel,
+                        schedules = (homeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
                             scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
                                 if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
                                         .not()
@@ -142,14 +144,12 @@ fun HomeScreen(
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(
-    homeViewModel: HomeViewModel,
+fun BossHomeContent(
+    homeViewModel: BossHomeViewModel,
     schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -312,79 +312,5 @@ fun MyScheduleDetailListItem(
                 .width(10.dp)
         )
         actions()
-    }
-}
-
-
-@Preview
-@ExperimentalAnimationApi
-@Composable
-fun HomeScreenPreview() {
-
-    MyScheduleTheme {
-//        MyScheduleDetailListItem(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            ScheduleData(
-//                "AAA 10:00",
-//                MyScheduleTheme.colors.calendarBlue,
-//                detail = MyScheduleInfo(
-//                    0,
-//                    "10:00",
-//                    "12:00",
-//                    "AAA",
-//                    "매니저",
-//                    false,
-//                    MyScheduleTheme.colors.calendarBlue,
-//                    true
-//                )
-//            ),
-//        ) {
-//            //내가 사장일 때
-//
-//            //아닐 때
-//            MyScheduleFilledButton(
-//                paddingValues = PaddingValues(horizontal = 14.dp, vertical = 5.dp),
-//                buttonState = true
-//            ) {
-//                Text("수락", style = MyScheduleTheme.typography.regular14)
-//            }
-//        }
-
-
-        MyScheduleAppBar(
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        modifier = Modifier.clickable {
-
-                        },
-                        contentDescription = "가게 목록으로 이동",
-                        painter = painterResource(
-                            id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "000 떡볶이 건대입구점",
-                        style = MyScheduleTheme.typography.bold16
-                    )
-                }
-            },
-            actions = {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.padding(end = 8.dp)
-                ) {
-                    CircularImageComponent(
-                        painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
-                        size = 30,
-                        onClick = {
-//                            composeNavigator.navigate(MyScheduleScreens.MyPage.route)
-                        }
-                    )
-                }
-            },
-        )
     }
 }

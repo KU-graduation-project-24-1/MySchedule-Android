@@ -1,4 +1,4 @@
-package com.uuranus.home
+package com.uuranus.myschedule.bosshome
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -22,7 +22,7 @@ import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class BossHomeViewModel @Inject constructor(
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
 ) : ViewModel() {
 
@@ -31,12 +31,12 @@ class HomeViewModel @Inject constructor(
 
     private val _userDate = MutableStateFlow<Int>(1)
 
-    private val _homeUiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val homeUiState: StateFlow<HomeUiState> = _homeUiState
+    private val _homeUiState = MutableStateFlow<BossHomeUiState>(BossHomeUiState.Loading)
+    val homeUiState: StateFlow<BossHomeUiState> = _homeUiState
 
     init {
         //userData 가져오기
-        getMonthlySchedules(DateInfo.create(Calendar.getInstance()))
+//        getMonthlySchedules(DateInfo.create(Calendar.getInstance()))
     }
 
     fun getMonthlySchedules(dateInfo: DateInfo) {
@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
                 }
             ) { _, schedules ->
 
-                HomeUiState.Success(
+                BossHomeUiState.Success(
                     schedules = schedules.mapKeys { keys ->
                         keys.key.dashToDateInfo()
                     }.mapValues { values ->

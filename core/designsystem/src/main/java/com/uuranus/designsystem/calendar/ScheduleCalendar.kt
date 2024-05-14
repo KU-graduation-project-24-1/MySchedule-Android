@@ -1,4 +1,4 @@
-package com.uuranus.home.calendar
+package com.uuranus.designsystem.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

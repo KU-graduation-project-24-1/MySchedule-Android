@@ -43,7 +43,6 @@ android {
 
 dependencies {
     implementation(projects.core.navigation)
-    implementation(projects.feature.main)
     implementation(projects.feature.home)
     implementation(projects.feature.login)
     implementation(projects.feature.mypage)
