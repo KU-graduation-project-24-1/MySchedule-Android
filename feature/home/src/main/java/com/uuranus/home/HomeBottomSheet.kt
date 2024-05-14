@@ -1,6 +1,8 @@
 package com.uuranus.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,15 +16,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.getLanguageYMDDate
 import com.uuranus.designsystem.component.MyScheduleFilledButton
+import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +50,7 @@ fun MyScheduleBottomSheet(
 }
 
 @Composable
-fun BottomSheetContent(
+fun MyScheduleBottomSheetContent(
     dateInfo: DateInfo,
     scheduleInfo: List<ScheduleData<MyScheduleInfo>>,
     onClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit,
@@ -82,6 +91,7 @@ fun BottomSheetContent(
                                 horizontal = 14.dp,
                                 vertical = 5.dp
                             ), buttonState = true,
+                            color = MyScheduleTheme.colors.primary,
                             content = {
                                 if (scheduleInfo[index].detail.isMine) {
                                     Text(
@@ -99,5 +109,90 @@ fun BottomSheetContent(
             }
         }
     }
+
+}
+
+@Composable
+fun PossibleTimeBottomSheetContent(
+    homeViewModel: HomeViewModel,
+    dateInfo: DateInfo,
+    scheduleInfo: List<ScheduleData<MyPossibleTimeInfo>>,
+) {
+
+    var showTimePicker: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        item {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Text(
+                    text = getLanguageYMDDate(dateInfo),
+                    style = MyScheduleTheme.typography.semiBold16,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                MyScheduleFilledButton(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    paddingValues = PaddingValues(
+                        horizontal = 14.dp,
+                        vertical = 5.dp
+                    ), buttonState = true,
+                    color = MyScheduleTheme.colors.primary,
+                    content = {
+                        Text(
+                            "추가", style = MyScheduleTheme.typography.regular14,
+                        )
+                    }
+                ) {
+                    showTimePicker.value = true
+                }
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+        items(scheduleInfo.size) { index ->
+            PossibleTimeDetailListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                scheduleInfo[index]
+            ) {
+                Row {
+                    MyScheduleFilledButton(
+                        modifier = Modifier,
+                        paddingValues = PaddingValues(
+                            horizontal = 14.dp,
+                            vertical = 5.dp
+                        ), buttonState = true,
+                        color = MyScheduleTheme.colors.lightGray,
+                        content = {
+                            Text(
+                                "삭제", style = MyScheduleTheme.typography.regular14,
+                            )
+                        }
+                    ) {
+                        homeViewModel.deletePossibleTime(scheduleInfo[index].detail.storeMemberAvailableTimeId)
+                    }
+                }
+            }
+        }
+    }
+
+    if (showTimePicker.value) {
+
+        TimePickerDialog("") {
+            println("it !! $it")
+            showTimePicker.value = false
+        }
+    }
+
 
 }

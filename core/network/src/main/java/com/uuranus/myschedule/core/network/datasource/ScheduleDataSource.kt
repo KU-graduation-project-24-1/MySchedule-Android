@@ -15,4 +15,9 @@ interface ScheduleDataSource {
         storeId: Int, dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>>
 
+    fun deletePossibleTime(
+        memberId: Int,
+        storeId: Int,
+        storeMemberAvailableTimeId: Int,
+    ): String
 }

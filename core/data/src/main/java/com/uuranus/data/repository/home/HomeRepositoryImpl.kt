@@ -28,4 +28,12 @@ class HomeRepositoryImpl @Inject constructor(
     ): HashMap<String, List<MyPossibleTimeInfo>> {
         return dataSource.getMonthlyPossibleTimes(storeId, dateYM)
     }
+
+    override fun deletePossibleTime(
+        memberId: Int,
+        storeId: Int,
+        storeMemberAvailableTimeId: Int,
+    ): String {
+        return dataSource.deletePossibleTime(memberId, storeId, storeMemberAvailableTimeId)
+    }
 }

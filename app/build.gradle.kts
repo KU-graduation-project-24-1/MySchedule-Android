@@ -3,7 +3,7 @@ plugins {
     id("myschedule.android.hilt")
     id("myschedule.android.application.compose")
     id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -77,6 +77,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-analytics")
 
-
     implementation(libs.androidx.core.splashscreen)
+
 }

@@ -8,6 +8,7 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
+import com.uuranus.domain.DeletePossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyPossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
@@ -18,10 +19,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -30,6 +31,7 @@ class HomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
     private val getMonthlyPossibleTimesUseCase: GetMonthlyPossibleTimesUseCase,
+    private val deletePossibleTimesUseCase: DeletePossibleTimesUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -68,7 +70,6 @@ class HomeViewModel @Inject constructor(
     fun getCurrentDate(): DateInfo = _currentDate.value
 
     fun getMonthlySchedules() {
-        println("GetMonthlySchedules")
         viewModelScope.launch {
             flow {
                 emit(
@@ -134,6 +135,18 @@ class HomeViewModel @Inject constructor(
             }.collect {
                 _homeUiState.value = it
             }
+        }
+    }
+
+    fun deletePossibleTime(storeMemberAvailableTimeId: Int) {
+        viewModelScope.launch {
+
+            val response =deletePossibleTimesUseCase(
+                _userData.value.memberId,
+                _userData.value.storeId,
+                storeMemberAvailableTimeId
+            )
+            _errorFlow.emit(Exception(response))
         }
     }
 }

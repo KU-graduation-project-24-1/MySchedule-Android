@@ -55,7 +55,6 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 fun LoginContent(viewModel: LoginViewModel) {
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MyScheduleTheme.colors.background

@@ -65,6 +65,7 @@ fun RequestFillInDialog(
                     .fillMaxWidth(),
                 paddingValues = PaddingValues(all = 13.dp),
                 buttonState = true,
+                color = MyScheduleTheme.colors.primary,
                 content = {
                     Text(
                         "요청",
@@ -113,6 +114,7 @@ fun AcceptFillInDialog(
                 modifier = Modifier.fillMaxWidth(),
                 paddingValues = PaddingValues(all = 13.dp),
                 buttonState = true,
+                color = MyScheduleTheme.colors.primary,
                 content = {
                     Text(
                         "수락",
@@ -203,6 +205,7 @@ fun CalendarChooseDialog(
                 modifier = Modifier.fillMaxWidth(),
                 paddingValues = PaddingValues(all = 13.dp),
                 buttonState = true,
+                color = MyScheduleTheme.colors.primary,
                 content = {
                     Text(
                         "확인",

@@ -18,7 +18,6 @@ sealed class MyScheduleScreens(
 
     data object BossHome : MyScheduleScreens(route = "bossHome")
 
-
     data object BossMyPage : MyScheduleScreens(route = "bossMyPage")
 }
 

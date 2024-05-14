@@ -41,8 +41,6 @@ import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.home.AcceptFillInDialog
-import com.uuranus.home.BottomSheetContent
-import com.uuranus.home.MyScheduleBottomSheet
 import com.uuranus.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.designsystem.R
@@ -195,38 +193,38 @@ fun BossHomeContent(
             .fillMaxWidth()
     ) {
 
-        ScheduleCalendar(
-            modifier = Modifier.fillMaxSize(),
-            schedules,
-            onDayClick = { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
-                selectedBottomSheetItem = Pair(dateInfo, schedules)
-                showBottomSheet = true
-
-            },
-            onPageChanged = {
-                homeViewModel.getMonthlySchedules(it)
-            }
-        )
-
-        if (showBottomSheet) {
-            MyScheduleBottomSheet(
-                sheetState = sheetState,
-                content = {
-                    BottomSheetContent(
-                        dateInfo = selectedBottomSheetItem.first,
-                        scheduleInfo = selectedBottomSheetItem.second,
-                        onClick = { dateInfo, scheduleData ->
-                            showDialog = true
-                            selectedScheduleItem = Pair(dateInfo, scheduleData)
-                        }
-                    )
-                },
-                onDismissRequest = {
-                    showBottomSheet = false
-                }
-
-            )
-        }
+//        ScheduleCalendar(
+//            modifier = Modifier.fillMaxSize(),
+//            schedules,
+//            onDayClick = { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
+//                selectedBottomSheetItem = Pair(dateInfo, schedules)
+//                showBottomSheet = true
+//
+//            },
+//            onPageChanged = {
+//                homeViewModel.getMonthlySchedules(it)
+//            }
+//        )
+//
+//        if (showBottomSheet) {
+//            MyScheduleBottomSheet(
+//                sheetState = sheetState,
+//                content = {
+//                    BottomSheetContent(
+//                        dateInfo = selectedBottomSheetItem.first,
+//                        scheduleInfo = selectedBottomSheetItem.second,
+//                        onClick = { dateInfo, scheduleData ->
+//                            showDialog = true
+//                            selectedScheduleItem = Pair(dateInfo, scheduleData)
+//                        }
+//                    )
+//                },
+//                onDismissRequest = {
+//                    showBottomSheet = false
+//                }
+//
+//            )
+//        }
 
         if (showDialog) {
             if (selectedScheduleItem.second.detail.isMine) {

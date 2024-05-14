@@ -166,6 +166,14 @@ class ScheduleDataSourceImpl @Inject constructor(
             )
         )
     }
+
+    override fun deletePossibleTime(
+        memberId: Int,
+        storeId: Int,
+        storeMemberAvailableTimeId: Int,
+    ): String {
+        return "근무 가능한 시간 정보를 삭제하였습니다."
+    }
 }
 
 //val dummyDate = HashMap<DateInfo, ScheduleInfo<MyScheduleInfo>>().apply {

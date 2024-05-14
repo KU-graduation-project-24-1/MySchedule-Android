@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleCalendar
 import com.uuranus.designsystem.calendar.ScheduleData
@@ -251,7 +250,7 @@ fun ScheduleHomeContent(
             MyScheduleBottomSheet(
                 sheetState = sheetState,
                 content = {
-                    BottomSheetContent(
+                    MyScheduleBottomSheetContent(
                         dateInfo = selectedBottomSheetItem.first,
                         scheduleInfo = selectedBottomSheetItem.second,
                         onClick = { dateInfo, scheduleData ->
@@ -315,7 +314,7 @@ fun PossibleTimeHomeContent(
             Pair(
                 DateInfo(0, 0, 0),
                 ScheduleData(
-                    title = "AA 10:00",
+                    title = "10:00",
                     color = Color.White,
                     MyPossibleTimeInfo(
                         0,
@@ -352,14 +351,11 @@ fun PossibleTimeHomeContent(
             MyScheduleBottomSheet(
                 sheetState = sheetState,
                 content = {
-//                    BottomSheetContent(
-//                        dateInfo = selectedBottomSheetItem.first,
-//                        scheduleInfo = selectedBottomSheetItem.second,
-//                        onClick = { dateInfo, scheduleData ->
-//                            showDialog = true
-//                            selectedScheduleItem = Pair(dateInfo, scheduleData)
-//                        }
-//                    )
+                    PossibleTimeBottomSheetContent(
+                        homeViewModel = homeViewModel,
+                        dateInfo = selectedBottomSheetItem.first,
+                        scheduleInfo = selectedBottomSheetItem.second
+                    )
                 },
                 onDismissRequest = {
                     showBottomSheet = false
@@ -444,6 +440,53 @@ fun MyScheduleDetailListItem(
                 } else {
                     "${scheduleInfo.detail.workerName} (${scheduleInfo.detail.workerType})"
                 },
+                style = MyScheduleTheme.typography.regular16
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .width(10.dp)
+        )
+        actions()
+    }
+}
+
+@Composable
+fun PossibleTimeDetailListItem(
+    modifier: Modifier,
+    scheduleInfo: ScheduleData<MyPossibleTimeInfo>,
+    actions: @Composable (RowScope.() -> Unit) = {},
+) {
+
+    Row(
+        modifier = modifier
+            .padding(bottom = 12.dp)
+            .wrapContentHeight()
+            .drawBehind {
+                drawLine(
+                    color = scheduleInfo.color,
+                    start = Offset(x = 0f, y = 0F),
+                    end = Offset(
+                        x = 0f,
+                        y = this.size.height
+                    ),
+                    strokeWidth = 5.dp.toPx()
+                )
+
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(
+            modifier = Modifier
+                .width(10.dp)
+        )
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .weight(1F)
+        ) {
+            Text(
+                "${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime}",
                 style = MyScheduleTheme.typography.regular16
             )
         }
