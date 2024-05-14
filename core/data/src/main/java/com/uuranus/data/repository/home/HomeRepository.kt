@@ -1,5 +1,6 @@
 package com.uuranus.data.repository.home
 
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 
 interface HomeRepository {
@@ -8,4 +9,8 @@ interface HomeRepository {
     fun requestFillIn(scheduleId: Int)
 
     fun acceptFillIn(scheduleId: Int)
+
+    fun getMonthlyPossibleTimes(
+        storeId: Int, dateYM: String,
+    ): HashMap<String, List<MyPossibleTimeInfo>>
 }

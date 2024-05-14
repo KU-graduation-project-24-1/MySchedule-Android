@@ -1,5 +1,6 @@
 package com.uuranus.myschedule.core.network.datasource
 
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 
 interface ScheduleDataSource {
@@ -9,5 +10,9 @@ interface ScheduleDataSource {
     fun requestFillIn(scheduleId: Int)
 
     fun acceptFillIn(scheduleId: Int)
+
+    fun getMonthlyPossibleTimes(
+        storeId: Int, dateYM: String,
+    ): HashMap<String, List<MyPossibleTimeInfo>>
 
 }

@@ -1,5 +1,6 @@
 package com.uuranus.data.repository.home
 
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
 import javax.inject.Inject
@@ -20,5 +21,11 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun acceptFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
+    }
+
+    override fun getMonthlyPossibleTimes(
+        storeId: Int, dateYM: String,
+    ): HashMap<String, List<MyPossibleTimeInfo>> {
+        return dataSource.getMonthlyPossibleTimes(storeId, dateYM)
     }
 }

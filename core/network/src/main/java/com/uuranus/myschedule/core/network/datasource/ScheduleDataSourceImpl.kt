@@ -1,5 +1,6 @@
 package com.uuranus.myschedule.core.network.datasource
 
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.network.service.MyScheduleService
 import javax.inject.Inject
@@ -112,6 +113,58 @@ class ScheduleDataSourceImpl @Inject constructor(
 
     override fun acceptFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
+    }
+
+    override fun getMonthlyPossibleTimes(
+        storeId: Int, dateYM: String,
+    ): HashMap<String, List<MyPossibleTimeInfo>> {
+        return hashMapOf(
+            "2024-05-13" to listOf(
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 1,
+                    startTime = "15:00",
+                    endTime = "21:00"
+                )
+            ),
+            "2024-05-16" to listOf(
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 6,
+                    startTime = "13:00",
+                    endTime = "17:00"
+                )
+            ),
+            "2024-05-23" to listOf(
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 2,
+                    startTime = "13:00",
+                    endTime = "17:00"
+                ),
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 4,
+                    startTime = "18:00",
+                    endTime = "20:00"
+                )
+            ),
+            "2024-05-27" to listOf(
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 7,
+                    startTime = "13:00",
+                    endTime = "17:00"
+                )
+            ),
+            "2024-06-30" to listOf(
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 10,
+                    startTime = "13:00",
+                    endTime = "17:00"
+                ),
+                MyPossibleTimeInfo(
+                    storeMemberAvailableTimeId = 11,
+                    startTime = "18:00",
+                    endTime = "20:00"
+                )
+            )
+        )
     }
 }
 

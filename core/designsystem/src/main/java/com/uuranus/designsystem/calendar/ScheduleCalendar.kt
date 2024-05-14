@@ -41,12 +41,13 @@ internal val today = DateInfo.create(Calendar.getInstance())
 @Composable
 fun <T> ScheduleCalendar(
     modifier: Modifier,
+    currentDate: DateInfo,
     schedules: Map<DateInfo, ScheduleInfo<T>>, //DateInfo날의 스케줄 정보
     onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
     onPageChanged: (DateInfo) -> Unit,
 ) {
 
-    var currentDate by remember { mutableStateOf(DateInfo.create(Calendar.getInstance())) }
+    var currentDate by remember { mutableStateOf(currentDate) }
 
     val monthInfo = rememberMonthInfo(currentDate)
 
@@ -380,14 +381,4 @@ fun PreviewCalendar() {
         )
     }
 
-    MyScheduleTheme {
-        ScheduleCalendar(
-            Modifier, dummyDate, onDayClick = { dateInfo, scheduleData ->
-
-            },
-            onPageChanged = {
-
-            }
-        )
-    }
 }
