@@ -119,7 +119,7 @@ fun PossibleTimeBottomSheetContent(
     scheduleInfo: List<ScheduleData<MyPossibleTimeInfo>>,
 ) {
 
-    var showTimePicker: MutableState<Boolean> = remember {
+    val showTimePicker: MutableState<Boolean> = remember {
         mutableStateOf(false)
     }
 
@@ -179,7 +179,10 @@ fun PossibleTimeBottomSheetContent(
                             )
                         }
                     ) {
-                        homeViewModel.deletePossibleTime(scheduleInfo[index].detail.storeMemberAvailableTimeId)
+                        homeViewModel.deletePossibleTime(
+                            dateInfo,
+                            scheduleInfo[index].detail.storeMemberAvailableTimeId
+                        )
                     }
                 }
             }
@@ -188,8 +191,8 @@ fun PossibleTimeBottomSheetContent(
 
     if (showTimePicker.value) {
 
-        TimePickerDialog("") {
-            println("it !! $it")
+        TimePickerDialog { start, end ->
+            homeViewModel.addPossibleTime(dateInfo, start, end)
             showTimePicker.value = false
         }
     }

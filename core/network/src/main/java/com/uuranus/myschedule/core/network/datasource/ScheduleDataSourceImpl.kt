@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ScheduleDataSourceImpl @Inject constructor(
 //    private val service: MyScheduleService,
 ) : ScheduleDataSource {
-    override fun getMonthlySchedules(
+    override suspend fun getMonthlySchedules(
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
@@ -107,15 +107,15 @@ class ScheduleDataSourceImpl @Inject constructor(
         )
     }
 
-    override fun requestFillIn(scheduleId: Int) {
+    override suspend fun requestFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun acceptFillIn(scheduleId: Int) {
+    override suspend fun acceptFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun getMonthlyPossibleTimes(
+    override suspend fun getMonthlyPossibleTimes(
         storeId: Int, dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>> {
         return hashMapOf(
@@ -167,7 +167,17 @@ class ScheduleDataSourceImpl @Inject constructor(
         )
     }
 
-    override fun deletePossibleTime(
+    override suspend fun addPossibleTime(
+        memberId: Int,
+        storeId: Int,
+        dateYMD: String,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return 9 //storeMemberAvailableTimeId
+    }
+
+    override suspend fun deletePossibleTime(
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
@@ -175,78 +185,3 @@ class ScheduleDataSourceImpl @Inject constructor(
         return "근무 가능한 시간 정보를 삭제하였습니다."
     }
 }
-
-//val dummyDate = HashMap<DateInfo, ScheduleInfo<MyScheduleInfo>>().apply {
-//    put(
-//        DateInfo.create(2024, 5, 5),
-//        ScheduleInfo(
-//            false,
-//            listOf(
-//                ScheduleData(
-//                    "AAA 10:00",
-//                    MyScheduleTheme.colors.calendarBlue,
-//                    detail = MyScheduleInfo(
-//                        0,
-//                        "10:00",
-//                        "12:00",
-//                        "AAA",
-//                        "매니저",
-//                        false,
-//                        MyScheduleTheme.colors.calendarBlue,
-//                        true
-//                    )
-//                ),
-//                ScheduleData(
-//                    "BBB 12:00",
-//                    MyScheduleTheme.colors.calendarOrange,
-//                    MyScheduleInfo(
-//                        1,
-//                        "12:00",
-//                        "15:00",
-//                        "BBB",
-//                        "아르바이트",
-//                        true,
-//                        MyScheduleTheme.colors.calendarOrange,
-//                        false
-//                    ),
-//                ),
-//                ScheduleData(
-//                    "KKK 15:00",
-//                    MyScheduleTheme.colors.calendarPurple,
-//                    MyScheduleInfo(
-//                        2,
-//                        "15:00",
-//                        "18:00",
-//                        "KKK",
-//                        "사장",
-//                        false,
-//                        MyScheduleTheme.colors.calendarPurple,
-//                        false
-//                    ),
-//                )
-//            )
-//        )
-//    )
-//    put(
-//        DateInfo.create(2024, 5, 14),
-//        ScheduleInfo(
-//            true,
-//            listOf(
-//                ScheduleData(
-//                    "AAA 10:00",
-//                    MyScheduleTheme.colors.calendarBlue,
-//                    MyScheduleInfo(
-//                        0,
-//                        "10:00",
-//                        "12:00",
-//                        "AAA",
-//                        "매니저",
-//                        false,
-//                        MyScheduleTheme.colors.calendarBlue,
-//                        true
-//                    ),
-//                )
-//            )
-//        )
-//    )
-//}

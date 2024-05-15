@@ -8,28 +8,38 @@ import javax.inject.Inject
 class HomeRepositoryImpl @Inject constructor(
     private val dataSource: ScheduleDataSource,
 ) : HomeRepository {
-    override fun getMonthlySchedules(
+    override suspend fun getMonthlySchedules(
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
         return dataSource.getMonthlySchedules(storeId, dateYM)
     }
 
-    override fun requestFillIn(scheduleId: Int) {
+    override suspend fun requestFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun acceptFillIn(scheduleId: Int) {
+    override suspend fun acceptFillIn(scheduleId: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun getMonthlyPossibleTimes(
+    override suspend fun getMonthlyPossibleTimes(
         storeId: Int, dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>> {
         return dataSource.getMonthlyPossibleTimes(storeId, dateYM)
     }
 
-    override fun deletePossibleTime(
+    override suspend fun addPossibleTime(
+        memberId: Int,
+        storeId: Int,
+        dateYMD: String,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return dataSource.addPossibleTime(memberId, storeId, dateYMD, startTime, endTime)
+    }
+
+    override suspend fun deletePossibleTime(
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,

@@ -8,10 +8,12 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
-import com.uuranus.domain.DeletePossibleTimesUseCase
+import com.uuranus.domain.AddPossibleTimeUseCase
+import com.uuranus.domain.DeletePossibleTimeUseCase
 import com.uuranus.domain.GetMonthlyPossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
+import com.uuranus.model.MyPossibleTimeInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,8 @@ class HomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
     private val getMonthlyPossibleTimesUseCase: GetMonthlyPossibleTimesUseCase,
-    private val deletePossibleTimesUseCase: DeletePossibleTimesUseCase,
+    private val addPossibleTimesUseCase: AddPossibleTimeUseCase,
+    private val deletePossibleTimeUseCase: DeletePossibleTimeUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -138,15 +141,90 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deletePossibleTime(storeMemberAvailableTimeId: Int) {
+    fun addPossibleTime(dateInfo: DateInfo, startTime: String, endTime: String) {
         viewModelScope.launch {
 
-            val response =deletePossibleTimesUseCase(
-                _userData.value.memberId,
-                _userData.value.storeId,
-                storeMemberAvailableTimeId
-            )
-            _errorFlow.emit(Exception(response))
+            flow {
+                emit(
+                    addPossibleTimesUseCase(
+                        _userData.value.memberId,
+                        _userData.value.storeId,
+                        getDashYMDDate(dateInfo),
+                        startTime,
+                        endTime
+                    )
+                )
+            }.map {
+                val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
+                HomeUiState.PossibleTimeSuccess(
+                    schedules = cur.schedules.plus(
+                        //scheduleInfo
+                        dateInfo to ScheduleInfo(
+                            false,
+                            (cur.schedules[dateInfo]?.schedules?.plus(
+                                ScheduleData(
+                                    startTime,
+                                    Color.White,
+                                    MyPossibleTimeInfo(
+                                        it, startTime, endTime
+                                    )
+                                )
+
+                            ) ?: listOf(
+                                ScheduleData(
+                                    startTime,
+                                    Color.White,
+                                    MyPossibleTimeInfo(
+                                        it, startTime, endTime
+                                    )
+                                )
+                            )).sortedBy { sort -> sort.detail.startTime }
+                        )
+                    )
+                )
+
+
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _homeUiState.value = it
+            }
+
+        }
+    }
+
+    fun deletePossibleTime(dateInfo: DateInfo, storeMemberAvailableTimeId: Int) {
+        viewModelScope.launch {
+
+            flow {
+                emit(
+                    deletePossibleTimeUseCase(
+                        _userData.value.memberId,
+                        _userData.value.storeId,
+                        storeMemberAvailableTimeId
+                    )
+                )
+            }.map {
+                val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
+                HomeUiState.PossibleTimeSuccess(
+                    schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
+                        if (di == dateInfo) {
+                            scheduleInfo.copy(
+                                schedules = scheduleInfo.schedules.filterNot { scheduleData ->
+                                    scheduleData.detail.storeMemberAvailableTimeId == storeMemberAvailableTimeId
+                                }
+                            )
+                        } else {
+                            scheduleInfo
+                        }
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _homeUiState.value = it
+            }
+
         }
     }
 }

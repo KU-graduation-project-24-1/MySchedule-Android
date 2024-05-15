@@ -17,6 +17,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -32,11 +35,14 @@ import com.uuranus.designsystem.theme.MyScheduleTheme
 
 @Composable
 fun TimePickerDialog(
-    selectedTime: String,
-    onTimeSelected: (String) -> Unit,
+    onTimeSelected: (String, String) -> Unit,
 ) {
-    val time: MutableState<Pair<String, String>> = remember {
-        mutableStateOf(Pair("", ""))
+    val starTime: MutableState<String> = remember {
+        mutableStateOf("")
+    }
+
+    val endTime: MutableState<String> = remember {
+        mutableStateOf("")
     }
 
     Dialog(onDismissRequest = {}) {
@@ -61,12 +67,23 @@ fun TimePickerDialog(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                OutlinedTextField(value = "", onValueChange = {
-                    time.value.copy(first = it)
-                }, textStyle = MyScheduleTheme.typography.regular16,
+                OutlinedTextField(
+                    value = starTime.value,
+                    onValueChange = {
+                        starTime.value = it
+                    },
+                    colors = TextFieldDefaults.colors().copy(
+                        focusedIndicatorColor = MyScheduleTheme.colors.primary,
+
+                        unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
+                        focusedContainerColor = MyScheduleTheme.colors.background,
+                        unfocusedContainerColor = MyScheduleTheme.colors.background,
+                    ),
+                    textStyle = MyScheduleTheme.typography.regular16,
                     placeholder = {
                         Text(text = "00:00")
-                    })
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(30.dp))
 
@@ -77,9 +94,17 @@ fun TimePickerDialog(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                OutlinedTextField(value = "", onValueChange = {
-                    time.value.copy(first = it)
-                }, textStyle = MyScheduleTheme.typography.regular16,
+                OutlinedTextField(value = endTime.value, onValueChange = {
+                    endTime.value = it
+                },
+                    colors = TextFieldDefaults.colors().copy(
+                        focusedIndicatorColor = MyScheduleTheme.colors.primary,
+
+                        unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
+                        focusedContainerColor = MyScheduleTheme.colors.background,
+                        unfocusedContainerColor = MyScheduleTheme.colors.background,
+                    ),
+                    textStyle = MyScheduleTheme.typography.regular16,
                     placeholder = {
                         Text(text = "00:00")
                     })
@@ -94,8 +119,7 @@ fun TimePickerDialog(
                         modifier = Modifier.fillMaxWidth(),
                         paddingValues = PaddingValues(all = 12.dp),
                         onClick = {
-//                            onTimeSelected(String.format("%02d:%02d", hour, minute))
-                            onTimeSelected("${time.value.first}~${time.value.second}")
+                            onTimeSelected(starTime.value, endTime.value)
                         },
                         buttonState = true,
                         color = MyScheduleTheme.colors.primary,
@@ -108,49 +132,3 @@ fun TimePickerDialog(
         }
     }
 }
-
-//@Composable
-//fun TimePicker(
-//    modifier: Modifier = Modifier,
-//    hour: Int,
-//    minute: Int,
-//    onTimeSelected: (Int, Int) -> Unit,
-//) {
-//    Column(modifier) {
-//        // 시간 선택
-//        var selectedHour by remember { mutableStateOf(hour) }
-//        var selectedMinute by remember { mutableStateOf(minute) }
-//
-//        // 시간 피커
-//        Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                Text("Hour: ", modifier = Modifier.padding(end = 8.dp))
-//                NumberPicker(
-//                    value = selectedHour,
-//                    onValueChange = { selectedHour = it },
-//                    minValue = 0,
-//                    maxValue = 23
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                Text("Minute: ", modifier = Modifier.padding(end = 8.dp))
-//                NumberPicker(
-//                    value = selectedMinute,
-//                    onValueChange = { selectedMinute = it },
-//                    minValue = 0,
-//                    maxValue = 59
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Button(
-//                onClick = {
-//                    onTimeSelected(selectedHour, selectedMinute)
-//                },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text("Select")
-//            }
-//        }
-//    }
-//}

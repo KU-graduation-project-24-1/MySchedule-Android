@@ -193,12 +193,7 @@ fun ScheduleHomeContent(
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedBottomSheetItem by remember {
 
-        mutableStateOf(
-            Pair<DateInfo, List<ScheduleData<MyScheduleInfo>>>(
-                DateInfo(0, 0, 0),
-                emptyList()
-            )
-        )
+        mutableStateOf(DateInfo(0, 0, 0))
     }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -235,8 +230,8 @@ fun ScheduleHomeContent(
             modifier = Modifier.fillMaxSize(),
             currentDate = homeViewModel.getCurrentDate(),
             schedules = schedules,
-            onDayClick = { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
-                selectedBottomSheetItem = Pair(dateInfo, schedules)
+            onDayClick = { dateInfo ->
+                selectedBottomSheetItem = dateInfo
                 showBottomSheet = true
 
             },
@@ -251,8 +246,8 @@ fun ScheduleHomeContent(
                 sheetState = sheetState,
                 content = {
                     MyScheduleBottomSheetContent(
-                        dateInfo = selectedBottomSheetItem.first,
-                        scheduleInfo = selectedBottomSheetItem.second,
+                        dateInfo = selectedBottomSheetItem,
+                        scheduleInfo = schedules[selectedBottomSheetItem]?.schedules ?: emptyList(),
                         onClick = { dateInfo, scheduleData ->
                             showDialog = true
                             selectedScheduleItem = Pair(dateInfo, scheduleData)
@@ -300,30 +295,7 @@ fun PossibleTimeHomeContent(
     var selectedBottomSheetItem by remember {
 
         mutableStateOf(
-            Pair<DateInfo, List<ScheduleData<MyPossibleTimeInfo>>>(
-                DateInfo(0, 0, 0),
-                emptyList()
-            )
-        )
-    }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedScheduleItem by remember {
-
-        mutableStateOf(
-            Pair(
-                DateInfo(0, 0, 0),
-                ScheduleData(
-                    title = "10:00",
-                    color = Color.White,
-                    MyPossibleTimeInfo(
-                        0,
-                        "11:00",
-                        "12:00"
-                    )
-                )
-            )
-
+            DateInfo(0, 0, 0)
         )
     }
 
@@ -336,8 +308,8 @@ fun PossibleTimeHomeContent(
             modifier = Modifier.fillMaxSize(),
             currentDate = homeViewModel.getCurrentDate(),
             schedules = possibleTimes,
-            onDayClick = { dateInfo, schedules: List<ScheduleData<MyPossibleTimeInfo>> ->
-                selectedBottomSheetItem = Pair(dateInfo, schedules)
+            onDayClick = { dateInfo ->
+                selectedBottomSheetItem = dateInfo
                 showBottomSheet = true
 
             },
@@ -353,8 +325,9 @@ fun PossibleTimeHomeContent(
                 content = {
                     PossibleTimeBottomSheetContent(
                         homeViewModel = homeViewModel,
-                        dateInfo = selectedBottomSheetItem.first,
-                        scheduleInfo = selectedBottomSheetItem.second
+                        dateInfo = selectedBottomSheetItem,
+                        scheduleInfo = possibleTimes[selectedBottomSheetItem]?.schedules
+                            ?: emptyList()
                     )
                 },
                 onDismissRequest = {
@@ -363,25 +336,6 @@ fun PossibleTimeHomeContent(
 
             )
         }
-
-        if (showDialog) {
-//            if (selectedScheduleItem.second.detail.isMine) {
-//                RequestFillInDialog(
-//                    dateInfo = selectedScheduleItem.first,
-//                    scheduleInfo = selectedScheduleItem.second
-//                ) {
-//                    showDialog = false
-//                }
-//            } else if (selectedScheduleItem.second.detail.isFillInNeeded) {
-//                AcceptFillInDialog(
-//                    dateInfo = selectedScheduleItem.first,
-//                    scheduleInfo = selectedScheduleItem.second
-//                ) {
-//                    showDialog = false
-//                }
-//            }
-        }
-
     }
 
 }
@@ -505,35 +459,6 @@ fun PossibleTimeDetailListItem(
 fun HomeScreenPreview() {
 
     MyScheduleTheme {
-//        MyScheduleDetailListItem(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            ScheduleData(
-//                "AAA 10:00",
-//                MyScheduleTheme.colors.calendarBlue,
-//                detail = MyScheduleInfo(
-//                    0,
-//                    "10:00",
-//                    "12:00",
-//                    "AAA",
-//                    "매니저",
-//                    false,
-//                    MyScheduleTheme.colors.calendarBlue,
-//                    true
-//                )
-//            ),
-//        ) {
-//            //내가 사장일 때
-//
-//            //아닐 때
-//            MyScheduleFilledButton(
-//                paddingValues = PaddingValues(horizontal = 14.dp, vertical = 5.dp),
-//                buttonState = true
-//            ) {
-//                Text("수락", style = MyScheduleTheme.typography.regular14)
-//            }
-//        }
-
 
         MyScheduleAppBar(
             title = {
