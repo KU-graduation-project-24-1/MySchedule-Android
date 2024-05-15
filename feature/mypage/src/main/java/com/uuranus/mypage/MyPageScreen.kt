@@ -25,20 +25,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.NetworkImage
+import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
+import com.uuranus.model.TimeRange
 import com.uuranus.myschedule.core.designsystem.R
 
 @Composable
 fun MyPageScreen(
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
 ) {
+
+    val myPageUiState by myPageViewModel.mypageUiState.collectAsStateWithLifecycle()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -60,16 +72,28 @@ fun MyPageScreen(
                             })
                 })
 
-            MyInfo()
-            Spacer(modifier = Modifier.height(58.dp))
-            MyFixedPossibleTime()
+            when (myPageUiState) {
+                is MyPageUiState.Loading -> LoadingScreen()
+                is MyPageUiState.Success -> Column {
+                    MyInfo(myPageViewModel)
+                    Spacer(modifier = Modifier.height(58.dp))
+                    MyFixedPossibleTime(
+                        myPageViewModel,
+                        (myPageUiState as MyPageUiState.Success).fixedPossibleTimes
+                    )
+                }
+            }
+
         }
 
     }
 }
 
 @Composable
-fun MyInfo() {
+fun MyInfo(viewModel: MyPageViewModel) {
+
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
+
     Column {
         Row(
             modifier = Modifier
@@ -106,7 +130,7 @@ fun MyInfo() {
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    "김알바", style = MyScheduleTheme.typography.semiBold16,
+                    userData.name, style = MyScheduleTheme.typography.semiBold16,
                     modifier = Modifier.weight(4f)
                 )
             }
@@ -117,7 +141,7 @@ fun MyInfo() {
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    "아르바이트", style = MyScheduleTheme.typography.semiBold16,
+                    userData.workerType, style = MyScheduleTheme.typography.semiBold16,
                     modifier = Modifier.weight(4f)
                 )
             }
@@ -126,16 +150,10 @@ fun MyInfo() {
 }
 
 @Composable
-fun MyFixedPossibleTime() {
-    val possibleTimes = listOf(
-        emptyList<Pair<String, String>>(),
-        emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList(),
-    )
+fun MyFixedPossibleTime(
+    viewModel: MyPageViewModel,
+    possibleTimes: List<List<TimeRange>>,
+) {
     Column {
         Row(
             modifier = Modifier
@@ -149,7 +167,9 @@ fun MyFixedPossibleTime() {
         HorizontalDivider(thickness = 1.dp, color = MyScheduleTheme.colors.lightGray)
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(possibleTimes.size) {
-                DayPossibleTimeListItem(it, possibleTimes[it])
+                DayPossibleTimeListItem(it, possibleTimes[it]) { start, end ->
+                    viewModel.addFixedPossibleTime(it, start, end)
+                }
             }
         }
     }
@@ -158,10 +178,15 @@ fun MyFixedPossibleTime() {
 @Composable
 fun DayPossibleTimeListItem(
     weekDayNum: Int,
-    possibleTimes: List<Pair<String, String>>,
+    possibleTimes: List<TimeRange>,
+    onEditButtonClick: (String, String) -> Unit,
 ) {
 
     val weekdays = listOf("월", "화", "수", "목", "금", "토", "일")
+
+    var showTimePicker: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(
@@ -189,7 +214,7 @@ fun DayPossibleTimeListItem(
                 Text(
                     possibleTimes
                         .map {
-                            "${it.first}~${it.second}"
+                            "${it.startTime}~${it.endTime}"
                         }
                         .joinToString(", "), style = MyScheduleTheme.typography.regular16
                 )
@@ -200,9 +225,18 @@ fun DayPossibleTimeListItem(
             painter = painterResource(id = R.drawable.edit_icon),
             contentDescription = "고정된 가능 시간 추가하기",
             modifier = Modifier.clickable {
+                showTimePicker.value = true
             }
         )
         Spacer(modifier = Modifier.width(16.dp))
 
+    }
+
+    if (showTimePicker.value) {
+
+        TimePickerDialog { start, end ->
+            onEditButtonClick(start, end)
+            showTimePicker.value = false
+        }
     }
 }
