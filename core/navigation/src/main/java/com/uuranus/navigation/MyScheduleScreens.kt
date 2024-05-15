@@ -15,6 +15,10 @@ sealed class MyScheduleScreens(
     data object Home : MyScheduleScreens("home")
 
     data object MyPage : MyScheduleScreens(route = "mypage")
+
+    data object BossHome : MyScheduleScreens(route = "bossHome")
+
+    data object BossMyPage : MyScheduleScreens(route = "bossMyPage")
 }
 
 private fun String.appendArguments(navArguments: List<NamedNavArgument>): String {

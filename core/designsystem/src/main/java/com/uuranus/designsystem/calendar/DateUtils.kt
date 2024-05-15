@@ -1,4 +1,4 @@
-package com.uuranus.home.calendar
+package com.uuranus.designsystem.calendar
 
 import java.text.SimpleDateFormat
 import java.util.Calendar

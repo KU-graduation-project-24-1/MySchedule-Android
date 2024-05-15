@@ -4,6 +4,8 @@ import com.uuranus.data.repository.home.HomeRepository
 import com.uuranus.data.repository.home.HomeRepositoryImpl
 import com.uuranus.data.repository.login.LoginRepository
 import com.uuranus.data.repository.login.LoginRepositoryImpl
+import com.uuranus.data.repository.user.UserRepository
+import com.uuranus.data.repository.user.UserRepositoryImpl
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSourceImpl
 import dagger.Binds
@@ -25,5 +27,8 @@ internal interface DataModule {
 
     @Binds
     fun bindsLoginRepository(loginRepositoryImpl: LoginRepositoryImpl): LoginRepository
+
+    @Binds
+    fun bindsUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
 }

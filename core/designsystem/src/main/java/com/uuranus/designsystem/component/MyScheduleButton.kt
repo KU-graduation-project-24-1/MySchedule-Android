@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.theme.MyScheduleTheme
 
@@ -19,13 +20,14 @@ fun MyScheduleFilledButton(
     modifier: Modifier,
     paddingValues: PaddingValues,
     buttonState: Boolean,
+    color: Color,
     content: @Composable (BoxScope.() -> Unit) = {},
     onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .background(
-                color = if (buttonState) MyScheduleTheme.colors.primary else MyScheduleTheme.colors.lightGray,
+                color = if (buttonState) color else MyScheduleTheme.colors.lightGray,
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable {

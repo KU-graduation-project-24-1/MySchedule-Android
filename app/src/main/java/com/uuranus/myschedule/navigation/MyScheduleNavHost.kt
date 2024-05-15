@@ -17,3 +17,16 @@ fun MyScheduleNavHost(
     }
 
 }
+
+@Composable
+fun BossNavHost(
+    navHostController: NavHostController,
+) {
+    NavHost(
+        navController = navHostController,
+        startDestination = MyScheduleScreens.BossHome.route,
+    ) {
+        bossNavigation()
+    }
+
+}

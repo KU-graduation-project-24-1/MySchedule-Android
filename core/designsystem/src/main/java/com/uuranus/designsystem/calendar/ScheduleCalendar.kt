@@ -1,4 +1,4 @@
-package com.uuranus.home.calendar
+package com.uuranus.designsystem.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,12 +41,13 @@ internal val today = DateInfo.create(Calendar.getInstance())
 @Composable
 fun <T> ScheduleCalendar(
     modifier: Modifier,
+    currentDate: DateInfo,
     schedules: Map<DateInfo, ScheduleInfo<T>>, //DateInfo날의 스케줄 정보
-    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo) -> Unit,
     onPageChanged: (DateInfo) -> Unit,
 ) {
 
-    var currentDate by remember { mutableStateOf(DateInfo.create(Calendar.getInstance())) }
+    var currentDate by remember { mutableStateOf(currentDate) }
 
     val monthInfo = rememberMonthInfo(currentDate)
 
@@ -109,7 +110,7 @@ fun <T> ScheduleCalendarMonth(
     currentDate: DateInfo,
     monthInfo: MonthInfo,
     schedules: Map<DateInfo, ScheduleInfo<T>>,
-    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo) -> Unit,
 ) {
     LazyVerticalGrid(columns = GridCells.Fixed(7)) {
         items(7) {
@@ -170,7 +171,7 @@ fun <T> ScheduleCalendarDate(
     isCheckNeeded: Boolean,
     isToday: Boolean,
     scheduleInfo: ScheduleInfo<T>,
-    onDayClick: (DateInfo, List<ScheduleData<T>>) -> Unit,
+    onDayClick: (DateInfo) -> Unit,
 ) {
     val borderColor =
         MyScheduleTheme.colors.gray
@@ -190,7 +191,7 @@ fun <T> ScheduleCalendarDate(
                 )
             }
             .clickable {
-                onDayClick(date, scheduleInfo.schedules)
+                onDayClick(date)
             }
             .padding(3.dp),
     ) {
@@ -380,14 +381,4 @@ fun PreviewCalendar() {
         )
     }
 
-    MyScheduleTheme {
-        ScheduleCalendar(
-            Modifier, dummyDate, onDayClick = { dateInfo, scheduleData ->
-
-            },
-            onPageChanged = {
-
-            }
-        )
-    }
 }
