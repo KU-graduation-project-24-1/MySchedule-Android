@@ -8,50 +8,77 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
+import com.uuranus.domain.AddPossibleTimeUseCase
+import com.uuranus.domain.DeletePossibleTimeUseCase
+import com.uuranus.domain.GetMonthlyPossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
+import com.uuranus.domain.GetUserDataUseCase
+import com.uuranus.model.MyPossibleTimeInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class BossHomeViewModel @Inject constructor(
+    private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow: SharedFlow<Throwable> get() = _errorFlow
 
-    private val _userDate = MutableStateFlow<Int>(1)
+    private val _userData =
+        MutableStateFlow(
+            com.uuranus.model.UserData(
+                0,
+                0,
+                "",
+                "",
+                false
+            )
+        )
 
-    private val _homeUiState = MutableStateFlow<BossHomeUiState>(BossHomeUiState.Loading)
-    val homeUiState: StateFlow<BossHomeUiState> = _homeUiState
+    private val _currentDate = MutableStateFlow(DateInfo.create(Calendar.getInstance()))
+
+    private val _bossHomeUiState = MutableStateFlow<BossHomeUiState>(BossHomeUiState.Loading)
+    val bossHomeUiState: StateFlow<BossHomeUiState> = _bossHomeUiState.asStateFlow()
 
     init {
-        //userData 가져오기
-//        getMonthlySchedules(DateInfo.create(Calendar.getInstance()))
+        viewModelScope.launch {
+
+            getUserDataUseCase().map {
+                _userData.value = it
+            }
+        }
+        getMonthlySchedules()
     }
 
-    fun getMonthlySchedules(dateInfo: DateInfo) {
+    fun setCurrentDate(dateInfo: DateInfo) {
+        _currentDate.value = dateInfo
+    }
+
+    fun getCurrentDate(): DateInfo = _currentDate.value
+
+    fun getMonthlySchedules() {
         viewModelScope.launch {
-            combine(
-                homeUiState,
-                flow {
-                    emit(
-                        getMonthlyScheduleUseCase(
-                            _userDate.value,
-                            getDashYMDDate(dateInfo)
-                        )
+            flow {
+                emit(
+                    getMonthlyScheduleUseCase(
+                        _userData.value.storeId,
+                        getDashYMDDate(_currentDate.value)
                     )
-                }
-            ) { _, schedules ->
+                )
+            }.map { schedules ->
 
                 BossHomeUiState.Success(
                     schedules = schedules.mapKeys { keys ->
@@ -71,7 +98,11 @@ class BossHomeViewModel @Inject constructor(
                 )
             }.catch { throwable ->
                 _errorFlow.emit(throwable)
-            }.collect { _homeUiState.value = it }
+            }.collect {
+                _bossHomeUiState.value = it
+            }
         }
     }
+
+
 }

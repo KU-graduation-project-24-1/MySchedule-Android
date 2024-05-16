@@ -4,6 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.uuranus.home.HomeScreen
 import com.uuranus.mypage.MyPageScreen
+import com.uuranus.myschedule.bosshome.BossHomeScreen
+import com.uuranus.myschedule.bossmypage.BossMyPageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
 fun NavGraphBuilder.myScheduleNavigation() {
@@ -21,13 +23,13 @@ fun NavGraphBuilder.myScheduleNavigation() {
 
 fun NavGraphBuilder.bossNavigation() {
     composable(route = MyScheduleScreens.BossHome.name) {
-//        BossHomeScreen(this)
+        BossHomeScreen()
     }
 
     composable(
         route = MyScheduleScreens.BossMyPage.name,
         arguments = MyScheduleScreens.BossMyPage.navArguments,
     ) {
-//        BossMyPageScreen()
+        BossMyPageScreen()
     }
 }

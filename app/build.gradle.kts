@@ -46,6 +46,8 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.login)
     implementation(projects.feature.mypage)
+    implementation(projects.feature.bosshome)
+    implementation(projects.feature.bossmypage)
 
     // cores
     implementation(projects.core.model)
@@ -66,6 +68,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(project(":feature:bosshome"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -1,9 +1,7 @@
 package com.uuranus.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,10 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -33,21 +27,6 @@ import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyScheduleBottomSheet(
-    sheetState: SheetState,
-    content: @Composable (ColumnScope.() -> Unit) = {},
-    onDismissRequest: () -> Unit,
-) {
-    ModalBottomSheet(
-        sheetState = sheetState,
-        content = content,
-        containerColor = MyScheduleTheme.colors.background,
-        onDismissRequest = onDismissRequest
-    )
-}
 
 @Composable
 fun MyScheduleBottomSheetContent(
@@ -76,7 +55,7 @@ fun MyScheduleBottomSheetContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
         items(scheduleInfo.size) { index ->
-            MyScheduleDetailListItem(
+            com.uuranus.myschedule.core.common.home.MyScheduleDetailListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),

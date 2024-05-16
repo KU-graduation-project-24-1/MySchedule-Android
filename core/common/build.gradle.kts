@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.uuranus.myschedule.core.designsystem"
+    namespace = "com.uuranus.myschedule.core.common"
 }
 
 dependencies {
@@ -17,5 +17,7 @@ dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
+
     implementation(projects.core.model)
+    implementation(projects.core.designsystem)
 }
