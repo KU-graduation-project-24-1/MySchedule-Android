@@ -4,8 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.uuranus.home.HomeScreen
 import com.uuranus.mypage.MyPageScreen
-import com.uuranus.myschedule.bosshome.BossHomeAddScheduleScreen
-import com.uuranus.myschedule.bosshome.BossHomeEditScheduleScreen
+import com.uuranus.myschedule.bosshome.schedule.BossHomeAddScheduleScreen
+import com.uuranus.myschedule.bosshome.schedule.BossHomeEditScheduleScreen
 import com.uuranus.myschedule.bosshome.BossHomeScreen
 import com.uuranus.myschedule.bossmypage.BossMyPageScreen
 import com.uuranus.navigation.MyScheduleScreens

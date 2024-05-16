@@ -132,3 +132,75 @@ fun TimePickerDialog(
         }
     }
 }
+
+@Composable
+fun TimePickerSingleDialog(
+    onTimeSelected: (String) -> Unit,
+) {
+    val time: MutableState<String> = remember {
+        mutableStateOf("")
+    }
+
+    Dialog(onDismissRequest = {}) {
+        Card(
+            shape = RoundedCornerShape(8.dp), // Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(300.dp)
+                    .wrapContentHeight()
+                    .background(
+                        color = Color.White,
+                    )
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                Text(
+                    "시간 입력",
+                    style = MyScheduleTheme.typography.semiBold16
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                OutlinedTextField(
+                    value = time.value,
+                    onValueChange = {
+                        time.value = it
+                    },
+                    colors = TextFieldDefaults.colors().copy(
+                        focusedIndicatorColor = MyScheduleTheme.colors.primary,
+
+                        unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
+                        focusedContainerColor = MyScheduleTheme.colors.background,
+                        unfocusedContainerColor = MyScheduleTheme.colors.background,
+                    ),
+                    textStyle = MyScheduleTheme.typography.regular16,
+                    placeholder = {
+                        Text(text = "00:00")
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(35.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    MyScheduleFilledButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        paddingValues = PaddingValues(all = 12.dp),
+                        onClick = {
+                            onTimeSelected(time.value)
+                        },
+                        buttonState = true,
+                        color = MyScheduleTheme.colors.primary,
+                        content = {
+                            Text(text = "확인", style = MyScheduleTheme.typography.semiBold16)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}

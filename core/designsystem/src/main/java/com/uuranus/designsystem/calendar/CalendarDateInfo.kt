@@ -28,14 +28,15 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
     val weekDay: String
         get() {
             return if (this::calendar.isInitialized) {
+                println("Calendar ${calendar.get(Calendar.DAY_OF_WEEK)}")
                 when (calendar.get(Calendar.DAY_OF_WEEK)) {
-                    0 -> "일"
-                    1 -> "월"
-                    2 -> "화"
-                    3 -> "수"
-                    4 -> "목"
-                    5 -> "금"
-                    6 -> "토"
+                    Calendar.SUNDAY -> "일"
+                    Calendar.MONDAY -> "월"
+                    Calendar.TUESDAY -> "화"
+                    Calendar.WEDNESDAY -> "수"
+                    Calendar.THURSDAY -> "목"
+                    Calendar.FRIDAY -> "금"
+                    Calendar.SATURDAY -> "토"
                     else -> ""
                 }
             } else {

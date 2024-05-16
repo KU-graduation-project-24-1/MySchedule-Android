@@ -1,4 +1,4 @@
-package com.uuranus.myschedule.bosshome
+package com.uuranus.myschedule.bosshome.schedule
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,20 +18,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.uuranus.designsystem.calendar.DateInfo
-import com.uuranus.designsystem.calendar.getLanguageYMWDate
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.uuranus.designsystem.calendar.getLanguageMDWDate
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyScheduleNavType
+import com.uuranus.myschedule.bosshome.BossHomeScheduleViewModel
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
 @Composable
 fun BossHomeAddScheduleScreen(
+    viewModel: BossHomeScheduleViewModel = hiltViewModel(),
 ) {
     val composeNavigator = currentComposeNavigator
 
-    val dateInfo = DateInfo(2024, 5, 19)
+    val myScheduleInfo by viewModel.myScheduleInfo.collectAsStateWithLifecycle()
+
     var startTime: String by remember {
         mutableStateOf("00:00")
     }
@@ -58,7 +62,8 @@ fun BossHomeAddScheduleScreen(
                         composeNavigator.navigateBackWithResult(
                             key = "updatedSchedule",
                             result = MyScheduleNavType(
-                                getLanguageYMWDate(dateInfo),
+                                scheduleId = -1,
+                                getLanguageMDWDate(myScheduleInfo.dateInfo),
                                 startTime = startTime,
                                 endTime = endTime,
                                 memberId = 0
@@ -72,7 +77,7 @@ fun BossHomeAddScheduleScreen(
 
             Spacer(modifier = Modifier.height(25.dp))
             Text(
-                getLanguageYMWDate(dateInfo),
+                getLanguageMDWDate(myScheduleInfo.dateInfo),
                 style = MyScheduleTheme.typography.semiBold16,
                 modifier = Modifier.padding(horizontal = screenPadding)
             )
@@ -87,8 +92,13 @@ fun BossHomeAddScheduleScreen(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            ScheduleTimeInput()
-
+            ScheduleTimeInput(
+                startTime,
+                endTime, onStartTimeChanged = {
+                    startTime = it
+                }, onEndTimeChanged = {
+                    endTime = it
+                })
 
             Spacer(modifier = Modifier.height(57.dp))
             Text(

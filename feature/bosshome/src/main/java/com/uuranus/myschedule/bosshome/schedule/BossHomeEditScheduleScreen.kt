@@ -1,4 +1,4 @@
-package com.uuranus.myschedule.bosshome
+package com.uuranus.myschedule.bosshome.schedule
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,23 +26,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.uuranus.designsystem.calendar.DateInfo
-import com.uuranus.designsystem.calendar.getLanguageYMWDate
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.uuranus.designsystem.calendar.getLanguageMDWDate
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
+import com.uuranus.designsystem.component.TimePickerDialog
+import com.uuranus.designsystem.component.TimePickerSingleDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyScheduleNavType
+import com.uuranus.myschedule.bosshome.BossHomeScheduleViewModel
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
 val screenPadding = 16.dp
 
 @Composable
-fun BossHomeEditScheduleScreen() {
+fun BossHomeEditScheduleScreen(
+    viewModel: BossHomeScheduleViewModel = hiltViewModel(),
+) {
 
     val composeNavigator = currentComposeNavigator
 
-    val dateInfo = DateInfo(2024, 5, 19)
+    val myScheduleInfo by viewModel.myScheduleInfo.collectAsStateWithLifecycle()
+
     var startTime: String by remember {
         mutableStateOf("00:00")
     }
@@ -70,7 +77,8 @@ fun BossHomeEditScheduleScreen() {
                             composeNavigator.navigateBackWithResult(
                                 key = "updatedSchedule",
                                 result = MyScheduleNavType(
-                                    getLanguageYMWDate(dateInfo),
+                                    scheduleId = myScheduleInfo.scheduleId,
+                                    getLanguageMDWDate(myScheduleInfo.dateInfo),
                                     startTime = startTime,
                                     endTime = endTime,
                                     memberId = 0
@@ -84,7 +92,7 @@ fun BossHomeEditScheduleScreen() {
 
                 Spacer(modifier = Modifier.height(25.dp))
                 Text(
-                    getLanguageYMWDate(dateInfo),
+                    getLanguageMDWDate(myScheduleInfo.dateInfo),
                     style = MyScheduleTheme.typography.semiBold16,
                     modifier = Modifier.padding(horizontal = screenPadding)
                 )
@@ -99,7 +107,13 @@ fun BossHomeEditScheduleScreen() {
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                ScheduleTimeInput()
+                ScheduleTimeInput(
+                    startTime,
+                    endTime, onStartTimeChanged = {
+                        startTime = it
+                    }, onEndTimeChanged = {
+                        endTime = it
+                    })
 
 
                 Spacer(modifier = Modifier.height(57.dp))
@@ -136,7 +150,21 @@ fun BossHomeEditScheduleScreen() {
 }
 
 @Composable
-fun ScheduleTimeInput() {
+fun ScheduleTimeInput(
+    startTime: String,
+    endTime: String,
+    onStartTimeChanged: (String) -> Unit,
+    onEndTimeChanged: (String) -> Unit,
+) {
+
+    var showStartTimePicker: Boolean by remember {
+        mutableStateOf(false)
+    }
+
+    var showEndTimePicker: Boolean by remember {
+        mutableStateOf(false)
+    }
+
     Column(modifier = Modifier.padding(horizontal = screenPadding)) {
         Row {
             Text(
@@ -145,10 +173,10 @@ fun ScheduleTimeInput() {
                 style = MyScheduleTheme.typography.semiBold16
             )
             Text(
-                text = "00:00", modifier = Modifier
+                text = startTime, modifier = Modifier
                     .weight(4f)
                     .clickable {
-//                               showTimePicker = true
+                        showStartTimePicker = true
                     },
                 style = MyScheduleTheme.typography.regular16
             )
@@ -160,9 +188,27 @@ fun ScheduleTimeInput() {
                 style = MyScheduleTheme.typography.semiBold16
             )
             Text(
-                text = "00:00", modifier = Modifier.weight(4f),
+                text = endTime, modifier = Modifier
+                    .weight(4f)
+                    .clickable {
+                        showEndTimePicker = true
+                    },
                 style = MyScheduleTheme.typography.regular16
             )
+        }
+    }
+
+    if (showStartTimePicker) {
+        TimePickerSingleDialog { it ->
+            onStartTimeChanged(it)
+            showStartTimePicker = false
+        }
+    }
+
+    if (showEndTimePicker) {
+        TimePickerSingleDialog { it ->
+            onEndTimeChanged(it)
+            showEndTimePicker = false
         }
     }
 }

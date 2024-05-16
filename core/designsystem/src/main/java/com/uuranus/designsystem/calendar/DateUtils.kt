@@ -12,12 +12,12 @@ fun getLanguageYMDDate(dateInfo: DateInfo): String {
     return String.format("%4d년 %d월 %d일", dateInfo.year, dateInfo.month, dateInfo.date)
 }
 
-fun getLanguageYMWDate(dateInfo: DateInfo): String {
-    return String.format("%4d년 %d월 %s요일", dateInfo.year, dateInfo.month, dateInfo.weekDay)
+fun getLanguageMDWDate(dateInfo: DateInfo): String {
+    return String.format("%d월 %d일 %s요일", dateInfo.month, dateInfo.date, dateInfo.weekDay)
 }
 
 fun getDashYMDDate(dateInfo: DateInfo): String {
-    return String.format("%4d년 %d월 %d일", dateInfo.year, dateInfo.month, dateInfo.date)
+    return String.format("%04d-%02d-%02d", dateInfo.year, dateInfo.month, dateInfo.date)
 }
 
 fun String.dashToDateInfo(): DateInfo {

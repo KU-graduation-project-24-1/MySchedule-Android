@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.liveData
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleCalendar
 import com.uuranus.designsystem.calendar.ScheduleData
@@ -36,11 +35,11 @@ import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
-import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.myschedule.core.common.home.AcceptFillInDialog
 import com.uuranus.myschedule.core.common.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
+import com.uuranus.myschedule.bosshome.schedule.BossHomeViewModel
 import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.MyScheduleScreens
@@ -277,27 +276,6 @@ fun BossHomeContent(
             }
         }
 
-//            BossHomeEditScheduleScreen(
-//                dateInfo = selectedScheduleItem.first,
-//                scheduleInfo = selectedScheduleItem.second,
-//                onComplete = { scheduleData ->
-////                    viewModel.editSchedule(selectedScheduleItem.first, scheduleData)
-//                },
-//                onDeleteClick = { scheduleData ->
-//                    //viewModel.deleteSchedule(selectedScheduleItem.first, scheduleData)
-//                }
-//            )
-//        }
-//
-//        if (showAddPage) {
-//            BossHomeAddScheduleScreen(
-//                dateInfo = selectedScheduleItem.first,
-//                scheduleInfo = selectedScheduleItem.second,
-//                onComplete = { scheduleData ->
-////                    viewModel.addSchedule(selectedScheduleItem.first, scheduleData)
-//                }
-//            )
-//        }
     }
 
 }

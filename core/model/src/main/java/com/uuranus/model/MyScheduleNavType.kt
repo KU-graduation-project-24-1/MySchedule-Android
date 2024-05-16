@@ -10,6 +10,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class MyScheduleNavType(
+    @field:Json(name = "scheduleId")
+    val scheduleId: Int,
     @field:Json(name = "dateDashString")
     val dateDashString: String,
     @field:Json(name = "startTime")
@@ -23,6 +25,7 @@ data class MyScheduleNavType(
 
 fun MyScheduleInfo.toMyScheduleNavType(dateDashString: String) =
     MyScheduleNavType(
+        scheduleId = scheduleId,
         dateDashString = dateDashString,
         startTime = startTime,
         endTime = endTime,

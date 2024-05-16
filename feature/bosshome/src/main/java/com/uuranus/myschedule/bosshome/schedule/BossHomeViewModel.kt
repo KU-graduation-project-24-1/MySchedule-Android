@@ -1,6 +1,7 @@
-package com.uuranus.myschedule.bosshome
+package com.uuranus.myschedule.bosshome.schedule
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
@@ -8,12 +9,9 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
-import com.uuranus.domain.AddPossibleTimeUseCase
-import com.uuranus.domain.DeletePossibleTimeUseCase
-import com.uuranus.domain.GetMonthlyPossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
-import com.uuranus.model.MyPossibleTimeInfo
+import com.uuranus.myschedule.bosshome.BossHomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -32,6 +29,7 @@ import javax.inject.Inject
 class BossHomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
