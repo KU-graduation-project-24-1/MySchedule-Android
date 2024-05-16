@@ -13,9 +13,6 @@ public val LocalComposeNavigator: ProvidableCompositionLocal<AppComposeNavigator
         )
     }
 
-/**
- * Retrieves the current [AppComposeNavigator] at the call site's position in the hierarchy.
- */
 public val currentComposeNavigator: AppComposeNavigator
     @Composable
     @ReadOnlyComposable

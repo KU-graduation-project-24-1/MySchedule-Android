@@ -32,6 +32,7 @@ import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleCalendar
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
+import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
@@ -100,8 +101,8 @@ fun BossHomeScreen(
                         painter = painterResource(id = R.drawable.person_outline_icon),
                         contentDescription = "직원 관리",
                         modifier = Modifier.clickable {
-//                            composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
-                        }
+                            composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
+                        },
                     )
                     Spacer(modifier = Modifier.width(18.dp))
                     Box(
@@ -156,6 +157,9 @@ fun BossHomeContent(
     viewModel: BossHomeViewModel,
     schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
 ) {
+
+    val composeNavigator = currentComposeNavigator
+
     val sheetState = rememberModalBottomSheetState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -167,6 +171,7 @@ fun BossHomeContent(
     }
 
     var showDialog by remember { mutableStateOf(false) }
+
     var selectedScheduleItem by remember {
 
         mutableStateOf(
@@ -221,6 +226,19 @@ fun BossHomeContent(
                         onClick = { dateInfo, scheduleData ->
                             showDialog = true
                             selectedScheduleItem = Pair(dateInfo, scheduleData)
+                        },
+                        onEditClick = { dateInfo, scheduleData ->
+                            showBottomSheet = false
+                            composeNavigator.navigate(
+                                MyScheduleScreens.BossEditSchedule.createRoute(
+                                    dateDashString = getDashYMDDate(dateInfo),
+                                    scheduleInfo = scheduleData.detail
+                                ),
+                            )
+                        },
+                        onAddClick = { dateInfo, scheduleData ->
+                            showBottomSheet = false
+                            composeNavigator.navigate(MyScheduleScreens.BossAddSchedule.route)
                         }
                     )
                 },
@@ -258,6 +276,28 @@ fun BossHomeContent(
                 )
             }
         }
+
+//            BossHomeEditScheduleScreen(
+//                dateInfo = selectedScheduleItem.first,
+//                scheduleInfo = selectedScheduleItem.second,
+//                onComplete = { scheduleData ->
+////                    viewModel.editSchedule(selectedScheduleItem.first, scheduleData)
+//                },
+//                onDeleteClick = { scheduleData ->
+//                    //viewModel.deleteSchedule(selectedScheduleItem.first, scheduleData)
+//                }
+//            )
+//        }
+//
+//        if (showAddPage) {
+//            BossHomeAddScheduleScreen(
+//                dateInfo = selectedScheduleItem.first,
+//                scheduleInfo = selectedScheduleItem.second,
+//                onComplete = { scheduleData ->
+////                    viewModel.addSchedule(selectedScheduleItem.first, scheduleData)
+//                }
+//            )
+//        }
     }
 
 }

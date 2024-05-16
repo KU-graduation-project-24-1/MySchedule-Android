@@ -182,7 +182,6 @@ class HomeViewModel @Inject constructor(
                     )
                 )
 
-
             }.catch {
                 _errorFlow.emit(it)
             }.collect {

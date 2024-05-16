@@ -125,7 +125,7 @@ fun HomeScreen(
             )
 
             when (homeUiState) {
-                HomeUiState.Loading -> LoadingScreen()
+                is HomeUiState.Loading -> LoadingScreen()
                 is HomeUiState.ScheduleSuccess ->
                     ScheduleHomeContent(
                         homeViewModel = homeViewModel,
@@ -162,17 +162,17 @@ fun HomeScreen(
                     )
             }
         }
+    }
 
-        if (showCalendarChooseDialog) {
-            CalendarChooseDialog(currentItem = selectedScheduleItem) {
-                selectedScheduleItem = it
-                if (selectedScheduleItem == 0) {
-                    homeViewModel.getMonthlySchedules()
-                } else {
-                    homeViewModel.getMonthlyPossibleTimes()
-                }
-                showCalendarChooseDialog = false
+    if (showCalendarChooseDialog) {
+        CalendarChooseDialog(currentItem = selectedScheduleItem) {
+            selectedScheduleItem = it
+            if (selectedScheduleItem == 0) {
+                homeViewModel.getMonthlySchedules()
+            } else {
+                homeViewModel.getMonthlyPossibleTimes()
             }
+            showCalendarChooseDialog = false
         }
     }
 
