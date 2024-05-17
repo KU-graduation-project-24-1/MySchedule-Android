@@ -1,11 +1,10 @@
-package com.uuranus.myschedule.bosshome
+package com.uuranus.myschedule.bosshome.schedule
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
-import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.MyScheduleNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +41,7 @@ class BossHomeScheduleViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = BossScheduleEditInfo(
                 scheduleId = -1,
-                dateInfo = DateInfo.Companion.create(Calendar.getInstance()),
+                dateInfo = DateInfo.create(0, 0, 0),
                 startTime = "00:00",
                 endTime = "00:00",
                 memberId = -1,

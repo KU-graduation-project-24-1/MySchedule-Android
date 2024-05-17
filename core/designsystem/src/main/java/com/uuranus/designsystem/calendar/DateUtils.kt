@@ -13,6 +13,7 @@ fun getLanguageYMDDate(dateInfo: DateInfo): String {
 }
 
 fun getLanguageMDWDate(dateInfo: DateInfo): String {
+    println("dateInfo $dateInfo ")
     return String.format("%d월 %d일 %s요일", dateInfo.month, dateInfo.date, dateInfo.weekDay)
 }
 

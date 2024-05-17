@@ -24,7 +24,6 @@ import com.uuranus.designsystem.calendar.getLanguageMDWDate
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyScheduleNavType
-import com.uuranus.myschedule.bosshome.BossHomeScheduleViewModel
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
@@ -41,6 +40,9 @@ fun BossHomeAddScheduleScreen(
     }
     var endTime: String by remember {
         mutableStateOf("00:00")
+    }
+    var selectedWorker: Int by remember {
+        mutableStateOf(0)
     }
 
     Surface(
@@ -66,7 +68,7 @@ fun BossHomeAddScheduleScreen(
                                 getLanguageMDWDate(myScheduleInfo.dateInfo),
                                 startTime = startTime,
                                 endTime = endTime,
-                                memberId = 0
+                                memberId = selectedWorker
                             ),
                             route = MyScheduleScreens.BossHome.name
                         )
@@ -110,7 +112,11 @@ fun BossHomeAddScheduleScreen(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            ScheduleWorkerInput()
+            ScheduleWorkerInput(
+                selectedWorker = selectedWorker,
+                onWorkerChanged = {
+                    selectedWorker = it
+                })
         }
 
     }

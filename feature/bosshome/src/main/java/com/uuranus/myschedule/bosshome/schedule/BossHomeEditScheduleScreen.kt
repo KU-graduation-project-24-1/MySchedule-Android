@@ -31,11 +31,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.calendar.getLanguageMDWDate
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
-import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.component.TimePickerSingleDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyScheduleNavType
-import com.uuranus.myschedule.bosshome.BossHomeScheduleViewModel
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
@@ -55,6 +53,14 @@ fun BossHomeEditScheduleScreen(
     }
     var endTime: String by remember {
         mutableStateOf("00:00")
+    }
+
+    var selectedWorker: Int by remember {
+        mutableStateOf(0)
+    }
+
+    var showDeleteDialog: Boolean by remember {
+        mutableStateOf(false)
     }
 
     Surface(
@@ -81,7 +87,7 @@ fun BossHomeEditScheduleScreen(
                                     getLanguageMDWDate(myScheduleInfo.dateInfo),
                                     startTime = startTime,
                                     endTime = endTime,
-                                    memberId = 0
+                                    memberId = selectedWorker
                                 ),
                                 route = MyScheduleScreens.BossHome.name
                             )
@@ -126,7 +132,12 @@ fun BossHomeEditScheduleScreen(
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                ScheduleWorkerInput()
+                ScheduleWorkerInput(
+                    selectedWorker = selectedWorker,
+                    onWorkerChanged = {
+                        selectedWorker = it
+                    }
+                )
             }
 
 
@@ -141,10 +152,13 @@ fun BossHomeEditScheduleScreen(
                     Text("스케줄 식제", style = MyScheduleTheme.typography.semiBold16)
                 }
             ) {
-//                onDeleteClick(scheduleInfo)
+                showDeleteDialog = true
             }
         }
 
+    }
+
+    if(showDeleteDialog){
 
     }
 }
@@ -199,14 +213,14 @@ fun ScheduleTimeInput(
     }
 
     if (showStartTimePicker) {
-        TimePickerSingleDialog { it ->
+        TimePickerSingleDialog {
             onStartTimeChanged(it)
             showStartTimePicker = false
         }
     }
 
     if (showEndTimePicker) {
-        TimePickerSingleDialog { it ->
+        TimePickerSingleDialog {
             onEndTimeChanged(it)
             showEndTimePicker = false
         }
@@ -214,7 +228,10 @@ fun ScheduleTimeInput(
 }
 
 @Composable
-fun ScheduleWorkerInput() {
+fun ScheduleWorkerInput(
+    selectedWorker: Int,
+    onWorkerChanged: (Int) -> Unit,
+) {
     val workers = listOf(
         Pair("김00", "아르바이트"),
 
@@ -224,27 +241,42 @@ fun ScheduleWorkerInput() {
 
         Pair("최00", "매니저")
     )
+
+    println("selectedWorker $selectedWorker")
     LazyColumn(
         modifier = Modifier
             .padding(horizontal = screenPadding)
     ) {
         items(workers.size) { index ->
-            WorkerListItem(workers[index])
+            WorkerListItem(
+                (index == selectedWorker),
+                onWorkerSelected = {
+                    onWorkerChanged(index)
+                },
+                workers[index]
+            )
         }
     }
 
 }
 
 @Composable
-fun WorkerListItem(workerInfo: Pair<String, String>) {
+fun WorkerListItem(
+    selected: Boolean,
+    onWorkerSelected: () -> Unit,
+    workerInfo: Pair<String, String>,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
             .border(
                 width = 1.dp, shape = RoundedCornerShape(12.dp),
-                color = MyScheduleTheme.colors.primary
+                color = if (selected) MyScheduleTheme.colors.primary else MyScheduleTheme.colors.lightGray
             )
+            .clickable {
+                onWorkerSelected()
+            }
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
