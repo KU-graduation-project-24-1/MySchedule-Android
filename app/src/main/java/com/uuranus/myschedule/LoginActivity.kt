@@ -49,6 +49,8 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
+import com.uuranus.login.LoginScreen
+
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
 
@@ -105,7 +107,7 @@ class LoginActivity : ComponentActivity() {
                     } else {
                         setContent {
                             MyScheduleTheme {
-                                LoginContent(viewModel = loginViewModel)
+                                LoginScreen(viewModel = loginViewModel, onClickLogin = ::onClickLogin)
                             }
                         }
                     }
@@ -168,101 +170,6 @@ fun onClickLogin(context: Context) {
     } else {
         UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
     }
-}
-@Composable
-fun LoginContent(viewModel: LoginViewModel) {
-
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                text = "간편한 가게 근무 스케줄러\n오늘 알바",
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-
-        // Second Box
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.2f),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.kakao_login_medium_wide),
-                contentDescription = "Button",
-                modifier = Modifier.fillMaxSize().clickable (onClick = { onClickLogin(context)})
-
-
-            )
-        }
-    }
-}
-
-@Composable
-fun SimpleComposable() {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                text = "간편한 가게 근무 스케줄러\n오늘 알바",
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-
-        // Second Box
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.2f),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.kakao_login_medium_wide),
-                contentDescription = "Button",
-                modifier = Modifier.fillMaxSize().clickable (onClick = { onClickLogin(context)})
-
-
-            )
-        }
-    }
-
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-fun SimpleComposablePreview() {
-    SimpleComposable()
 }
 
 

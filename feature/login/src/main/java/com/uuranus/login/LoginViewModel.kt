@@ -25,4 +25,8 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateLoginStatus(loggedIn: Boolean) {
+        _isLoggedIn.value = loggedIn
+    }
 }
