@@ -24,7 +24,9 @@ fun NavGraphBuilder.myScheduleNavigation() {
 }
 
 fun NavGraphBuilder.bossNavigation() {
-    composable(route = MyScheduleScreens.BossHome.name) {
+    composable(
+        route = MyScheduleScreens.BossHome.name
+    ) {
         BossHomeScreen()
     }
 

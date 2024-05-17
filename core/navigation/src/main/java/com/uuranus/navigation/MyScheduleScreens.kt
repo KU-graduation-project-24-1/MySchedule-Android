@@ -31,10 +31,15 @@ sealed class MyScheduleScreens(
             },
         ),
     ) {
-        fun createRoute(dateDashString: String, scheduleInfo: MyScheduleInfo) =
+        fun createRoute(storeId: Int, dateDashString: String, scheduleInfo: MyScheduleInfo) =
             name.replace(
                 "{${navArguments.first().name}}",
-                MyScheduleType.encodeToString(scheduleInfo.toMyScheduleNavType(dateDashString))
+                MyScheduleType.encodeToString(
+                    scheduleInfo.toMyScheduleNavType(
+                        storeId = storeId,
+                        dateDashString = dateDashString
+                    )
+                )
             )
     }
 
@@ -47,10 +52,15 @@ sealed class MyScheduleScreens(
             },
         ),
     ) {
-        fun createRoute(dateDashString: String, scheduleInfo: MyScheduleInfo) =
+        fun createRoute(storeId: Int, dateDashString: String, scheduleInfo: MyScheduleInfo) =
             name.replace(
                 "{${navArguments.first().name}}",
-                MyScheduleType.encodeToString(scheduleInfo.toMyScheduleNavType(dateDashString))
+                MyScheduleType.encodeToString(
+                    scheduleInfo.toMyScheduleNavType(
+                        storeId,
+                        dateDashString
+                    )
+                )
             )
     }
 

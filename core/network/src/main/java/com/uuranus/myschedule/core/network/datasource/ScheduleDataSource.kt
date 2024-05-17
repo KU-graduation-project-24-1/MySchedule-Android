@@ -2,10 +2,14 @@ package com.uuranus.myschedule.core.network.datasource
 
 import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
+import com.uuranus.model.ScheduleUpdate
+import com.uuranus.model.WorkerInfo
 
 interface ScheduleDataSource {
-
-    suspend fun getMonthlySchedules(storeId: Int, dateYM: String): HashMap<String, List<MyScheduleInfo>>
+    suspend fun getMonthlySchedules(
+        storeId: Int,
+        dateYM: String,
+    ): HashMap<String, List<MyScheduleInfo>>
 
     suspend fun requestFillIn(scheduleId: Int)
 
@@ -28,4 +32,21 @@ interface ScheduleDataSource {
         storeId: Int,
         storeMemberAvailableTimeId: Int,
     ): String
+
+    suspend fun getAllWorkers(
+        storeId: Int,
+    ): List<WorkerInfo>
+
+    suspend fun changedSchedule(
+        storeId: Int,
+        scheduleInfo: ScheduleUpdate,
+    ): Boolean
+
+    suspend fun deleteSchedule(
+        scheduleId: Int,
+    ): Boolean
+
+    suspend fun addSchedule(
+        scheduleInfo: MyScheduleInfo,
+    ): Boolean
 }

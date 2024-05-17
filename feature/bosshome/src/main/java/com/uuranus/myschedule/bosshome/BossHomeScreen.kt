@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -131,9 +132,9 @@ fun BossHomeScreen(
                                 ) {
                                     memberIdColorMap.put(
                                         scheduleData.detail.memberId,
-                                        calendarColors[currentColorIndex.value]
+                                        calendarColors[currentColorIndex.intValue]
                                     )
-                                    currentColorIndex.value += 1
+                                    currentColorIndex.intValue += 1
                                 }
 
                                 scheduleData.copy(
@@ -185,8 +186,8 @@ fun BossHomeContent(
                         3,
                         "AAA",
                         "매니저",
-                        false,
-                        true
+                        isMine = false,
+                        isFillInNeeded = true
                     )
                 )
             )
@@ -209,6 +210,7 @@ fun BossHomeContent(
 
             },
             onPageChanged = {
+                println("it $it")
                 viewModel.setCurrentDate(dateInfo = it)
                 viewModel.getMonthlySchedules()
             }
@@ -229,14 +231,30 @@ fun BossHomeContent(
                             showBottomSheet = false
                             composeNavigator.navigate(
                                 MyScheduleScreens.BossEditSchedule.createRoute(
+                                    storeId = viewModel.getUserData().storeId,
                                     dateDashString = getDashYMDDate(dateInfo),
                                     scheduleInfo = scheduleData.detail
                                 ),
                             )
                         },
-                        onAddClick = { dateInfo, scheduleData ->
+                        onAddClick = { dateInfo ->
                             showBottomSheet = false
-                            composeNavigator.navigate(MyScheduleScreens.BossAddSchedule.route)
+                            composeNavigator.navigate(
+                                MyScheduleScreens.BossAddSchedule.createRoute(
+                                    storeId = viewModel.getUserData().storeId,
+                                    dateDashString = getDashYMDDate(dateInfo),
+                                    scheduleInfo = MyScheduleInfo(
+                                        scheduleId = -1,
+                                        startTime = "00:00",
+                                        endTime = "00:00",
+                                        memberId = -1,
+                                        workerName = "",
+                                        workerType = "",
+                                        isMine = false,
+                                        isFillInNeeded = false
+                                    )
+                                )
+                            )
                         }
                     )
                 },

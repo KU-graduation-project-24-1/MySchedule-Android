@@ -32,7 +32,7 @@ fun MyScheduleBottomSheetContentForBoss(
     scheduleInfo: List<ScheduleData<MyScheduleInfo>>,
     onClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit = { _, _ -> },
     onEditClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit = { _, _ -> },
-    onAddClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit = { _, _ -> },
+    onAddClick: (DateInfo) -> Unit = { _ -> },
 ) {
 
     LazyColumn(
@@ -59,7 +59,7 @@ fun MyScheduleBottomSheetContentForBoss(
                     content = {
                         Text("추가", style = MyScheduleTheme.typography.regular14)
                     }, onClick = {
-//                        onAddClick()
+                        onAddClick(dateInfo)
                     })
             }
         }

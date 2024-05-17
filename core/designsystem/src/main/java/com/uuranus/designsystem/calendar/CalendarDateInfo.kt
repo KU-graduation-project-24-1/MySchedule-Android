@@ -25,7 +25,18 @@ data class MonthInfo(val numberOfDays: Int, val firstDayOfWeek: Int)
 data class DateInfo(val year: Int, val month: Int, val date: Int) {
     private lateinit var calendar: Calendar
 
-    lateinit var weekDay: String
+    fun getWeekDay(): String {
+        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
+            1 -> "일"
+            2 -> "월"
+            3 -> "화"
+            4 -> "수"
+            5 -> "목"
+            6 -> "금"
+            7 -> "토"
+            else -> ""
+        }
+    }
 
     fun addMonth(monthNum: Int): DateInfo {
         val newCalendar = calendar.clone() as Calendar
@@ -47,18 +58,6 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
 
     private fun setCalendar(calendar: Calendar) {
         this.calendar = calendar
-        weekDay =  when (this.calendar.get(Calendar.DAY_OF_WEEK)) {
-            Calendar.SUNDAY -> "일"
-            Calendar.MONDAY -> "월"
-            Calendar.TUESDAY -> "화"
-            Calendar.WEDNESDAY -> "수"
-            Calendar.THURSDAY -> "목"
-            Calendar.FRIDAY -> "금"
-            Calendar.SATURDAY -> "토"
-            else -> ""
-        }
-
-        println("weekDay $weekDay")
     }
 
     companion object {
@@ -73,7 +72,7 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
         fun create(year: Int, month: Int, date: Int): DateInfo {
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.MONTH, month - 1)
             calendar.set(Calendar.DATE, date)
 
             return DateInfo(year, month, date).apply {

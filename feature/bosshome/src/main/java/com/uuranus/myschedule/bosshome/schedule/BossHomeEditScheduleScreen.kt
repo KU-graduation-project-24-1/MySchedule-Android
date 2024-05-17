@@ -29,11 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.calendar.getLanguageMDWDate
+import com.uuranus.designsystem.component.DeleteDialog
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.component.TimePickerSingleDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
-import com.uuranus.model.MyScheduleNavType
+import com.uuranus.model.WorkerInfo
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
@@ -47,17 +48,6 @@ fun BossHomeEditScheduleScreen(
     val composeNavigator = currentComposeNavigator
 
     val myScheduleInfo by viewModel.myScheduleInfo.collectAsStateWithLifecycle()
-
-    var startTime: String by remember {
-        mutableStateOf("00:00")
-    }
-    var endTime: String by remember {
-        mutableStateOf("00:00")
-    }
-
-    var selectedWorker: Int by remember {
-        mutableStateOf(0)
-    }
 
     var showDeleteDialog: Boolean by remember {
         mutableStateOf(false)
@@ -80,16 +70,10 @@ fun BossHomeEditScheduleScreen(
                         text = "완료",
                         style = MyScheduleTheme.typography.semiBold16,
                         modifier = Modifier.clickable {
-                            composeNavigator.navigateBackWithResult(
-                                key = "updatedSchedule",
-                                result = MyScheduleNavType(
-                                    scheduleId = myScheduleInfo.scheduleId,
-                                    getLanguageMDWDate(myScheduleInfo.dateInfo),
-                                    startTime = startTime,
-                                    endTime = endTime,
-                                    memberId = selectedWorker
-                                ),
-                                route = MyScheduleScreens.BossHome.name
+                            viewModel.editSchedule()
+                            composeNavigator.popUpTo(
+                                route = MyScheduleScreens.BossHome.name,
+                                inclusive = false
                             )
                         }
                     )
@@ -114,13 +98,12 @@ fun BossHomeEditScheduleScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 ScheduleTimeInput(
-                    startTime,
-                    endTime, onStartTimeChanged = {
-                        startTime = it
+                    myScheduleInfo.startTime,
+                    myScheduleInfo.endTime, onStartTimeChanged = {
+                        viewModel.saveStartTime(it)
                     }, onEndTimeChanged = {
-                        endTime = it
+                        viewModel.saveEndTime(it)
                     })
-
 
                 Spacer(modifier = Modifier.height(57.dp))
                 Text(
@@ -133,10 +116,11 @@ fun BossHomeEditScheduleScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 ScheduleWorkerInput(
-                    selectedWorker = selectedWorker,
+                    selectedWorker = myScheduleInfo.memberId,
                     onWorkerChanged = {
-                        selectedWorker = it
-                    }
+                        viewModel.saveWorkerId(it)
+                    },
+                    viewModel = viewModel
                 )
             }
 
@@ -158,8 +142,22 @@ fun BossHomeEditScheduleScreen(
 
     }
 
-    if(showDeleteDialog){
-
+    if (showDeleteDialog) {
+        DeleteDialog(
+            title = "스케줄 저장",
+            content = "해당 스케줄을 삭제하시겠습니까?",
+            onDismissDialog = {
+                showDeleteDialog = false
+            },
+            onConfirmDialog = {
+                viewModel.deleteSchedule()
+                showDeleteDialog = false
+                composeNavigator.popUpTo(
+                    route = MyScheduleScreens.BossHome.name,
+                    inclusive = false
+                )
+            }
+        )
     }
 }
 
@@ -213,45 +211,42 @@ fun ScheduleTimeInput(
     }
 
     if (showStartTimePicker) {
-        TimePickerSingleDialog {
+        TimePickerSingleDialog(onTimeSelected = {
             onStartTimeChanged(it)
             showStartTimePicker = false
-        }
+        }, onDismissDialog = {
+            showStartTimePicker = false
+        })
     }
 
     if (showEndTimePicker) {
-        TimePickerSingleDialog {
+        TimePickerSingleDialog(onTimeSelected = {
             onEndTimeChanged(it)
             showEndTimePicker = false
-        }
+        }, onDismissDialog = {
+            showStartTimePicker = false
+        })
     }
 }
 
 @Composable
 fun ScheduleWorkerInput(
+    viewModel: BossHomeScheduleViewModel,
     selectedWorker: Int,
     onWorkerChanged: (Int) -> Unit,
 ) {
-    val workers = listOf(
-        Pair("김00", "아르바이트"),
 
-        Pair("이00", "아르바이트"),
+    val workers by viewModel.workers.collectAsStateWithLifecycle()
 
-        Pair("박00", "사장"),
-
-        Pair("최00", "매니저")
-    )
-
-    println("selectedWorker $selectedWorker")
     LazyColumn(
         modifier = Modifier
             .padding(horizontal = screenPadding)
     ) {
         items(workers.size) { index ->
             WorkerListItem(
-                (index == selectedWorker),
+                (workers[index].memeberId == selectedWorker),
                 onWorkerSelected = {
-                    onWorkerChanged(index)
+                    onWorkerChanged(workers[index].memeberId)
                 },
                 workers[index]
             )
@@ -264,7 +259,7 @@ fun ScheduleWorkerInput(
 fun WorkerListItem(
     selected: Boolean,
     onWorkerSelected: () -> Unit,
-    workerInfo: Pair<String, String>,
+    workerInfo: WorkerInfo,
 ) {
     Column(
         modifier = Modifier
@@ -280,11 +275,11 @@ fun WorkerListItem(
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
-            workerInfo.first,
+            workerInfo.workerName,
             style = MyScheduleTheme.typography.semiBold16
         )
         Text(
-            "고용형태: ${workerInfo.second}",
+            "고용형태: ${workerInfo.workerType}",
             style = MyScheduleTheme.typography.regular14
         )
     }

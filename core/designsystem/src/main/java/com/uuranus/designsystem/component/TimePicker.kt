@@ -36,6 +36,7 @@ import com.uuranus.designsystem.theme.MyScheduleTheme
 @Composable
 fun TimePickerDialog(
     onTimeSelected: (String, String) -> Unit,
+    onDismissDialog: () -> Unit,
 ) {
     val starTime: MutableState<String> = remember {
         mutableStateOf("")
@@ -45,7 +46,7 @@ fun TimePickerDialog(
         mutableStateOf("")
     }
 
-    Dialog(onDismissRequest = {}) {
+    Dialog(onDismissRequest = onDismissDialog) {
         Card(
             shape = RoundedCornerShape(8.dp), // Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
         ) {
@@ -136,12 +137,13 @@ fun TimePickerDialog(
 @Composable
 fun TimePickerSingleDialog(
     onTimeSelected: (String) -> Unit,
+    onDismissDialog: () -> Unit,
 ) {
     val time: MutableState<String> = remember {
         mutableStateOf("")
     }
 
-    Dialog(onDismissRequest = {}) {
+    Dialog(onDismissRequest = onDismissDialog) {
         Card(
             shape = RoundedCornerShape(8.dp), // Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
         ) {

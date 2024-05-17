@@ -170,10 +170,13 @@ fun PossibleTimeBottomSheetContent(
 
     if (showTimePicker.value) {
 
-        TimePickerDialog { start, end ->
+        TimePickerDialog(onTimeSelected =  { start, end ->
             homeViewModel.addPossibleTime(dateInfo, start, end)
             showTimePicker.value = false
-        }
+        }, onDismissDialog = {
+
+            showTimePicker.value = false
+        })
     }
 
 

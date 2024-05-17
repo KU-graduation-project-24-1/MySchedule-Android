@@ -10,6 +10,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class MyScheduleNavType(
+    @field:Json(name = "storeId")
+    val storeId: Int,
     @field:Json(name = "scheduleId")
     val scheduleId: Int,
     @field:Json(name = "dateDashString")
@@ -23,8 +25,9 @@ data class MyScheduleNavType(
 ) : Parcelable
 
 
-fun MyScheduleInfo.toMyScheduleNavType(dateDashString: String) =
+fun MyScheduleInfo.toMyScheduleNavType(storeId: Int, dateDashString: String) =
     MyScheduleNavType(
+        storeId = storeId,
         scheduleId = scheduleId,
         dateDashString = dateDashString,
         startTime = startTime,
