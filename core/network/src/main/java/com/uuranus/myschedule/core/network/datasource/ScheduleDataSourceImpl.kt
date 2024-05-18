@@ -245,32 +245,25 @@ class ScheduleDataSourceImpl @Inject constructor(
         schedules = schedules.mapValues { (dateInfo, schedules) ->
             //List<MyScheduleInfo>
             schedules.filterNot { schedule: MyScheduleInfo ->
-                schedule.scheduleId != scheduleId
+                schedule.scheduleId == scheduleId
             }
         } as HashMap<String, List<MyScheduleInfo>>
         return true
     }
 
     override suspend fun addSchedule(storeId: Int, scheduleUpdate: ScheduleUpdate): Boolean {
-        schedules.putIfAbsent(scheduleUpdate.dateDashString, emptyList())
-        schedules = schedules.mapValues { (dateInfo, schedules) ->
-            if (dateInfo == scheduleUpdate.dateDashString) {
-                schedules.plus(
-                    MyScheduleInfo(
-                        scheduleId = 10,
-                        startTime = scheduleUpdate.startTime,
-                        endTime = scheduleUpdate.endTime,
-                        memberId = scheduleUpdate.memberId,
-                        workerType = "",
-                        workerName = "",
-                        isMine = false,
-                        isFillInNeeded = false
-                    )
-                )
-            } else {
-                schedules
-            }
-        } as HashMap<String, List<MyScheduleInfo>>
+        schedules[scheduleUpdate.dateDashString] = schedules[scheduleUpdate.dateDashString]?.plus(
+            MyScheduleInfo(
+                scheduleId = 10,
+                startTime = scheduleUpdate.startTime,
+                endTime = scheduleUpdate.endTime,
+                memberId = scheduleUpdate.memberId,
+                workerType = "",
+                workerName = "",
+                isMine = false,
+                isFillInNeeded = false
+            )
+        ) ?: emptyList()
         return true
     }
 }

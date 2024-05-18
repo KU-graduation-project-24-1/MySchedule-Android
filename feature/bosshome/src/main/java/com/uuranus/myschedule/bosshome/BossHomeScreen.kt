@@ -210,7 +210,6 @@ fun BossHomeContent(
 
             },
             onPageChanged = {
-                println("it $it")
                 viewModel.setCurrentDate(dateInfo = it)
                 viewModel.getMonthlySchedules()
             }

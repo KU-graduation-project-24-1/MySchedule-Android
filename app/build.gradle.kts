@@ -69,11 +69,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-<<<<<<< HEAD
-    implementation(project(":feature:bosshome"))
-=======
     implementation(libs.firebase.messaging.ktx)
->>>>>>> develop
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
