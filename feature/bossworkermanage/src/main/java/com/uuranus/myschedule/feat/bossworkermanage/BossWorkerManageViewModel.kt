@@ -2,6 +2,8 @@ package com.uuranus.myschedule.feat.bossworkermanage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uuranus.domain.DeleteWorker
+import com.uuranus.domain.EditWorkerType
 import com.uuranus.domain.GetAllWorkersInfo
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.UserData
@@ -23,6 +25,8 @@ import javax.inject.Inject
 class BossWorkerManageViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getAllWorkersInfo: GetAllWorkersInfo,
+    private val deleteWorker: DeleteWorker,
+    private val editWorkerType: EditWorkerType,
 ) : ViewModel() {
 
 
@@ -62,11 +66,41 @@ class BossWorkerManageViewModel @Inject constructor(
 
     fun deleteWorker(workerId: Int) {
         viewModelScope.launch {
-
+            flow { emit(deleteWorker(_userData.value.storeId, workerId)) }
+                .map {
+                    val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
+                    BossWorkerMangeUiState.Success(
+                        state.workers.filterNot {
+                            it.memeberId == workerId
+                        }
+                    )
+                }.catch {
+                    _errorFlow.emit(it)
+                }.collect {
+                    _bossWorkerManageUiState.value = it
+                }
         }
     }
 
     fun editWorker(workerId: Int, workerType: String) {
-
+        viewModelScope.launch {
+            flow { emit(editWorkerType(_userData.value.storeId, workerId, workerType)) }
+                .map {
+                    val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
+                    BossWorkerMangeUiState.Success(
+                        state.workers.map {
+                            if (it.memeberId == workerId) {
+                                it.copy(workerType = workerType)
+                            } else {
+                                it
+                            }
+                        }
+                    )
+                }.catch {
+                    _errorFlow.emit(it)
+                }.collect {
+                    _bossWorkerManageUiState.value = it
+                }
+        }
     }
 }

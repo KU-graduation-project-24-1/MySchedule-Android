@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -89,7 +90,7 @@ fun WorkerInfoListItem(
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    var selectedDeleteWorker by remember { mutableStateOf(0) }
+    var selectedWorker by remember { mutableIntStateOf(0) }
 
     Row(
         modifier = Modifier
@@ -123,6 +124,7 @@ fun WorkerInfoListItem(
                     contentDescription = "직원 고용형태 수정",
                     modifier = Modifier.clickable {
                         showEditDialog = true
+                        selectedWorker = workerInfo.memeberId
                     }
                 )
 
@@ -133,7 +135,7 @@ fun WorkerInfoListItem(
             contentDescription = "직원 삭제",
             modifier = Modifier.clickable {
                 showDeleteDialog = true
-                selectedDeleteWorker = workerInfo.memeberId
+                selectedWorker = workerInfo.memeberId
             }
         )
 
@@ -146,7 +148,7 @@ fun WorkerInfoListItem(
             },
             onWorkerTypeSelected = {
                 showEditDialog = false
-                //viewModel.editWorkerType(it)
+                viewModel.editWorker(selectedWorker, it)
             }
         )
     }
@@ -159,7 +161,7 @@ fun WorkerInfoListItem(
                 showDeleteDialog = false
             }, onConfirmDialog = {
                 showDeleteDialog = false
-                viewModel.deleteWorker(selectedDeleteWorker)
+                viewModel.deleteWorker(selectedWorker)
             })
     }
 }
