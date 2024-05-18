@@ -20,9 +20,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -40,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.component.DeleteDialog
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
+import com.uuranus.designsystem.component.MyScheduleFilledButton
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
@@ -136,7 +140,6 @@ fun StoreSalesInfo(
         mutableStateOf(false)
     }
 
-
     val showTimePicker: MutableState<Boolean> = remember {
         mutableStateOf(false)
     }
@@ -219,7 +222,11 @@ fun StoreSalesInfo(
                         ) {
                             Text(
                                 "${scheduleInfo.workerNum}명",
-                                style = MyScheduleTheme.typography.semiBold16
+                                style = MyScheduleTheme.typography.regular16,
+                                modifier = Modifier.clickable {
+                                    showWorkerNumDialog.value = true
+                                    selectedWeekNum.value = index / 4
+                                }
                             )
                         }
                     } else if (index % 4 == 2) {
@@ -287,8 +294,48 @@ fun StoreSalesInfo(
 
 
     if (showWorkerNumDialog.value) {
+        AlertDialog(onDismissRequest = {
+            showWorkerNumDialog.value = false
+        }, confirmButton = {
+            MyScheduleFilledButton(
+                modifier = Modifier.fillMaxWidth(),
+                paddingValues = PaddingValues(13.dp),
+                buttonState = true,
+                color = MyScheduleTheme.colors.primary,
+                content = {
+                    Text(
+                        "확인",
+                        style = MyScheduleTheme.typography.semiBold16,
+                        color = MyScheduleTheme.colors.textColor
+                    )
+                },
+                onClick = {
 
+                    showWorkerNumDialog.value = false
+                }
+            )
+        }, title = {
+            Text("근무 인원", style = MyScheduleTheme.typography.semiBold16)
+        }, text = {
+            OutlinedTextField(
+                value = "",
+                onValueChange = {
+                },
+                colors = TextFieldDefaults.colors().copy(
+                    focusedIndicatorColor = MyScheduleTheme.colors.primary,
+
+                    unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
+                    focusedContainerColor = MyScheduleTheme.colors.background,
+                    unfocusedContainerColor = MyScheduleTheme.colors.background,
+                ),
+                textStyle = MyScheduleTheme.typography.regular16,
+                placeholder = {
+                    Text(text = "0(명)")
+                }
+            )
+        }, containerColor = MyScheduleTheme.colors.background)
     }
+
     val context = LocalContext.current
     val intent = LocalLoginIntent.current
 
