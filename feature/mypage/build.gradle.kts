@@ -15,5 +15,5 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.data)
     implementation(projects.core.domain)
-    implementation(project(":core:datastore"))
+    implementation(projects.core.common)
 }
