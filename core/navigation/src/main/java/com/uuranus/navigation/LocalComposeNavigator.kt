@@ -1,5 +1,6 @@
 package com.uuranus.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
@@ -17,3 +18,7 @@ public val currentComposeNavigator: AppComposeNavigator
     @Composable
     @ReadOnlyComposable
     get() = LocalComposeNavigator.current
+
+public val LocalLoginIntent: ProvidableCompositionLocal<Intent> = compositionLocalOf {
+    error("No Intent provided")
+}

@@ -1,5 +1,6 @@
 package com.uuranus.myschedule.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +10,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.uuranus.myschedule.LoginActivity
 import com.uuranus.myschedule.ui.BossMain
 import com.uuranus.myschedule.ui.MyScheduleMain
 import com.uuranus.navigation.AppComposeNavigator
 import com.uuranus.navigation.LocalComposeNavigator
+import com.uuranus.navigation.LocalLoginIntent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,6 +32,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val loginIntent = Intent(this, LoginActivity::class.java)
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainActivityViewModel.uiState.collectLatest {
@@ -39,6 +44,7 @@ class MainActivity : ComponentActivity() {
                             setContent {
                                 CompositionLocalProvider(
                                     LocalComposeNavigator provides composeNavigator,
+                                    LocalLoginIntent provides loginIntent
                                 ) {
                                     BossMain(composeNavigator = composeNavigator)
                                 }
@@ -47,6 +53,7 @@ class MainActivity : ComponentActivity() {
                             setContent {
                                 CompositionLocalProvider(
                                     LocalComposeNavigator provides composeNavigator,
+                                    LocalLoginIntent provides loginIntent
                                 ) {
                                     MyScheduleMain(composeNavigator = composeNavigator)
                                 }
