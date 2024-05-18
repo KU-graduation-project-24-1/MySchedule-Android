@@ -4,8 +4,12 @@ import com.uuranus.data.repository.home.HomeRepository
 import com.uuranus.data.repository.home.HomeRepositoryImpl
 import com.uuranus.data.repository.login.LoginRepository
 import com.uuranus.data.repository.login.LoginRepositoryImpl
+import com.uuranus.data.repository.mypage.MyPageRepository
+import com.uuranus.data.repository.mypage.MyPageRepositoryImpl
 import com.uuranus.data.repository.user.UserRepository
 import com.uuranus.data.repository.user.UserRepositoryImpl
+import com.uuranus.myschedule.core.network.datasource.MyPageDataSource
+import com.uuranus.myschedule.core.network.datasource.MyPageDataSourceImpl
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSourceImpl
 import dagger.Binds
@@ -23,6 +27,11 @@ internal interface DataModule {
     ): ScheduleDataSource
 
     @Binds
+    fun bindMyPageDataSource(
+        dataSource: MyPageDataSourceImpl,
+    ): MyPageDataSource
+
+    @Binds
     fun bindsHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
     @Binds
@@ -30,5 +39,8 @@ internal interface DataModule {
 
     @Binds
     fun bindsUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    fun bindsMyPageRepository(mypageRepositoryImpl: MyPageRepositoryImpl): MyPageRepository
 
 }
