@@ -33,10 +33,6 @@ interface HomeRepository {
         storeMemberAvailableTimeId: Int,
     ): String
 
-    suspend fun getAllWorkers(
-        storeId: Int,
-    ): List<WorkerInfo>
-
     suspend fun changeSchedule(
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
