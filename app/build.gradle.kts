@@ -3,6 +3,7 @@ plugins {
     id("myschedule.android.hilt")
     id("myschedule.android.application.compose")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 
 }
 
@@ -68,7 +69,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+<<<<<<< HEAD
     implementation(project(":feature:bosshome"))
+=======
+    implementation(libs.firebase.messaging.ktx)
+>>>>>>> develop
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -78,7 +83,16 @@ dependencies {
     kspAndroidTest(libs.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))
-    implementation("com.google.firebase:firebase-analytics")
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    implementation("com.kakao.sdk:v2-user:2.20.1") // 카카오 로그인 API 모듈
+
 
     implementation(libs.androidx.core.splashscreen)
 
