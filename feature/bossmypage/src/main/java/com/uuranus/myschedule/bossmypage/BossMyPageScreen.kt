@@ -1,4 +1,8 @@
 package com.uuranus.myschedule.bossmypage
 
-class BossMyPageScreen {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun BossMyPageScreen() {
+
 }

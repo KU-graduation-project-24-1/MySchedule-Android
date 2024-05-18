@@ -43,6 +43,7 @@ fun MyScheduleFilledButton(
 @Composable
 fun MyScheduleOutlinedButton(
     modifier: Modifier,
+    paddingValues: PaddingValues,
     buttonState: Boolean,
     content: @Composable (BoxScope.() -> Unit) = {},
     onClick: () -> Unit,
@@ -56,7 +57,8 @@ fun MyScheduleOutlinedButton(
             )
             .clickable {
                 onClick()
-            },
+            }
+            .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
         content()

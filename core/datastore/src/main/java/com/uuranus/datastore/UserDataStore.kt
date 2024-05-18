@@ -25,7 +25,7 @@ class UserDataStore @Inject constructor(
                 storeId = 1,
                 memberId = 1,
                 name = "김알바",
-                workerType = "아르바이트",
+                workerType = "사장",
                 isLoggedIn = true
             )
         }

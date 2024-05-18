@@ -3,6 +3,10 @@ package com.uuranus.navigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.uuranus.designsystem.calendar.DateInfo
+import com.uuranus.model.MyScheduleInfo
+import com.uuranus.model.MyScheduleNavType
+import com.uuranus.model.toMyScheduleNavType
 
 sealed class MyScheduleScreens(
     val route: String,
@@ -17,6 +21,50 @@ sealed class MyScheduleScreens(
     data object MyPage : MyScheduleScreens(route = "mypage")
 
     data object BossHome : MyScheduleScreens(route = "bossHome")
+
+    data object BossEditSchedule : MyScheduleScreens(
+        route = "bossEditSchedule",
+        navArguments = listOf(
+            navArgument("scheduleInfo") {
+                type = MyScheduleType()
+                nullable = false
+            },
+        ),
+    ) {
+        fun createRoute(storeId: Int, dateDashString: String, scheduleInfo: MyScheduleInfo) =
+            name.replace(
+                "{${navArguments.first().name}}",
+                MyScheduleType.encodeToString(
+                    scheduleInfo.toMyScheduleNavType(
+                        storeId = storeId,
+                        dateDashString = dateDashString
+                    )
+                )
+            )
+    }
+
+    data object BossAddSchedule : MyScheduleScreens(
+        route = "bossAddSchedule",
+        navArguments = listOf(
+            navArgument("scheduleInfo") {
+                type = MyScheduleType()
+                nullable = false
+            },
+        ),
+    ) {
+        fun createRoute(storeId: Int, dateDashString: String, scheduleInfo: MyScheduleInfo) =
+            name.replace(
+                "{${navArguments.first().name}}",
+                MyScheduleType.encodeToString(
+                    scheduleInfo.toMyScheduleNavType(
+                        storeId,
+                        dateDashString
+                    )
+                )
+            )
+    }
+
+    data object BossWorkerManage : MyScheduleScreens(route = "bossWorkerManage")
 
     data object BossMyPage : MyScheduleScreens(route = "bossMyPage")
 }

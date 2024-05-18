@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -182,7 +181,6 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 )
-
 
             }.catch {
                 _errorFlow.emit(it)

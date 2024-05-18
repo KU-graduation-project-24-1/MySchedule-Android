@@ -5,18 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,8 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -35,14 +32,15 @@ import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleCalendar
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
+import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.designsystem.component.CircularImageComponent
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
-import com.uuranus.designsystem.component.toAnnotateString
 import com.uuranus.designsystem.theme.MyScheduleTheme
-import com.uuranus.home.AcceptFillInDialog
-import com.uuranus.home.RequestFillInDialog
+import com.uuranus.myschedule.core.common.home.AcceptFillInDialog
+import com.uuranus.myschedule.core.common.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
+import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
@@ -63,7 +61,7 @@ fun BossHomeScreen(
 
     val composeNavigator = currentComposeNavigator
 
-    val homeUiState by bossHomeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val bossHomUnknownError by bossHomeViewModel.bossHomeUiState.collectAsStateWithLifecycle()
 
     val memberIdColorMap = remember {
         mutableMapOf<Int, Color>()
@@ -98,6 +96,14 @@ fun BossHomeScreen(
                     }
                 },
                 actions = {
+                    Image(
+                        painter = painterResource(id = R.drawable.person_outline_icon),
+                        contentDescription = "직원 관리",
+                        modifier = Modifier.clickable {
+                            composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(18.dp))
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.padding(end = 8.dp)
@@ -106,29 +112,29 @@ fun BossHomeScreen(
                             painter = painterResource(id = R.drawable.baseline_person_24),
                             size = 30,
                             onClick = {
-                                composeNavigator.navigate(MyScheduleScreens.MyPage.route)
+                                composeNavigator.navigate(MyScheduleScreens.BossMyPage.route)
                             }
                         )
                     }
                 },
             )
 
-            when (homeUiState) {
+            when (bossHomUnknownError) {
                 BossHomeUiState.Loading -> LoadingScreen()
                 is BossHomeUiState.Success ->
 
                     BossHomeContent(
-                        homeViewModel = bossHomeViewModel,
-                        schedules = (homeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                        viewModel = bossHomeViewModel,
+                        schedules = (bossHomUnknownError as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
                             scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
                                 if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
                                         .not()
                                 ) {
                                     memberIdColorMap.put(
                                         scheduleData.detail.memberId,
-                                        calendarColors[currentColorIndex.value]
+                                        calendarColors[currentColorIndex.intValue]
                                     )
-                                    currentColorIndex.value += 1
+                                    currentColorIndex.intValue += 1
                                 }
 
                                 scheduleData.copy(
@@ -147,23 +153,24 @@ fun BossHomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BossHomeContent(
-    homeViewModel: BossHomeViewModel,
+    viewModel: BossHomeViewModel,
     schedules: Map<DateInfo, ScheduleInfo<MyScheduleInfo>>,
 ) {
+
+    val composeNavigator = currentComposeNavigator
+
     val sheetState = rememberModalBottomSheetState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedBottomSheetItem by remember {
 
         mutableStateOf(
-            Pair<DateInfo, List<ScheduleData<MyScheduleInfo>>>(
-                DateInfo(0, 0, 0),
-                emptyList()
-            )
+            DateInfo(0, 0, 0)
         )
     }
 
     var showDialog by remember { mutableStateOf(false) }
+
     var selectedScheduleItem by remember {
 
         mutableStateOf(
@@ -179,8 +186,8 @@ fun BossHomeContent(
                         3,
                         "AAA",
                         "매니저",
-                        false,
-                        true
+                        isMine = false,
+                        isFillInNeeded = true
                     )
                 )
             )
@@ -193,54 +200,95 @@ fun BossHomeContent(
             .fillMaxWidth()
     ) {
 
-//        ScheduleCalendar(
-//            modifier = Modifier.fillMaxSize(),
-//            schedules,
-//            onDayClick = { dateInfo, schedules: List<ScheduleData<MyScheduleInfo>> ->
-//                selectedBottomSheetItem = Pair(dateInfo, schedules)
-//                showBottomSheet = true
-//
-//            },
-//            onPageChanged = {
-//                homeViewModel.getMonthlySchedules(it)
-//            }
-//        )
-//
-//        if (showBottomSheet) {
-//            MyScheduleBottomSheet(
-//                sheetState = sheetState,
-//                content = {
-//                    BottomSheetContent(
-//                        dateInfo = selectedBottomSheetItem.first,
-//                        scheduleInfo = selectedBottomSheetItem.second,
-//                        onClick = { dateInfo, scheduleData ->
-//                            showDialog = true
-//                            selectedScheduleItem = Pair(dateInfo, scheduleData)
-//                        }
-//                    )
-//                },
-//                onDismissRequest = {
-//                    showBottomSheet = false
-//                }
-//
-//            )
-//        }
+        ScheduleCalendar(
+            modifier = Modifier.fillMaxSize(),
+            currentDate = viewModel.getCurrentDate(),
+            schedules,
+            onDayClick = { dateInfo ->
+                selectedBottomSheetItem = dateInfo
+                showBottomSheet = true
+
+            },
+            onPageChanged = {
+                viewModel.setCurrentDate(dateInfo = it)
+                viewModel.getMonthlySchedules()
+            }
+        )
+
+        if (showBottomSheet) {
+            MyScheduleBottomSheet(
+                sheetState = sheetState,
+                content = {
+                    MyScheduleBottomSheetContentForBoss(
+                        dateInfo = selectedBottomSheetItem,
+                        scheduleInfo = schedules[selectedBottomSheetItem]?.schedules ?: emptyList(),
+                        onClick = { dateInfo, scheduleData ->
+                            showDialog = true
+                            selectedScheduleItem = Pair(dateInfo, scheduleData)
+                        },
+                        onEditClick = { dateInfo, scheduleData ->
+                            showBottomSheet = false
+                            composeNavigator.navigate(
+                                MyScheduleScreens.BossEditSchedule.createRoute(
+                                    storeId = viewModel.getUserData().storeId,
+                                    dateDashString = getDashYMDDate(dateInfo),
+                                    scheduleInfo = scheduleData.detail
+                                ),
+                            )
+                        },
+                        onAddClick = { dateInfo ->
+                            showBottomSheet = false
+                            composeNavigator.navigate(
+                                MyScheduleScreens.BossAddSchedule.createRoute(
+                                    storeId = viewModel.getUserData().storeId,
+                                    dateDashString = getDashYMDDate(dateInfo),
+                                    scheduleInfo = MyScheduleInfo(
+                                        scheduleId = -1,
+                                        startTime = "00:00",
+                                        endTime = "00:00",
+                                        memberId = viewModel.getUserData().memberId,
+                                        workerName = "",
+                                        workerType = "",
+                                        isMine = false,
+                                        isFillInNeeded = false
+                                    )
+                                )
+                            )
+                        }
+                    )
+                },
+                onDismissRequest = {
+                    showBottomSheet = false
+                }
+
+            )
+        }
 
         if (showDialog) {
             if (selectedScheduleItem.second.detail.isMine) {
                 RequestFillInDialog(
                     dateInfo = selectedScheduleItem.first,
-                    scheduleInfo = selectedScheduleItem.second
-                ) {
-                    showDialog = false
-                }
+                    scheduleInfo = selectedScheduleItem.second,
+                    onDismissDialog = {
+                        showDialog = false
+                    },
+                    onConfirmClick = {
+                        //viewmodel.requestFillIn()
+                        showDialog = false
+                    }
+                )
             } else if (selectedScheduleItem.second.detail.isFillInNeeded) {
                 AcceptFillInDialog(
                     dateInfo = selectedScheduleItem.first,
-                    scheduleInfo = selectedScheduleItem.second
-                ) {
-                    showDialog = false
-                }
+                    scheduleInfo = selectedScheduleItem.second,
+                    onDismissDialog = {
+                        showDialog = false
+                    },
+                    onConfirmClick = {
+                        //viewModel.acceptFillIn()
+                        showDialog = false
+                    }
+                )
             }
         }
 
@@ -248,67 +296,3 @@ fun BossHomeContent(
 
 }
 
-@Composable
-fun MyScheduleDetailListItem(
-    modifier: Modifier,
-    scheduleInfo: ScheduleData<MyScheduleInfo>,
-    actions: @Composable (RowScope.() -> Unit) = {},
-) {
-
-    Row(
-        modifier = modifier
-            .padding(bottom = 12.dp)
-            .wrapContentHeight()
-            .drawBehind {
-                drawLine(
-                    color = scheduleInfo.color,
-                    start = Offset(x = 0f, y = 0F),
-                    end = Offset(
-                        x = 0f,
-                        y = this.size.height
-                    ),
-                    strokeWidth = 5.dp.toPx()
-                )
-
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(
-            modifier = Modifier
-                .width(10.dp)
-        )
-        Column(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(1F)
-        ) {
-
-            if (scheduleInfo.detail.isFillInNeeded) {
-                Text(
-                    ("${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime} ").toAnnotateString(
-                        "(대타요청중)", MyScheduleTheme.colors.errorColor
-                    ),
-                    style = MyScheduleTheme.typography.regular16
-                )
-            } else {
-                Text(
-                    "${scheduleInfo.detail.startTime} ~ ${scheduleInfo.detail.endTime}",
-                    style = MyScheduleTheme.typography.regular16
-                )
-            }
-            Text(
-                if (scheduleInfo.detail.isMine) {
-                    "${scheduleInfo.detail.workerName} (${scheduleInfo.detail.workerType}, 나)"
-                } else {
-                    "${scheduleInfo.detail.workerName} (${scheduleInfo.detail.workerType})"
-                },
-                style = MyScheduleTheme.typography.regular16
-            )
-        }
-        Spacer(
-            modifier = Modifier
-                .width(10.dp)
-        )
-        actions()
-    }
-}

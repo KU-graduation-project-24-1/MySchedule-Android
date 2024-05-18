@@ -19,4 +19,5 @@ dependencies {
     api(libs.androidx.navigation.compose)
 
     implementation(libs.moshi)
+    implementation(project(":core:designsystem"))
 }
