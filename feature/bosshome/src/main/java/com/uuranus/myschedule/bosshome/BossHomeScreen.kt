@@ -247,7 +247,7 @@ fun BossHomeContent(
                                         scheduleId = -1,
                                         startTime = "00:00",
                                         endTime = "00:00",
-                                        memberId = -1,
+                                        memberId = viewModel.getUserData().memberId,
                                         workerName = "",
                                         workerType = "",
                                         isMine = false,

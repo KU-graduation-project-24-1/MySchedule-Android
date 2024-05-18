@@ -4,6 +4,7 @@ import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.ScheduleUpdate
 import com.uuranus.model.WorkerInfo
+import org.jetbrains.annotations.Async.Schedule
 
 interface ScheduleDataSource {
     suspend fun getMonthlySchedules(
@@ -39,7 +40,7 @@ interface ScheduleDataSource {
 
     suspend fun changedSchedule(
         storeId: Int,
-        scheduleInfo: ScheduleUpdate,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean
 
     suspend fun deleteSchedule(
@@ -47,6 +48,7 @@ interface ScheduleDataSource {
     ): Boolean
 
     suspend fun addSchedule(
-        scheduleInfo: MyScheduleInfo,
+        storeId: Int,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean
 }

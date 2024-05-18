@@ -63,28 +63,20 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun changeSchedule(
         storeId: Int,
-        scheduleInfo: ScheduleUpdate,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean {
         return dataSource.changedSchedule(
-            storeId, scheduleInfo
+            storeId, scheduleUpdate
         )
     }
 
     override suspend fun deleteSchedule(scheduleId: Int): Boolean {
-        return dataSource.deleteSchedule(
-            scheduleId
-        )
+        return dataSource.deleteSchedule(scheduleId)
     }
 
-    override suspend fun addSchedule(scheduleInfo: MyScheduleInfo): Boolean {
-        return true
+    override suspend fun addSchedule(storeId: Int, scheduleUpdate: ScheduleUpdate): Boolean {
+        return dataSource.addSchedule(storeId, scheduleUpdate)
     }
-
-//    override suspend fun addSchedule(scheduleInfo: MyScheduleInfo): Boolean {
-//        return dataSource.addSchedule(
-//
-//        )
-//    }
 
 
 }

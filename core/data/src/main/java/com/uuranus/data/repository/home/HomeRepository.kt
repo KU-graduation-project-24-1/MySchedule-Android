@@ -39,7 +39,7 @@ interface HomeRepository {
 
     suspend fun changeSchedule(
         storeId: Int,
-        scheduleInfo: ScheduleUpdate,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean
 
     suspend fun deleteSchedule(
@@ -47,6 +47,7 @@ interface HomeRepository {
     ): Boolean
 
     suspend fun addSchedule(
-        scheduleInfo: MyScheduleInfo,
+        storeId: Int,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean
 }

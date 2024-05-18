@@ -13,7 +13,7 @@ private var schedules = hashMapOf(
             scheduleId = 9,
             startTime = "18:00",
             endTime = "23:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -25,7 +25,7 @@ private var schedules = hashMapOf(
             scheduleId = 8,
             startTime = "18:00",
             endTime = "23:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -37,7 +37,7 @@ private var schedules = hashMapOf(
             scheduleId = 7,
             startTime = "18:00",
             endTime = "23:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -49,7 +49,7 @@ private var schedules = hashMapOf(
             scheduleId = 6,
             startTime = "18:00",
             endTime = "23:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -61,7 +61,7 @@ private var schedules = hashMapOf(
             scheduleId = 5,
             startTime = "08:00",
             endTime = "13:00",
-            memberId = 2,
+            memberId = 1,
             workerName = "이직원",
             workerType = "매니저",
             isMine = false,
@@ -71,7 +71,7 @@ private var schedules = hashMapOf(
             scheduleId = 3,
             startTime = "12:00",
             endTime = "15:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -81,7 +81,7 @@ private var schedules = hashMapOf(
             scheduleId = 4,
             startTime = "15:00",
             endTime = "23:59",
-            memberId = 2,
+            memberId = 1,
             workerName = "이직원",
             workerType = "매니저",
             isMine = false,
@@ -91,7 +91,7 @@ private var schedules = hashMapOf(
             scheduleId = 2,
             startTime = "18:00",
             endTime = "23:00",
-            memberId = 3,
+            memberId = 2,
             workerName = "김알바",
             workerType = "아르바이트",
             isMine = true,
@@ -147,6 +147,30 @@ private val possibleSchedules = hashMapOf(
     )
 )
 
+private val workers = listOf(
+    WorkerInfo(
+        0,
+        "최사장",
+        "사장",
+    ),
+    WorkerInfo(
+        1,
+        "이직원",
+        "매니저",
+    ),
+    WorkerInfo(
+        2,
+        "김알바",
+        "아르바이트",
+    ),
+    WorkerInfo(
+        3,
+        "나알바",
+        "아르바이트",
+    )
+
+)
+
 class ScheduleDataSourceImpl @Inject constructor(
 //    private val service: MyScheduleService,
 ) : ScheduleDataSource {
@@ -193,43 +217,21 @@ class ScheduleDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getAllWorkers(storeId: Int): List<WorkerInfo> {
-        return listOf(
-            WorkerInfo(
-                0,
-                "최사장",
-                "사장",
-            ),
-            WorkerInfo(
-                1,
-                "이직원",
-                "매니저",
-            ),
-            WorkerInfo(
-                2,
-                "김알바",
-                "아르바이트",
-            ),
-            WorkerInfo(
-                3,
-                "나알바",
-                "아르바이트",
-            ),
-
-            )
+        return workers
     }
 
     override suspend fun changedSchedule(
         storeId: Int,
-        scheduleInfo: ScheduleUpdate,
+        scheduleUpdate: ScheduleUpdate,
     ): Boolean {
         schedules = schedules.mapValues { (dateInfo, schedules) ->
             //List<MyScheduleInfo>
             schedules.map { schedule: MyScheduleInfo ->
-                if (schedule.scheduleId == scheduleInfo.scheduleId) {
+                if (schedule.scheduleId == scheduleUpdate.scheduleId) {
                     schedule.copy(
-                        startTime = scheduleInfo.startTime,
-                        endTime = scheduleInfo.endTime,
-                        memberId = scheduleInfo.memberId
+                        startTime = scheduleUpdate.startTime,
+                        endTime = scheduleUpdate.endTime,
+                        memberId = scheduleUpdate.memberId
                     )
                 } else {
                     schedule
@@ -249,18 +251,26 @@ class ScheduleDataSourceImpl @Inject constructor(
         return true
     }
 
-    override suspend fun addSchedule(scheduleInfo: MyScheduleInfo): Boolean {
+    override suspend fun addSchedule(storeId: Int, scheduleUpdate: ScheduleUpdate): Boolean {
+        schedules.putIfAbsent(scheduleUpdate.dateDashString, emptyList())
+        schedules = schedules.mapValues { (dateInfo, schedules) ->
+            if (dateInfo == scheduleUpdate.dateDashString) {
+                schedules.plus(
+                    MyScheduleInfo(
+                        scheduleId = 10,
+                        startTime = scheduleUpdate.startTime,
+                        endTime = scheduleUpdate.endTime,
+                        memberId = scheduleUpdate.memberId,
+                        workerType = "",
+                        workerName = "",
+                        isMine = false,
+                        isFillInNeeded = false
+                    )
+                )
+            } else {
+                schedules
+            }
+        } as HashMap<String, List<MyScheduleInfo>>
         return true
     }
-
-//    override suspend fun addSchedule(
-//        storeId: Int,
-//        dateDashString: String,
-//        scheduleInfo: MyScheduleInfo,
-//    ): Boolean {
-////        schedules = schedules.plus(
-////            scheduleInfo
-////        )
-//        return true
-//    }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
+import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.domain.AddSchedule
 import com.uuranus.domain.DeleteSchedule
 import com.uuranus.domain.GetAllWorkersInfo
@@ -104,6 +105,7 @@ class BossHomeScheduleViewModel @Inject constructor(
                 _myScheduleInfo.value.storeId,
                 ScheduleUpdate(
                     _myScheduleInfo.value.scheduleId,
+                    getDashYMDDate(_myScheduleInfo.value.dateInfo),
                     _myScheduleInfo.value.startTime,
                     _myScheduleInfo.value.endTime,
                     _myScheduleInfo.value.memberId,
@@ -122,7 +124,16 @@ class BossHomeScheduleViewModel @Inject constructor(
 
     fun addSchedule() {
         viewModelScope.launch {
-//            addSchedule(_myScheduleInfo.value)
+            addSchedule(
+                _myScheduleInfo.value.storeId,
+                ScheduleUpdate(
+                    -1,
+                    getDashYMDDate(_myScheduleInfo.value.dateInfo),
+                    _myScheduleInfo.value.startTime,
+                    _myScheduleInfo.value.endTime,
+                    _myScheduleInfo.value.memberId
+                )
+            )
         }
     }
 }
