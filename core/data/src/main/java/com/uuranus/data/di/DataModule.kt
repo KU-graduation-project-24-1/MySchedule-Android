@@ -34,7 +34,8 @@ internal interface DataModule {
     fun bindWorkerDataSource(
         dataSource: WorkerDataSourceImpl,
     ): WorkerDataSource
-  
+
+    @Binds
     fun bindMyPageDataSource(
         dataSource: MyPageDataSourceImpl,
     ): MyPageDataSource
