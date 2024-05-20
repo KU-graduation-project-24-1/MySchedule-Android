@@ -1,6 +1,5 @@
 package com.uuranus.mypage
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,30 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.uuranus.designsystem.component.DeleteDialog
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.NetworkImage
@@ -54,6 +49,10 @@ fun MyPageScreen(
     val myPageUiState by myPageViewModel.mypageUiState.collectAsStateWithLifecycle()
     val userData by myPageViewModel.userData.collectAsStateWithLifecycle()
 
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MyScheduleTheme.colors.background
@@ -70,7 +69,7 @@ fun MyPageScreen(
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .clickable {
-                                //mypageViewModel.quit()
+                                showDeleteDialog = true
                             })
                 })
 
@@ -88,6 +87,20 @@ fun MyPageScreen(
 
         }
 
+    }
+
+    if (showDeleteDialog) {
+        DeleteDialog(
+            title = "회원 탈퇴",
+            content = "회원 탈퇴하시겠습니까?\n(탈퇴하면 모든 가게 정보가 삭제됩니다)",
+            onDismissDialog = {
+                showDeleteDialog = false
+            },
+            onConfirmDialog = {
+                showDeleteDialog = false
+                myPageViewModel.quit()
+            }
+        )
     }
 }
 
@@ -126,7 +139,7 @@ fun DayPossibleTimeListItem(
 
     val weekdays = listOf("월", "화", "수", "목", "금", "토", "일")
 
-    var showTimePicker: MutableState<Boolean> = remember {
+    var showTimePicker by remember {
         mutableStateOf(false)
     }
 
@@ -154,11 +167,9 @@ fun DayPossibleTimeListItem(
                 )
             } else {
                 Text(
-                    possibleTimes
-                        .map {
-                            "${it.startTime}~${it.endTime}"
-                        }
-                        .joinToString(", "), style = MyScheduleTheme.typography.regular16
+                    possibleTimes.joinToString(", ") {
+                        "${it.startTime}~${it.endTime}"
+                    }, style = MyScheduleTheme.typography.regular16
                 )
             }
         }
@@ -167,20 +178,20 @@ fun DayPossibleTimeListItem(
             painter = painterResource(id = R.drawable.edit_icon),
             contentDescription = "고정된 가능 시간 추가하기",
             modifier = Modifier.clickable {
-                showTimePicker.value = true
+                showTimePicker = true
             }
         )
         Spacer(modifier = Modifier.width(16.dp))
 
     }
 
-    if (showTimePicker.value) {
+    if (showTimePicker) {
 
         TimePickerDialog(onTimeSelected = { start, end ->
             onEditButtonClick(start, end)
-            showTimePicker.value = false
+            showTimePicker = false
         }, onDismissDialog = {
-            showTimePicker.value = false
+            showTimePicker = false
         })
     }
 }

@@ -31,10 +31,10 @@ fun MyScheduleFilledButton(
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable {
-                onClick()
+                if (buttonState) onClick()
             }
             .padding(paddingValues),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         content()
     }
@@ -56,7 +56,7 @@ fun MyScheduleOutlinedButton(
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable {
-                onClick()
+                if (buttonState) onClick()
             }
             .padding(paddingValues),
         contentAlignment = Alignment.Center
