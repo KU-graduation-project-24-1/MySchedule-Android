@@ -20,28 +20,28 @@ import com.uuranus.myschedule.feat.bossworkermanage.BossWorkerManageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
 fun NavGraphBuilder.loginNavigation() {
-    composable(MyScheduleScreens.Login.route) {
+    composable(MyScheduleScreens.Login.name) {
         LoginScreen()
     }
-    composable(MyScheduleScreens.NameInput.route) {
+    composable(MyScheduleScreens.NameInput.name) {
         NameInputScreen()
     }
-    composable(MyScheduleScreens.StoreList.route) {
+    composable(MyScheduleScreens.StoreList.name) {
         StoreListScreen()
     }
-    composable(MyScheduleScreens.EmploymentType.route) {
+    composable(MyScheduleScreens.EmploymentType.name) {
         EmploymentTypeScreen()
     }
-    composable(MyScheduleScreens.BusinessRegistration.route) {
+    composable(MyScheduleScreens.BusinessRegistration.name) {
         BusinessRegistrationForm()
     }
-    composable(MyScheduleScreens.InviteCode.route) {
+    composable(MyScheduleScreens.InviteCode.name) {
         InviteCodeScreen()
     }
-    composable(MyScheduleScreens.StoreName.route) {
+    composable(MyScheduleScreens.StoreName.name) {
         StoreNameForm()
     }
-    composable(MyScheduleScreens.InviteRegistration.route) {
+    composable(MyScheduleScreens.InviteRegistration.name) {
         InviteCodeForm()
     }
 }

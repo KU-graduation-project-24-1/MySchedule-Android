@@ -26,9 +26,15 @@ import android.app.Activity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.uuranus.login.LoginScreen
+import com.uuranus.myschedule.ui.LoginMain
+import com.uuranus.navigation.AppComposeNavigator
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
+
+    @Inject
+    internal lateinit var composeNavigator: AppComposeNavigator
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -80,7 +86,7 @@ class LoginActivity : ComponentActivity() {
                     } else {
                         setContent {
                             MyScheduleTheme {
-                                LoginScreen()
+                                LoginMain(composeNavigator = composeNavigator)
                             }
                         }
                     }
