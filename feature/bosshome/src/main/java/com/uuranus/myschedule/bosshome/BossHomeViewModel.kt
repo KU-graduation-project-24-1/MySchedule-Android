@@ -1,39 +1,28 @@
 package com.uuranus.myschedule.bosshome
 
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
-import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.designsystem.calendar.getDashYMDate
 import com.uuranus.domain.AcceptFillIn
-import com.uuranus.domain.ChangeScheduleInfo
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.domain.RequestFillIn
-import com.uuranus.model.MyScheduleInfo
-import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.observeOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -129,7 +118,7 @@ class BossHomeViewModel @Inject constructor(
                 val state = _bossHomeUiState.value as BossHomeUiState.Success
 
                 BossHomeUiState.Success(
-                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
+                    schedules = state.schedules.mapValues { (_, scheduleInfo) ->
                         val schedules = scheduleInfo.schedules.map {
                             if (it.detail.scheduleId == scheduleId) {
                                 it.copy(
@@ -169,17 +158,9 @@ class BossHomeViewModel @Inject constructor(
                 val state = _bossHomeUiState.value as BossHomeUiState.Success
 
                 BossHomeUiState.Success(
-                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
-                        val schedules = scheduleInfo.schedules.map {
-                            if (it.detail.scheduleId == scheduleId) {
-                                it.copy(
-                                    detail = it.detail.copy(
-                                        isFillInNeeded = false
-                                    )
-                                )
-                            } else {
-                                it
-                            }
+                    schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                        val schedules = scheduleInfo.schedules.filterNot {
+                            it.detail.scheduleId == scheduleId
                         }
                         scheduleInfo.copy(
                             isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),

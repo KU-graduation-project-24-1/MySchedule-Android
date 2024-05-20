@@ -17,13 +17,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +43,9 @@ import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.WorkerInfo
 import com.uuranus.myschedule.feature.bossmypage.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 val screenPadding = 16.dp
 
@@ -49,6 +55,23 @@ fun BossWorkerManageScreen(
 ) {
 
     val uiState by viewModel.bossWorkerManageUiState.collectAsStateWithLifecycle()
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        viewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
+                    }
+                )
+            }
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),

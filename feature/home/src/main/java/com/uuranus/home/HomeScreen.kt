@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,9 @@ import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 internal val calendarColors = listOf(
     Color(0xFFF3A8A8),
@@ -75,6 +81,24 @@ fun HomeScreen(
     var selectedScheduleItem by remember {
         mutableStateOf(0)
     }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        homeViewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
+                    }
+                )
+            }
+        }
+    }
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),

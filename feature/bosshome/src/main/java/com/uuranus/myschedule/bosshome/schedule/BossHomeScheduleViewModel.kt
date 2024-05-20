@@ -33,7 +33,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BossHomeScheduleViewModel @Inject constructor(
-
     savedStateHandle: SavedStateHandle,
     val getAllWorkersInfo: GetAllWorkersInfo,
     val updateSchedule: UpdateSchedule,
