@@ -23,6 +23,9 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
+import android.app.Activity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.uuranus.login.LoginScreen
 
 @AndroidEntryPoint
@@ -45,7 +48,7 @@ class LoginActivity : ComponentActivity() {
 
         KakaoSdk.init(this, "a49003fec5167f6992c1f845710462b9")
 
-        askNotificationPermission()
+        askNotificationPermission(this, requestPermissionLauncher)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -86,22 +89,32 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+}
 
-    private fun askNotificationPermission() {
+private fun askNotificationPermission(
+    activity: Activity,
+    requestPermissionLauncher: ActivityResultLauncher<String>
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
+            when {
+                ContextCompat.checkSelfPermission(
+                    activity,
                     Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                // Permission already granted, handle accordingly
-            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // Explanation needed, display rationale to the user
-            } else {
-                // Request permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                ) == PERMISSION_GRANTED -> {
+                    // Permission already granted, handle accordingly
+                }
+                activity.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                    // You can use a dialog or another UI component to explain
+                }
+                else -> {
+                    // Directly request the permission.
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         }
     }
 }
-
