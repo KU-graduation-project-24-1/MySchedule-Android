@@ -34,6 +34,10 @@ interface ScheduleDataSource {
         storeMemberAvailableTimeId: Int,
     ): String
 
+    suspend fun getAllWorkers(
+        storeId: Int,
+    ): List<WorkerInfo>
+
     suspend fun changedSchedule(
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,

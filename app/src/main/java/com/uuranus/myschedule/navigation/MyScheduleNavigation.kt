@@ -8,7 +8,6 @@ import com.uuranus.myschedule.bosshome.schedule.BossHomeAddScheduleScreen
 import com.uuranus.myschedule.bosshome.schedule.BossHomeEditScheduleScreen
 import com.uuranus.myschedule.bosshome.BossHomeScreen
 import com.uuranus.myschedule.bossmypage.BossMyPageScreen
-import com.uuranus.myschedule.feat.bossworkermanage.BossWorkerManageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
 fun NavGraphBuilder.myScheduleNavigation() {
@@ -48,7 +47,7 @@ fun NavGraphBuilder.bossNavigation() {
     composable(
         route = MyScheduleScreens.BossWorkerManage.name,
     ) {
-        BossWorkerManageScreen()
+//        BossWorkerManageScreen()
     }
 
     composable(
