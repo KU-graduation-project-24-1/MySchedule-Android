@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
     private val _userData =
         MutableStateFlow(
             com.uuranus.model.UserData(
-                0,
+                -1,
                 0,
                 "",
                 "",

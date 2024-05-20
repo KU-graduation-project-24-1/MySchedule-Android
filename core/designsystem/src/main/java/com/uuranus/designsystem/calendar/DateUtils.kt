@@ -16,6 +16,10 @@ fun getLanguageMDWDate(dateInfo: DateInfo): String {
     return String.format("%d월 %d일 %s요일", dateInfo.month, dateInfo.date, dateInfo.getWeekDay())
 }
 
+fun getDashYMDate(dateInfo: DateInfo): String {
+    return String.format("%04d-%02d", dateInfo.year, dateInfo.month)
+}
+
 fun getDashYMDDate(dateInfo: DateInfo): String {
     return String.format("%04d-%02d-%02d", dateInfo.year, dateInfo.month, dateInfo.date)
 }

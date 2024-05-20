@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -20,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +47,9 @@ import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 internal val calendarColors = listOf(
     Color(0xFFF3A8A8),
@@ -61,7 +67,7 @@ fun BossHomeScreen(
 
     val composeNavigator = currentComposeNavigator
 
-    val bossHomUnknownError by bossHomeViewModel.bossHomeUiState.collectAsStateWithLifecycle()
+    val bossHomeUiState by bossHomeViewModel.bossHomeUiState.collectAsStateWithLifecycle()
 
     val memberIdColorMap = remember {
         mutableMapOf<Int, Color>()
@@ -69,6 +75,23 @@ fun BossHomeScreen(
 
     val currentColorIndex = remember {
         mutableIntStateOf(0)
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        bossHomeViewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
+                    }
+                )
+            }
+        }
     }
 
     Surface(
@@ -119,21 +142,19 @@ fun BossHomeScreen(
                 },
             )
 
-            when (bossHomUnknownError) {
+            when (bossHomeUiState) {
                 BossHomeUiState.Loading -> LoadingScreen()
                 is BossHomeUiState.Success ->
 
                     BossHomeContent(
                         viewModel = bossHomeViewModel,
-                        schedules = (bossHomUnknownError as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                        schedules = (bossHomeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
                             scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
                                 if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
                                         .not()
                                 ) {
-                                    memberIdColorMap.put(
-                                        scheduleData.detail.memberId,
+                                    memberIdColorMap[scheduleData.detail.memberId] =
                                         calendarColors[currentColorIndex.intValue]
-                                    )
                                     currentColorIndex.intValue += 1
                                 }
 
@@ -210,6 +231,7 @@ fun BossHomeContent(
 
             },
             onPageChanged = {
+                println("onpgaechange")
                 viewModel.setCurrentDate(dateInfo = it)
                 viewModel.getMonthlySchedules()
             }

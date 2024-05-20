@@ -9,6 +9,7 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
+import com.uuranus.designsystem.calendar.getDashYMDate
 import com.uuranus.domain.ChangeScheduleInfo
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
@@ -16,6 +17,7 @@ import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -45,7 +48,7 @@ class BossHomeViewModel @Inject constructor(
     private val _userData =
         MutableStateFlow(
             UserData(
-                0,
+                -1,
                 0,
                 "",
                 "",
@@ -58,13 +61,8 @@ class BossHomeViewModel @Inject constructor(
     private val _bossHomeUiState = MutableStateFlow<BossHomeUiState>(BossHomeUiState.Loading)
     val bossHomeUiState: StateFlow<BossHomeUiState> = _bossHomeUiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
 
-            getUserDataUseCase().map {
-                _userData.value = it
-            }
-        }
+    init {
         getMonthlySchedules()
     }
 
@@ -77,15 +75,18 @@ class BossHomeViewModel @Inject constructor(
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
-            flow {
-                emit(
-                    getMonthlyScheduleUseCase(
-                        _userData.value.storeId,
-                        getDashYMDDate(_currentDate.value)
-                    )
-                )
-            }.map { schedules ->
 
+            getUserDataUseCase().flatMapLatest {
+                _userData.value = it
+                flow {
+                    emit(
+                        getMonthlyScheduleUseCase(
+                            _userData.value.storeId,
+                            getDashYMDate(_currentDate.value)
+                        )
+                    )
+                }
+            }.map { schedules ->
                 BossHomeUiState.Success(
                     schedules = schedules.mapKeys { keys ->
                         keys.key.dashToDateInfo()
