@@ -1,16 +1,6 @@
 package com.uuranus.login
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,11 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -74,7 +60,7 @@ fun NameInputScreen() {
         ) {
             Button(
                 onClick = { /* Handle confirmation */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC1DAB9)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "확인", color = Color.Black)
@@ -82,3 +68,16 @@ fun NameInputScreen() {
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    //LoginScreen()
+//    NameInputScreen()
+//    //StoreListScreen()
+//    //EmploymentTypeScreen()
+//    //BusinessRegistrationForm() // todo
+//    //InviteCodeScreen2()
+//    //StoreNameForm()
+//    //StoreListScreen()
+//}

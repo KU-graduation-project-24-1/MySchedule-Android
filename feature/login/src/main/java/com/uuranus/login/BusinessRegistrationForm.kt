@@ -15,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -155,3 +156,16 @@ fun BusinessRegistrationForm() {
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    //LoginScreen()
+//    //NameInputScreen()
+//    //StoreListScreen()
+//    //EmploymentTypeScreen()
+//    BusinessRegistrationForm() // todo
+//    //InviteCodeScreen2()
+//    //StoreNameForm()
+//    //StoreListScreen()
+//}

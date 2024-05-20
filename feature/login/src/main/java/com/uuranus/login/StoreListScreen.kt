@@ -45,7 +45,7 @@ fun StoreListScreen() {
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.Black // Set text color to black
                 ),
-                border = BorderStroke(1.dp, Color(0xFFE0E0E0)) // Set border color to black
+                border = BorderStroke(1.dp, Color(0xFFC1DAB9)) // Set border color to black
             ) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "추가")
@@ -100,7 +100,7 @@ fun StoreItem(store: Store) {
                     Icon(Icons.Filled.ContentCopy, contentDescription = "Copy")
                 }
                 IconButton(onClick = { /* Handle navigation */ }) {
-                    Icon(Icons.Filled.ArrowForward, contentDescription = "Navigate")
+                    Icon(Icons.Filled.SubdirectoryArrowRight, contentDescription = "Navigate")
                 }
             }
         }
@@ -116,15 +116,15 @@ val sampleStores = listOf(
     Store("000 떡볶이 성수점", "사장")
 )
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-        //LoginScreen()
-        //NameInputScreen()
-        //StoreListScreen()
-        //EmploymentTypeScreen()
-        //BusinessRegistrationForm() // todo
-        //InviteCodeScreen2()
-        //StoreNameForm()
-        StoreListScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//        //LoginScreen()
+//        //NameInputScreen()
+//        //StoreListScreen()
+//        //EmploymentTypeScreen()
+//        //BusinessRegistrationForm() // todo
+//        //InviteCodeScreen2()
+//        //StoreNameForm()
+//        StoreListScreen()
+//}

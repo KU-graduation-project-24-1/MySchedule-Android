@@ -14,11 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.runtime.*
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -85,3 +84,16 @@ fun InviteCodeForm() {
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    //LoginScreen()
+//    //NameInputScreen()
+//    //StoreListScreen()
+//    //EmploymentTypeScreen()
+//    //BusinessRegistrationForm() // todo
+//    InviteCodeForm()
+//    //StoreNameForm()
+//    //StoreListScreen()
+//}
