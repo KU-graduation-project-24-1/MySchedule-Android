@@ -12,4 +12,8 @@ android {
 dependencies {
     implementation(libs.androidx.material3.android)
     implementation(projects.core.domain)
+    implementation("androidx.compose.ui:ui:1.2.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.2.0")
+    implementation("androidx.compose.material:material-icons-extended:1.0.5")
+    implementation("androidx.compose.material:material:1.2.0")
 }
