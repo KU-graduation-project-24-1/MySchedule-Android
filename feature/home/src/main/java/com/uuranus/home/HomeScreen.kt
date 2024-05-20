@@ -266,7 +266,7 @@ fun ScheduleHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.request()
+                        homeViewModel.requestFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )
@@ -278,7 +278,7 @@ fun ScheduleHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.accept()
+                        homeViewModel.acceptFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )

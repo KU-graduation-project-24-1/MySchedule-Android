@@ -16,12 +16,12 @@ class HomeRepositoryImpl @Inject constructor(
         return dataSource.getMonthlySchedules(storeId, dateYM)
     }
 
-    override suspend fun requestFillIn(scheduleId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun requestFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
+        return dataSource.requestFillIn(storeId, scheduleId, memberId)
     }
 
-    override suspend fun acceptFillIn(scheduleId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun acceptFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
+        return dataSource.acceptFillIn(storeId, scheduleId, memberId)
     }
 
     override suspend fun getMonthlyPossibleTimes(

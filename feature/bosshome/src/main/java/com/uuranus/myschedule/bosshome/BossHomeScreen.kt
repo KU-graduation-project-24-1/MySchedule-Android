@@ -231,7 +231,6 @@ fun BossHomeContent(
 
             },
             onPageChanged = {
-                println("onpgaechange")
                 viewModel.setCurrentDate(dateInfo = it)
                 viewModel.getMonthlySchedules()
             }
@@ -295,7 +294,7 @@ fun BossHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewmodel.requestFillIn()
+                        viewModel.requestFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )
@@ -307,7 +306,7 @@ fun BossHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.acceptFillIn()
+                        viewModel.acceptFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )

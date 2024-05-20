@@ -10,9 +10,11 @@ import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.designsystem.calendar.getDashYMDate
+import com.uuranus.domain.AcceptFillIn
 import com.uuranus.domain.ChangeScheduleInfo
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
+import com.uuranus.domain.RequestFillIn
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.UserData
@@ -40,6 +42,8 @@ import javax.inject.Inject
 class BossHomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
+    private val requestFillIn: RequestFillIn,
+    private val acceptFillIn: AcceptFillIn,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -111,5 +115,84 @@ class BossHomeViewModel @Inject constructor(
         }
     }
 
+    fun requestFillIn(scheduleId: Int) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    requestFillIn(
+                        _userData.value.storeId,
+                        scheduleId,
+                        _userData.value.memberId,
+                    )
+                )
+            }.map {
+                val state = _bossHomeUiState.value as BossHomeUiState.Success
+
+                BossHomeUiState.Success(
+                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
+                        val schedules = scheduleInfo.schedules.map {
+                            if (it.detail.scheduleId == scheduleId) {
+                                it.copy(
+                                    detail = it.detail.copy(
+                                        isFillInNeeded = true
+                                    )
+                                )
+                            } else {
+                                it
+                            }
+                        }
+                        scheduleInfo.copy(
+                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                            schedules = schedules
+                        )
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _bossHomeUiState.value = it
+            }
+        }
+    }
+
+    fun acceptFillIn(scheduleId: Int) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    acceptFillIn(
+                        _userData.value.storeId,
+                        scheduleId,
+                        _userData.value.memberId
+                    )
+                )
+            }.map {
+                val state = _bossHomeUiState.value as BossHomeUiState.Success
+
+                BossHomeUiState.Success(
+                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
+                        val schedules = scheduleInfo.schedules.map {
+                            if (it.detail.scheduleId == scheduleId) {
+                                it.copy(
+                                    detail = it.detail.copy(
+                                        isFillInNeeded = false
+                                    )
+                                )
+                            } else {
+                                it
+                            }
+                        }
+                        scheduleInfo.copy(
+                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                            schedules = schedules
+                        )
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _bossHomeUiState.value = it
+            }
+        }
+    }
 
 }

@@ -15,4 +15,11 @@ interface MyScheduleService {
     ): Response<MonthlyScheduleResponse>
 
 
+    @GET("/executive/{storeId}/employee")
+    suspend fun getAllWorkers(
+        @Header("Authorization") authorization: String,
+        @Path("storeId") storeId: Int,
+    ): Response<Any>
+
+
 }

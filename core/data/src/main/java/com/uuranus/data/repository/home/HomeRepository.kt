@@ -11,9 +11,17 @@ interface HomeRepository {
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>>
 
-    suspend fun requestFillIn(scheduleId: Int)
+    suspend fun requestFillIn(
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean
 
-    suspend fun acceptFillIn(scheduleId: Int)
+    suspend fun acceptFillIn(
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean
 
     suspend fun getMonthlyPossibleTimes(
         storeId: Int, dateYM: String,
