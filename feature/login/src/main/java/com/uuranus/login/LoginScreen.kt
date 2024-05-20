@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import com.uuranus.myschedule.feature.login.R
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
+fun LoginScreen(onClickLogin: (Context) -> Unit) {
 
     val context = LocalContext.current
 

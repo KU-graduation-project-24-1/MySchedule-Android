@@ -6,6 +6,19 @@ import androidx.navigation.compose.NavHost
 import com.uuranus.navigation.MyScheduleScreens
 
 @Composable
+fun LoginNavHost(
+    navHostController: NavHostController,
+) {
+    NavHost(
+        navController = navHostController,
+        startDestination = MyScheduleScreens.Login.route,
+    ) {
+        loginNavigation()
+    }
+
+}
+
+@Composable
 fun MyScheduleNavHost(
     navHostController: NavHostController,
 ) {

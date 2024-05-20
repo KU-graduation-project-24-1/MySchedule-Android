@@ -107,7 +107,7 @@ class LoginActivity : ComponentActivity() {
                     } else {
                         setContent {
                             MyScheduleTheme {
-                                LoginScreen(viewModel = loginViewModel, onClickLogin = ::onClickLogin)
+                                LoginScreen(onClickLogin = ::onClickLogin)
                             }
                         }
                     }

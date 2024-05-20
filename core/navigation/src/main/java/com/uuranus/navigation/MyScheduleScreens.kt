@@ -16,6 +16,20 @@ sealed class MyScheduleScreens(
 
     data object Login : MyScheduleScreens("login")
 
+    data object NameInput : MyScheduleScreens("nameInput")
+
+    data object StoreList : MyScheduleScreens("storeList")
+
+    data object EmploymentType : MyScheduleScreens("employmentType")
+
+    data object BusinessRegistration : MyScheduleScreens("businessRegistration")
+
+    data object InviteCode : MyScheduleScreens("inviteCode")
+
+    data object StoreName : MyScheduleScreens("storeName")
+
+    data object InviteRegistration : MyScheduleScreens("inviteRegistration")
+
     data object Home : MyScheduleScreens("home")
 
     data object MyPage : MyScheduleScreens(route = "mypage")
