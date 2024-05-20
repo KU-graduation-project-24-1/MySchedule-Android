@@ -20,9 +20,9 @@ import com.uuranus.myschedule.feat.bossworkermanage.BossWorkerManageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
 fun NavGraphBuilder.loginNavigation() {
-//    composable(MyScheduleScreens.Login.route) {
-//        LoginScreen()
-//    }
+    composable(MyScheduleScreens.Login.route) {
+        LoginScreen()
+    }
     composable(MyScheduleScreens.NameInput.route) {
         NameInputScreen()
     }
