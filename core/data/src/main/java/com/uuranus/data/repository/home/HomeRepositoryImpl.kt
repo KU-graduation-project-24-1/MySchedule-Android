@@ -1,21 +1,12 @@
 package com.uuranus.data.repository.home
 
-import android.util.Log
-import com.uuranus.datastore.UserDataStore
-import com.uuranus.datastore.UserPreferences
 import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.ScheduleUpdate
-import com.uuranus.model.WorkerInfo
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class HomeRepositoryImpl @Inject constructor(
-    private val dataStore: UserDataStore,
     private val dataSource: ScheduleDataSource,
 ) : HomeRepository {
     override suspend fun getMonthlySchedules(
@@ -55,10 +46,6 @@ class HomeRepositoryImpl @Inject constructor(
         storeMemberAvailableTimeId: Int,
     ): String {
         return dataSource.deletePossibleTime(memberId, storeId, storeMemberAvailableTimeId)
-    }
-
-    override suspend fun getAllWorkers(storeId: Int): List<WorkerInfo> {
-        return dataSource.getAllWorkers(storeId)
     }
 
     override suspend fun changeSchedule(

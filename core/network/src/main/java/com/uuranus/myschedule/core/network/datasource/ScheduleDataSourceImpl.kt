@@ -147,34 +147,10 @@ private val possibleSchedules = hashMapOf(
     )
 )
 
-private val workers = listOf(
-    WorkerInfo(
-        0,
-        "최사장",
-        "사장",
-    ),
-    WorkerInfo(
-        1,
-        "이직원",
-        "매니저",
-    ),
-    WorkerInfo(
-        2,
-        "김알바",
-        "아르바이트",
-    ),
-    WorkerInfo(
-        3,
-        "나알바",
-        "아르바이트",
-    )
-
-)
 
 class ScheduleDataSourceImpl @Inject constructor(
 //    private val service: MyScheduleService,
 ) : ScheduleDataSource {
-
 
     override suspend fun getMonthlySchedules(
         storeId: Int,
@@ -214,10 +190,6 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeMemberAvailableTimeId: Int,
     ): String {
         return "근무 가능한 시간 정보를 삭제하였습니다."
-    }
-
-    override suspend fun getAllWorkers(storeId: Int): List<WorkerInfo> {
-        return workers
     }
 
     override suspend fun changedSchedule(
