@@ -115,15 +115,16 @@ class ScheduleDataSourceImpl @Inject constructor(
 
         val response = service.deletePossibleTime(
             "Bearer $accessToken",
-            DeletePossibleTimeBody(
+            body = DeletePossibleTimeBody(
                 storeId = storeId,
                 storeAvailableScheduleId = storeMemberAvailableTimeId
             )
         )
-        println("response ${response.body()}")
+        println("response ${response}")
         if (response.isSuccessful) {
             return true
         } else {
+            println("error")
             throw Exception(response.message())
         }
     }

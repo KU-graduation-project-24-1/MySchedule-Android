@@ -322,48 +322,13 @@ fun StoreSalesInfo(
         }
     }
 
-
     if (showWorkerNumDialog.value) {
-        AlertDialog(onDismissRequest = {
+        WorkerNumDialog(onNumSelected = {
             showWorkerNumDialog.value = false
-        }, confirmButton = {
-            MyScheduleFilledButton(
-                modifier = Modifier.fillMaxWidth(),
-                paddingValues = PaddingValues(13.dp),
-                buttonState = true,
-                color = MyScheduleTheme.colors.primary,
-                content = {
-                    Text(
-                        "확인",
-                        style = MyScheduleTheme.typography.semiBold16,
-                        color = MyScheduleTheme.colors.textColor
-                    )
-                },
-                onClick = {
-
-                    showWorkerNumDialog.value = false
-                }
-            )
-        }, title = {
-            Text("근무 인원", style = MyScheduleTheme.typography.semiBold16)
-        }, text = {
-            OutlinedTextField(
-                value = "",
-                onValueChange = {
-                },
-                colors = TextFieldDefaults.colors().copy(
-                    focusedIndicatorColor = MyScheduleTheme.colors.primary,
-
-                    unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
-                    focusedContainerColor = MyScheduleTheme.colors.background,
-                    unfocusedContainerColor = MyScheduleTheme.colors.background,
-                ),
-                textStyle = MyScheduleTheme.typography.regular16,
-                placeholder = {
-                    Text(text = "0(명)")
-                }
-            )
-        }, containerColor = MyScheduleTheme.colors.background)
+            viewModel.addWorkerNum(selectedWeekNum.value, it.toInt())
+        }, onDismissDialog = {
+            showWorkerNumDialog.value = false
+        })
     }
 
     val context = LocalContext.current

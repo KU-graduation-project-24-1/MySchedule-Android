@@ -232,7 +232,6 @@ class HomeViewModel @Inject constructor(
 
     fun addPossibleTime(dateInfo: DateInfo, startTime: String, endTime: String) {
         viewModelScope.launch {
-
             flow {
                 emit(
                     addPossibleTimesUseCase(
@@ -249,7 +248,6 @@ class HomeViewModel @Inject constructor(
                 if (cur.schedules.containsKey(dateInfo)) {
                     HomeUiState.PossibleTimeSuccess(
                         schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
-                            //scheduleInfo
                             if (di == dateInfo) {
                                 scheduleInfo.copy(
                                     schedules = scheduleInfo.schedules.plus(

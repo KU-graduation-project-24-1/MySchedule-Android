@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +47,7 @@ import com.uuranus.myschedule.core.common.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.myschedule.core.designsystem.R
+import com.uuranus.navigation.LocalLoginIntent
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 import kotlinx.coroutines.flow.collectLatest
@@ -95,6 +97,10 @@ fun BossHomeScreen(
         }
     }
 
+
+    val context = LocalContext.current
+    val intent = LocalLoginIntent.current
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         modifier = Modifier.fillMaxSize()
@@ -109,7 +115,7 @@ fun BossHomeScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 modifier = Modifier.clickable {
-
+                                    context.startActivity(intent)
                                 },
                                 contentDescription = "가게 목록으로 이동",
                                 painter = painterResource(

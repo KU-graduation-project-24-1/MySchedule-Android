@@ -57,7 +57,10 @@ fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.kakao_login_medium_wide),
                 contentDescription = "Login button",
-                modifier = Modifier.fillMaxSize().clickable (onClick = { onClickLogin(context)})
+                modifier = Modifier.fillMaxSize().clickable (onClick = {
+                    viewModel.updateLoginStatus(true)
+//                    onClickLogin(context)
+                })
 
 
             )

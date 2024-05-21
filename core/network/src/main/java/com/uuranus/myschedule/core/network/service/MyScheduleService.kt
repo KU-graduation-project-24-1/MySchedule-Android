@@ -47,7 +47,7 @@ interface MyScheduleService {
     suspend fun deletePossibleTime(
         @Header("Authorization") authorization: String,
         @Body body: DeletePossibleTimeBody,
-    ): Response<ApiResponse<Any>>
+    ): Response<ApiResponse<PostPossibleTime>>
 
     @POST("/schedule/{scheduleId}/cover")
     suspend fun postScheduleCover(
@@ -84,7 +84,7 @@ interface MyScheduleService {
     suspend fun postSchedule(
         @Header("Authorization") authorization: String,
         @Body body: PostScheduleBody,
-    ): Response<ApiResponse<Any>>
+    ): Response<ApiResponse<PostScheduleResult>>
 
     @PATCH("/executive/schedule")
     suspend fun patchSchedule(
