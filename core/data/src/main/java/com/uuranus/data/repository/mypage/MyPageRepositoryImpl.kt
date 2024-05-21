@@ -32,4 +32,8 @@ class MyPageRepositoryImpl @Inject constructor(
     ): Boolean {
         return dataSource.addStoreOpeningHourTime(accessToken, storeId)
     }
+
+    override suspend fun deleteStore(accessToken: String, storeId: Int): Boolean {
+        return dataSource.deleteStore(accessToken, storeId)
+    }
 }

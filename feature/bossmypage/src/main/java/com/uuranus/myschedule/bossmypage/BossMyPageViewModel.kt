@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.domain.AddFixedPossibleTimesUseCase
-import com.uuranus.domain.GetFixedPossibleTimesUseCase
+import com.uuranus.domain.DeleteStore
 import com.uuranus.domain.GetSalesInformationUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.TimeRange
@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -26,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BossMyPageViewModel @Inject constructor(
+    private val deleteStore: DeleteStore,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getSalesInformationUseCase: GetSalesInformationUseCase,
     private val addFixedPossibleTimesUseCase: AddFixedPossibleTimesUseCase,
@@ -117,7 +116,16 @@ class BossMyPageViewModel @Inject constructor(
 
     fun deleteStore() {
         viewModelScope.launch {
-
+            flow {
+                emit(deleteStore())
+            }.flatMapLatest {
+                flow {
+                    emit("!")
+//                    emit(logOut())
+                }
+            }.catch {
+                _errorFlow.emit(it)
+            }
         }
     }
 

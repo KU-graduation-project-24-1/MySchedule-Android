@@ -6,15 +6,24 @@ import com.uuranus.model.TimeRange
 interface MyPageDataSource {
 
     suspend fun getFixedPossibleTimes(
-        accessToken:String,): List<List<TimeRange>>
+        accessToken: String,
+    ): List<List<TimeRange>>
 
     suspend fun addFixedPossibleTime(
-        accessToken:String,): String
-     suspend fun getStoreSalesInformation(
-         accessToken:String,): List<StoreSalesInformation>
+        accessToken: String,
+    ): String
 
-     suspend fun addStoreOpeningHourTime(
-         accessToken:String,
+    suspend fun getStoreSalesInformation(
+        accessToken: String,
+    ): List<StoreSalesInformation>
+
+    suspend fun addStoreOpeningHourTime(
+        accessToken: String,
+        storeId: Int,
+    ): Boolean
+
+    suspend fun deleteStore(
+        accessToken: String,
         storeId: Int,
     ): Boolean
 }

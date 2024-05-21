@@ -21,4 +21,9 @@ interface MyPageRepository {
         accessToken: String,
         storeId: Int,
     ): Boolean
+
+    suspend fun deleteStore(
+        accessToken: String,
+        storeId: Int,
+    ): Boolean
 }
