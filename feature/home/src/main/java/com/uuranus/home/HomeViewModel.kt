@@ -8,6 +8,7 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
+import com.uuranus.designsystem.calendar.getDashYMDate
 import com.uuranus.domain.AcceptFillIn
 import com.uuranus.domain.AddPossibleTimeUseCase
 import com.uuranus.domain.DeletePossibleTimeUseCase
@@ -62,23 +63,7 @@ class HomeViewModel @Inject constructor(
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-
-            getUserDataUseCase().flatMapLatest {
-                _userData.value = it
-
-                getMonthlyScheduleFlow()
-            }.map { schedules ->
-
-                HomeUiState.ScheduleSuccess(
-                    schedules as Map<DateInfo, ScheduleInfo<MyScheduleInfo>>
-                )
-            }.catch { throwable ->
-                _errorFlow.emit(throwable)
-            }.collect {
-                _homeUiState.value = it
-            }
-        }
+        getMonthlySchedules()
     }
 
     fun getUserData() = _userData.value
@@ -90,7 +75,19 @@ class HomeViewModel @Inject constructor(
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
-            getMonthlyScheduleFlow().map { schedules ->
+            getUserDataUseCase().flatMapLatest {
+                _userData.value = it
+
+                flow {
+                    emit(
+                        getMonthlyScheduleUseCase(
+                            _userData.value.accessToken,
+                            _userData.value.storeId,
+                            getDashYMDate(_currentDate.value)
+                        )
+                    )
+                }
+            }.map { schedules ->
 
                 HomeUiState.ScheduleSuccess(
                     schedules = schedules.mapKeys { keys ->
@@ -114,16 +111,6 @@ class HomeViewModel @Inject constructor(
                 _homeUiState.value = it
             }
         }
-    }
-
-    private suspend fun getMonthlyScheduleFlow() = flow {
-        emit(
-            getMonthlyScheduleUseCase(
-                _userData.value.accessToken,
-                _userData.value.storeId,
-                getDashYMDDate(_currentDate.value)
-            )
-        )
     }
 
     fun requestFillIn(scheduleId: Int) {
@@ -215,7 +202,7 @@ class HomeViewModel @Inject constructor(
                     getMonthlyPossibleTimesUseCase(
                         _userData.value.accessToken,
                         _userData.value.storeId,
-                        getDashYMDDate(_currentDate.value)
+                        getDashYMDate(_currentDate.value)
                     )
                 )
             }.map { schedules ->
@@ -259,32 +246,42 @@ class HomeViewModel @Inject constructor(
                 )
             }.map {
                 val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
-                HomeUiState.PossibleTimeSuccess(
-                    schedules = cur.schedules.plus(
-                        //scheduleInfo
-                        dateInfo to ScheduleInfo(
-                            false,
-                            (cur.schedules[dateInfo]?.schedules?.plus(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
+                if (cur.schedules.containsKey(dateInfo)) {
+                    HomeUiState.PossibleTimeSuccess(
+                        schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
+                            //scheduleInfo
+                            if (di == dateInfo) {
+                                scheduleInfo.copy(
+                                    schedules = scheduleInfo.schedules.plus(
+                                        ScheduleData(
+                                            startTime,
+                                            Color.White,
+                                            MyPossibleTimeInfo(
+                                                it, startTime, endTime
+                                            )
+                                        )
                                     )
                                 )
-
-                            ) ?: listOf(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
-                                    )
-                                )
-                            )).sortedBy { sort -> sort.detail.startTime }
-                        )
+                            } else {
+                                scheduleInfo
+                            }
+                        }
                     )
-                )
+                } else {
+                    HomeUiState.PossibleTimeSuccess(
+                        schedules = cur.schedules.plus(
+                            dateInfo to listOf(
+                                ScheduleData(
+                                    startTime,
+                                    Color.White,
+                                    MyPossibleTimeInfo(
+                                        it, startTime, endTime
+                                    )
+                                )
+                            )
+                        ) as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
+                    )
+                }
 
             }.catch {
                 _errorFlow.emit(it)
@@ -297,7 +294,6 @@ class HomeViewModel @Inject constructor(
 
     fun deletePossibleTime(dateInfo: DateInfo, storeMemberAvailableTimeId: Int) {
         viewModelScope.launch {
-
             flow {
                 emit(
                     deletePossibleTimeUseCase(
@@ -320,8 +316,7 @@ class HomeViewModel @Inject constructor(
                         } else {
                             scheduleInfo
                         }
-                    }
-                )
+                    })
             }.catch {
                 _errorFlow.emit(it)
             }.collect {

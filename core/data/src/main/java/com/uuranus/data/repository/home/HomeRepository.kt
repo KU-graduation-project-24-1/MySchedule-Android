@@ -45,7 +45,7 @@ interface HomeRepository {
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
-    ): String
+    ): Boolean
 
     suspend fun changeSchedule(
         accessToken: String,

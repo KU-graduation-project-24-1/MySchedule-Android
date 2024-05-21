@@ -1,9 +1,13 @@
 package com.uuranus.myschedule.core.network.model.mapper
 
+import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.WorkerInfo
+import com.uuranus.myschedule.core.network.model.AvailableTimesInDay
+import com.uuranus.myschedule.core.network.model.DailyAvailableSchedule
 import com.uuranus.myschedule.core.network.model.Employee
 import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
+import com.uuranus.myschedule.core.network.model.GetMonthlyPossibleTimesResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
 import com.uuranus.myschedule.core.network.model.WorkData
 
@@ -41,4 +45,21 @@ internal fun Employee.toData(): WorkerInfo = WorkerInfo(
     memberId = memberId,
     workerName = name,
     workerType = memberGrade
+)
+
+internal fun GetMonthlyPossibleTimesResult.toData(): HashMap<String, List<MyPossibleTimeInfo>> {
+    val map = HashMap<String, List<MyPossibleTimeInfo>>()
+    dailyAvailableSchehdules.forEach {
+        map[it.date] = it.availableTimesInDay.map { it2 ->
+            it2.toData()
+        }
+    }
+
+    return map
+}
+
+internal fun AvailableTimesInDay.toData(): MyPossibleTimeInfo = MyPossibleTimeInfo(
+    storeMemberAvailableTimeId = storeAvailableScheduleId,
+    startTime = startTime,
+    endTime = endTime
 )

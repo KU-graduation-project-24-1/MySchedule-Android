@@ -14,14 +14,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.getLanguageYMDDate
+import com.uuranus.designsystem.component.DeleteDialog
 import com.uuranus.designsystem.component.MyScheduleFilledButton
 import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
@@ -61,7 +64,6 @@ fun MyScheduleBottomSheetContent(
                     .wrapContentHeight(),
                 scheduleInfo[index]
             ) {
-                //사장이 아닐 때
                 if (scheduleInfo[index].detail.isFillInNeeded || scheduleInfo[index].detail.isMine) {
                     Row {
                         MyScheduleFilledButton(
@@ -100,6 +102,14 @@ fun PossibleTimeBottomSheetContent(
 
     val showTimePicker: MutableState<Boolean> = remember {
         mutableStateOf(false)
+    }
+
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedTimeId by remember {
+        mutableStateOf(-1)
     }
 
     LazyColumn(
@@ -158,10 +168,8 @@ fun PossibleTimeBottomSheetContent(
                             )
                         }
                     ) {
-                        homeViewModel.deletePossibleTime(
-                            dateInfo,
-                            scheduleInfo[index].detail.storeMemberAvailableTimeId
-                        )
+                        showDeleteDialog = true
+                        selectedTimeId = scheduleInfo[index].detail.storeMemberAvailableTimeId
                     }
                 }
             }
@@ -170,13 +178,28 @@ fun PossibleTimeBottomSheetContent(
 
     if (showTimePicker.value) {
 
-        TimePickerDialog(onTimeSelected =  { start, end ->
+        TimePickerDialog(onTimeSelected = { start, end ->
             homeViewModel.addPossibleTime(dateInfo, start, end)
             showTimePicker.value = false
         }, onDismissDialog = {
 
             showTimePicker.value = false
         })
+    }
+
+    if (showDeleteDialog) {
+        DeleteDialog(
+            title = "가능한 시간 삭제",
+            content = "해당 시간을 삭제하시겠습니까?",
+            onDismissDialog = {
+                showDeleteDialog = false
+            }, onConfirmDialog = {
+                showDeleteDialog = false
+                homeViewModel.deletePossibleTime(
+                    dateInfo,
+                    selectedTimeId
+                )
+            })
     }
 
 

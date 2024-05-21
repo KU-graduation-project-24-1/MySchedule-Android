@@ -38,19 +38,26 @@ data class WorkData(
 @JsonClass(generateAdapter = true)
 data class GetMonthlyPossibleTimesResult(
     val memberGrade: String,
-    val dailyAvailableShehdules: List<DailyAvailableSchedule>,
+    val dailyAvailableSchehdules: List<DailyAvailableSchedule>,
 )
 
 @JsonClass(generateAdapter = true)
 data class DailyAvailableSchedule(
-    val storeMemberAvailableTimeId: Int,
+    val date: String,
+    val availableTimesInDay: List<AvailableTimesInDay>,
+)
+
+@JsonClass(generateAdapter = true)
+data class AvailableTimesInDay(
+    val storeAvailableScheduleId: Int,
     val startTime: String,
     val endTime: String,
 )
 
+
 @JsonClass(generateAdapter = true)
 data class PostPossibleTime(
-    val storeMemberAvailableTimeId: Int,
+    val storeAvailableScheduleId: Int,
 )
 
 @JsonClass(generateAdapter = true)

@@ -9,7 +9,7 @@ data class PostPossibleTimeBody(
 
 data class DeletePossibleTimeBody(
     val storeId: Int,
-    val storeMemberAvailableTimeId: Int,
+    val storeAvailableScheduleId: Int,
 )
 
 data class PatchWorkerTypeBody(

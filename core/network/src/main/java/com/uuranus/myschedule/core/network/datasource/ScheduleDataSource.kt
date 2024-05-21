@@ -44,7 +44,7 @@ interface ScheduleDataSource {
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
-    ): String
+    ): Boolean
 
     suspend fun changedSchedule(
         accessToken: String,

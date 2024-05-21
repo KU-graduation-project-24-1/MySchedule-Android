@@ -12,7 +12,7 @@ class DeletePossibleTimeUseCase @Inject constructor(
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
-    ): String {
+    ): Boolean {
         return repository.deletePossibleTime(accessToken,memberId, storeId, storeMemberAvailableTimeId)
     }
 }

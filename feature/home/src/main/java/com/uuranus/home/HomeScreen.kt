@@ -167,8 +167,7 @@ fun HomeScreen(
                                     color = memberIdColorMap[scheduleData.detail.memberId]
                                         ?: MyScheduleTheme.colors.primary
                                 )
-                            }
-                            )
+                            })
                         },
                     )
 

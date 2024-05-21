@@ -66,7 +66,7 @@ class HomeRepositoryImpl @Inject constructor(
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
-    ): String {
+    ): Boolean {
         return dataSource.deletePossibleTime(
             accessToken,
             memberId,
