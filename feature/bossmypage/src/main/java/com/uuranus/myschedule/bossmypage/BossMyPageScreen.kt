@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -89,41 +91,46 @@ fun BossMyPageScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
         ) {
-            MyScheduleAppBar(title = {
-                Text(text = "마이 페이지", style = MyScheduleTheme.typography.bold20)
-            },
-                actions = {
-                    Text("탈퇴", style = MyScheduleTheme.typography.semiBold16,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .clickable {
-                                showQuitDialog = true
-                            })
-                })
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                MyScheduleAppBar(title = {
+                    Text(text = "마이 페이지", style = MyScheduleTheme.typography.bold20)
+                },
+                    actions = {
+                        Text("탈퇴", style = MyScheduleTheme.typography.semiBold16,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .clickable {
+                                    showQuitDialog = true
+                                })
+                    })
 
-            when (bossMyPageUiState) {
-                is BossMyPageUiState.Loading -> LoadingScreen()
-                is BossMyPageUiState.Success -> Column {
-                    val state = bossMyPageUiState as BossMyPageUiState.Success
-                    MyInfo(userData)
-                    Spacer(modifier = Modifier.height(58.dp))
-                    StoreSalesInfo(
-                        viewModel = bossMyPageViewModel,
-                        salesInfo = state.salesInformation
-                    )
+                when (bossMyPageUiState) {
+                    is BossMyPageUiState.Loading -> LoadingScreen()
+                    is BossMyPageUiState.Success -> Column {
+                        val state = bossMyPageUiState as BossMyPageUiState.Success
+                        MyInfo(userData)
+                        Spacer(modifier = Modifier.height(58.dp))
+                        StoreSalesInfo(
+                            viewModel = bossMyPageViewModel,
+                            salesInfo = state.salesInformation
+                        )
+                    }
                 }
+
             }
 
         }
-
     }
 
     val context = LocalContext.current

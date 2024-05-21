@@ -1,7 +1,6 @@
 package com.uuranus.myschedule.feat.bossworkermanage
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,7 +41,6 @@ import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.WorkerInfo
-import com.uuranus.myschedule.feature.bossmypage.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
@@ -66,40 +64,45 @@ fun BossWorkerManageScreen(
                 snackBarHostState.showSnackbar(
                     when (throwable) {
                         is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
-                        else -> "알 수 없는 오류가 발생했습니다"
+                        else -> throwable.message ?: "알 수 없는 오류가 발생했습니다"
                     }
                 )
             }
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
 
-            MyScheduleAppBar(
-                title = {
-                    Text("직원 관리", style = MyScheduleTheme.typography.bold16)
-                },
-            )
-            when (uiState) {
-                is BossWorkerMangeUiState.Loading -> LoadingScreen()
-                is BossWorkerMangeUiState.Success ->
+                MyScheduleAppBar(
+                    title = {
+                        Text("직원 관리", style = MyScheduleTheme.typography.bold16)
+                    },
+                )
+                when (uiState) {
+                    is BossWorkerMangeUiState.Loading -> LoadingScreen()
+                    is BossWorkerMangeUiState.Success ->
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 21.dp)
-                    ) {
-                        val workers = (uiState as BossWorkerMangeUiState.Success).workers
-                        items(workers.size) { index ->
-                            WorkerInfoListItem(viewModel, workers[index])
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 21.dp)
+                        ) {
+                            val workers = (uiState as BossWorkerMangeUiState.Success).workers
+                            items(workers.size) { index ->
+                                WorkerInfoListItem(viewModel, workers[index])
+                            }
                         }
-                    }
-            }
+                }
 
+            }
         }
     }
 }
@@ -163,6 +166,7 @@ fun WorkerInfoListItem(
         )
 
     }
+
 
     if (showEditDialog) {
         EditWorkerTypeDialog(

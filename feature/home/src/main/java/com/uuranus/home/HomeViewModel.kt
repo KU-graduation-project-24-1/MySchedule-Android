@@ -16,6 +16,7 @@ import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.domain.RequestFillIn
 import com.uuranus.model.MyPossibleTimeInfo
+import com.uuranus.model.MyScheduleInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -62,13 +64,24 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
 
-            getUserDataUseCase().map {
+            getUserDataUseCase().flatMapLatest {
                 _userData.value = it
+
+                getMonthlyScheduleFlow()
+            }.map { schedules ->
+
+                HomeUiState.ScheduleSuccess(
+                    schedules as Map<DateInfo, ScheduleInfo<MyScheduleInfo>>
+                )
+            }.catch { throwable ->
+                _errorFlow.emit(throwable)
+            }.collect {
+                _homeUiState.value = it
             }
         }
-        getMonthlySchedules()
     }
 
+    fun getUserData() = _userData.value
     fun setCurrentDate(dateInfo: DateInfo) {
         _currentDate.value = dateInfo
     }
@@ -77,15 +90,7 @@ class HomeViewModel @Inject constructor(
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
-            flow {
-                emit(
-                    getMonthlyScheduleUseCase(
-                        _userData.value.accessToken,
-                        _userData.value.storeId,
-                        getDashYMDDate(_currentDate.value)
-                    )
-                )
-            }.map { schedules ->
+            getMonthlyScheduleFlow().map { schedules ->
 
                 HomeUiState.ScheduleSuccess(
                     schedules = schedules.mapKeys { keys ->
@@ -109,6 +114,16 @@ class HomeViewModel @Inject constructor(
                 _homeUiState.value = it
             }
         }
+    }
+
+    private suspend fun getMonthlyScheduleFlow() = flow {
+        emit(
+            getMonthlyScheduleUseCase(
+                _userData.value.accessToken,
+                _userData.value.storeId,
+                getDashYMDDate(_currentDate.value)
+            )
+        )
     }
 
     fun requestFillIn(scheduleId: Int) {

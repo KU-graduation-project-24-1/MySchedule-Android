@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -76,94 +78,98 @@ fun BossHomeEditScheduleScreen(
             }
         }
     }
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Box(Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                MyScheduleAppBar(title = {
-                    Text(
-                        text = "스케줄 변경",
-                        style = MyScheduleTheme.typography.bold16
-                    )
-                }, actions = {
-                    Text(
-                        text = "완료",
-                        style = MyScheduleTheme.typography.semiBold16,
-                        modifier = Modifier.clickable {
-                            viewModel.editSchedule()
-                            composeNavigator.popUpTo(
-                                route = MyScheduleScreens.BossHome.name,
-                                inclusive = false
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                })
-
-                Spacer(modifier = Modifier.height(25.dp))
-                Text(
-                    getLanguageMDWDate(myScheduleInfo.dateInfo),
-                    style = MyScheduleTheme.typography.semiBold16,
-                    modifier = Modifier.padding(horizontal = screenPadding)
-                )
-                Spacer(modifier = Modifier.height(35.dp))
-
-                Text(
-                    " 시간 변경",
-                    style = MyScheduleTheme.typography.semiBold16,
-                    modifier = Modifier.padding(horizontal = screenPadding, vertical = 8.dp)
-                )
-                HorizontalDivider(color = MyScheduleTheme.colors.lightGray)
-
-                Spacer(modifier = Modifier.height(22.dp))
-
-                ScheduleTimeInput(
-                    myScheduleInfo.startTime,
-                    myScheduleInfo.endTime, onStartTimeChanged = {
-                        viewModel.saveStartTime(it)
-                    }, onEndTimeChanged = {
-                        viewModel.saveEndTime(it)
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Box(Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    MyScheduleAppBar(title = {
+                        Text(
+                            text = "스케줄 변경",
+                            style = MyScheduleTheme.typography.bold16
+                        )
+                    }, actions = {
+                        Text(
+                            text = "완료",
+                            style = MyScheduleTheme.typography.semiBold16,
+                            modifier = Modifier.clickable {
+                                viewModel.editSchedule()
+                                composeNavigator.popUpTo(
+                                    route = MyScheduleScreens.BossHome.name,
+                                    inclusive = false
+                                )
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                     })
 
-                Spacer(modifier = Modifier.height(57.dp))
-                Text(
-                    " 직원 변경",
-                    style = MyScheduleTheme.typography.semiBold16,
-                    modifier = Modifier.padding(horizontal = screenPadding, vertical = 8.dp)
-                )
-                HorizontalDivider(color = MyScheduleTheme.colors.lightGray)
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Text(
+                        getLanguageMDWDate(myScheduleInfo.dateInfo),
+                        style = MyScheduleTheme.typography.semiBold16,
+                        modifier = Modifier.padding(horizontal = screenPadding)
+                    )
+                    Spacer(modifier = Modifier.height(35.dp))
 
-                Spacer(modifier = Modifier.height(22.dp))
+                    Text(
+                        " 시간 변경",
+                        style = MyScheduleTheme.typography.semiBold16,
+                        modifier = Modifier.padding(horizontal = screenPadding, vertical = 8.dp)
+                    )
+                    HorizontalDivider(color = MyScheduleTheme.colors.lightGray)
 
-                ScheduleWorkerInput(
-                    workers = workers,
-                    selectedWorker = myScheduleInfo.memberId,
-                    onWorkerChanged = {
-                        viewModel.saveWorkerId(it)
-                    },
-                )
-            }
+                    Spacer(modifier = Modifier.height(22.dp))
 
+                    ScheduleTimeInput(
+                        myScheduleInfo.startTime,
+                        myScheduleInfo.endTime, onStartTimeChanged = {
+                            viewModel.saveStartTime(it)
+                        }, onEndTimeChanged = {
+                            viewModel.saveEndTime(it)
+                        })
 
-            MyScheduleOutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(screenPadding)
-                    .align(Alignment.BottomCenter),
-                paddingValues = PaddingValues(all = 13.dp),
-                buttonState = true,
-                content = {
-                    Text("스케줄 식제", style = MyScheduleTheme.typography.semiBold16)
+                    Spacer(modifier = Modifier.height(57.dp))
+                    Text(
+                        " 직원 변경",
+                        style = MyScheduleTheme.typography.semiBold16,
+                        modifier = Modifier.padding(horizontal = screenPadding, vertical = 8.dp)
+                    )
+                    HorizontalDivider(color = MyScheduleTheme.colors.lightGray)
+
+                    Spacer(modifier = Modifier.height(22.dp))
+
+                    ScheduleWorkerInput(
+                        workers = workers,
+                        selectedWorker = myScheduleInfo.memberId,
+                        onWorkerChanged = {
+                            viewModel.saveWorkerId(it)
+                        },
+                    )
                 }
-            ) {
-                showDeleteDialog = true
-            }
-        }
 
+
+                MyScheduleOutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(screenPadding)
+                        .align(Alignment.BottomCenter),
+                    paddingValues = PaddingValues(all = 13.dp),
+                    buttonState = true,
+                    content = {
+                        Text("스케줄 식제", style = MyScheduleTheme.typography.semiBold16)
+                    }
+                ) {
+                    showDeleteDialog = true
+                }
+            }
+
+        }
     }
 
     if (showDeleteDialog) {

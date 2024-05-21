@@ -119,7 +119,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "000 떡볶이 건대입구점",
+                            text = homeViewModel.getUserData().storeName,
                             style = MyScheduleTheme.typography.bold16
                         )
                     }

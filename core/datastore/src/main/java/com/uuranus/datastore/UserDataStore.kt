@@ -26,12 +26,12 @@ class UserDataStore @Inject constructor(
 //            )
             UserData(
                 storeId = 2,
-                memberId = 7,
-                name = "김알바",
-                workerType = "사장",
+                memberId = 8,
+                name = "박알바",
+                workerType = "아르바이트",
                 isLoggedIn = true,
                 storeName = "ㅁㅁ 떡볶이 건대입구점",
-                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzE2MjE3NDE5LCJleHAiOjE3NDc3NTM0MTl9.3Etu1SIueL83j5SQ0ClXPM2gF97HP1Q-l-SwFL5nCBU",
+                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiaWF0IjoxNzE2Mjg1MDk5LCJleHAiOjE3NDc4MjEwOTl9.nM7YkMnozZ9BdnrYo9ohx04N8YegUfEIr_VJccWugsA",
                 refreshToken = ""
             )
         }

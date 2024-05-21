@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -93,78 +95,83 @@ fun BossHomeScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            MyScheduleAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.clickable {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                MyScheduleAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                modifier = Modifier.clickable {
 
-                            },
-                            contentDescription = "가게 목록으로 이동",
-                            painter = painterResource(
-                                id = R.drawable.arrow_left_icon
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "000 떡볶이 건대입구점",
-                            style = MyScheduleTheme.typography.bold16
-                        )
-                    }
-                },
-                actions = {
-                    Image(
-                        painter = painterResource(id = R.drawable.person_outline_icon),
-                        contentDescription = "직원 관리",
-                        modifier = Modifier.clickable {
-                            composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
-                        },
-                    )
-                    Spacer(modifier = Modifier.width(18.dp))
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        CircularImageComponent(
-                            painter = painterResource(id = R.drawable.baseline_person_24),
-                            size = 30,
-                            onClick = {
-                                composeNavigator.navigate(MyScheduleScreens.BossMyPage.route)
-                            }
-                        )
-                    }
-                },
-            )
-
-            when (bossHomeUiState) {
-                BossHomeUiState.Loading -> LoadingScreen()
-                is BossHomeUiState.Success ->
-
-                    BossHomeContent(
-                        viewModel = bossHomeViewModel,
-                        schedules = (bossHomeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
-                            scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
-                                if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
-                                        .not()
-                                ) {
-                                    memberIdColorMap[scheduleData.detail.memberId] =
-                                        calendarColors[currentColorIndex.intValue]
-                                    currentColorIndex.intValue += 1
-                                }
-
-                                scheduleData.copy(
-                                    color = memberIdColorMap[scheduleData.detail.memberId]
-                                        ?: MyScheduleTheme.colors.primary
+                                },
+                                contentDescription = "가게 목록으로 이동",
+                                painter = painterResource(
+                                    id = R.drawable.arrow_left_icon
                                 )
-                            }
                             )
-                        },
-                    )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = bossHomeViewModel.getUserData().storeName,
+                                style = MyScheduleTheme.typography.bold16
+                            )
+                        }
+                    },
+                    actions = {
+                        Image(
+                            painter = painterResource(id = R.drawable.person_outline_icon),
+                            contentDescription = "직원 관리",
+                            modifier = Modifier.clickable {
+                                composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
+                            },
+                        )
+                        Spacer(modifier = Modifier.width(18.dp))
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            CircularImageComponent(
+                                painter = painterResource(id = R.drawable.baseline_person_24),
+                                size = 30,
+                                onClick = {
+                                    composeNavigator.navigate(MyScheduleScreens.BossMyPage.route)
+                                }
+                            )
+                        }
+                    },
+                )
+
+                when (bossHomeUiState) {
+                    BossHomeUiState.Loading -> LoadingScreen()
+                    is BossHomeUiState.Success ->
+
+                        BossHomeContent(
+                            viewModel = bossHomeViewModel,
+                            schedules = (bossHomeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                                scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
+                                    if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
+                                            .not()
+                                    ) {
+                                        memberIdColorMap[scheduleData.detail.memberId] =
+                                            calendarColors[currentColorIndex.intValue]
+                                        currentColorIndex.intValue += 1
+                                    }
+
+                                    scheduleData.copy(
+                                        color = memberIdColorMap[scheduleData.detail.memberId]
+                                            ?: MyScheduleTheme.colors.primary
+                                    )
+                                }
+                                )
+                            },
+                        )
+                }
             }
         }
     }

@@ -67,6 +67,11 @@ class BossWorkerManageViewModel @Inject constructor(
 
     fun deleteWorker(workerId: Int) {
         viewModelScope.launch {
+            if (workerId == _userData.value.memberId) {
+                _errorFlow.emit(Exception("고용인은 삭제할 수 없습니다."))
+                return@launch
+            }
+
             flow {
                 emit(
                     deleteWorker(
@@ -92,7 +97,13 @@ class BossWorkerManageViewModel @Inject constructor(
     }
 
     fun editWorker(workerId: Int, workerType: String) {
+
         viewModelScope.launch {
+            if (workerId == _userData.value.memberId) {
+                _errorFlow.emit(Exception("고용인은 고용 형태를 수정할 수 없습니다."))
+                return@launch
+            }
+
             flow {
                 emit(
                     editWorkerType(

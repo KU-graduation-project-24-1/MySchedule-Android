@@ -69,12 +69,14 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
+        println("storeId $storeId $dateYM")
         val response = service.getMonthlySchedules(
             "Bearer $accessToken",
             storeId,
             dateYM
         )
 
+        println("response ${response.body()}")
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
@@ -133,7 +135,6 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
-        println("change $scheduleUpdate")
         val response = service.patchSchedule(
             "Bearer $accessToken",
             PatchScheduleBody(
@@ -143,7 +144,6 @@ class ScheduleDataSourceImpl @Inject constructor(
                 endTime = scheduleUpdate.endTime
             )
         )
-        println("Response ${response.body()}")
         if (response.isSuccessful) {
             return true
         } else {
