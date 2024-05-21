@@ -9,6 +9,9 @@ message UserPreferences {
     string name = 3;
     string worker_type = 4;
     bool is_logged_in = 5;
+    string store_name = 6;
+    string access_token = 7;
+    string refresh_token = 8;
 
-    bool has_done_int_to_string_id_migration = 8;
+    bool has_done_int_to_string_id_migration = 10;
 }

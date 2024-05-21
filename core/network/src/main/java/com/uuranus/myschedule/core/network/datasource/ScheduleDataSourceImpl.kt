@@ -100,6 +100,7 @@ private var schedules = hashMapOf(
         )
     )
 )
+
 private val possibleSchedules = hashMapOf(
     "2024-05-13" to listOf(
         MyPossibleTimeInfo(
@@ -154,39 +155,51 @@ class ScheduleDataSourceImpl @Inject constructor(
 ) : ScheduleDataSource {
 
     override suspend fun getMonthlySchedules(
+        accessToken: String,
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
-        println("!!!")
         val response = service.getMonthlySchedules(
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzE2MjE3NDE5LCJleHAiOjE3NDc3NTM0MTl9.3Etu1SIueL83j5SQ0ClXPM2gF97HP1Q-l-SwFL5nCBU",
+            "Bearer $accessToken",
             storeId,
             dateYM
         )
-println("response $response")
-//        if (response.isSuccessful) {
-//            return response.body()?.toData() ?: hashMapOf()
-//        } else {
-//            throw Exception(response.message())
-//        }
-        return schedules
+
+        if (response.isSuccessful) {
+            return response.body()?.result?.toData() ?: hashMapOf()
+        } else {
+            throw Exception(response.message())
+        }
     }
 
-    override suspend fun requestFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
+    override suspend fun requestFillIn(
+        accessToken: String,
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean {
         return true
     }
 
-    override suspend fun acceptFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
+    override suspend fun acceptFillIn(
+        accessToken: String,
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean {
         return true
     }
 
     override suspend fun getMonthlyPossibleTimes(
-        storeId: Int, dateYM: String,
+        accessToken: String,
+        storeId: Int,
+        dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>> {
         return possibleSchedules
     }
 
     override suspend fun addPossibleTime(
+        accessToken: String,
         memberId: Int,
         storeId: Int,
         dateYMD: String,
@@ -197,6 +210,7 @@ println("response $response")
     }
 
     override suspend fun deletePossibleTime(
+        accessToken: String,
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
@@ -205,6 +219,7 @@ println("response $response")
     }
 
     override suspend fun changedSchedule(
+        accessToken: String,
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
@@ -225,7 +240,7 @@ println("response $response")
         return true
     }
 
-    override suspend fun deleteSchedule(scheduleId: Int): Boolean {
+    override suspend fun deleteSchedule(accessToken: String, scheduleId: Int): Boolean {
         schedules = schedules.mapValues { (dateInfo, schedules) ->
             //List<MyScheduleInfo>
             schedules.filterNot { schedule: MyScheduleInfo ->
@@ -235,19 +250,12 @@ println("response $response")
         return true
     }
 
-    override suspend fun addSchedule(storeId: Int, scheduleUpdate: ScheduleUpdate): Boolean {
-        schedules[scheduleUpdate.dateDashString] = schedules[scheduleUpdate.dateDashString]?.plus(
-            MyScheduleInfo(
-                scheduleId = 10,
-                startTime = scheduleUpdate.startTime,
-                endTime = scheduleUpdate.endTime,
-                memberId = scheduleUpdate.memberId,
-                workerType = "",
-                workerName = "",
-                isMine = false,
-                isFillInNeeded = false
-            )
-        ) ?: emptyList()
-        return true
+    override suspend fun addSchedule(
+        accessToken: String,
+        storeId: Int,
+        scheduleUpdate: ScheduleUpdate,
+    ): Boolean {
+        val response =
+            return true
     }
 }

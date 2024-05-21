@@ -74,6 +74,7 @@ class BossHomeViewModel @Inject constructor(
                 flow {
                     emit(
                         getMonthlyScheduleUseCase(
+                            _userData.value.accessToken,
                             _userData.value.storeId,
                             getDashYMDate(_currentDate.value)
                         )
@@ -109,6 +110,7 @@ class BossHomeViewModel @Inject constructor(
             flow {
                 emit(
                     requestFillIn(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         scheduleId,
                         _userData.value.memberId,
@@ -149,6 +151,7 @@ class BossHomeViewModel @Inject constructor(
             flow {
                 emit(
                     acceptFillIn(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         scheduleId,
                         _userData.value.memberId

@@ -12,10 +12,12 @@ class UpdateSchedule @Inject constructor(
     private val repository: HomeRepository,
 ) {
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
         scheduleEditInfo: ScheduleUpdate,
     ): Boolean {
         return repository.changeSchedule(
+            accessToken,
             storeId,
             scheduleEditInfo
         )

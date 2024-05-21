@@ -10,59 +10,92 @@ class HomeRepositoryImpl @Inject constructor(
     private val dataSource: ScheduleDataSource,
 ) : HomeRepository {
     override suspend fun getMonthlySchedules(
+        accessToken: String,
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
-        return dataSource.getMonthlySchedules(storeId, dateYM)
+        return dataSource.getMonthlySchedules(accessToken, storeId, dateYM)
     }
 
-    override suspend fun requestFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
-        return dataSource.requestFillIn(storeId, scheduleId, memberId)
+    override suspend fun requestFillIn(
+        accessToken: String,
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean {
+        return dataSource.requestFillIn(accessToken, storeId, scheduleId, memberId)
     }
 
-    override suspend fun acceptFillIn(storeId: Int, scheduleId: Int, memberId: Int): Boolean {
-        return dataSource.acceptFillIn(storeId, scheduleId, memberId)
+    override suspend fun acceptFillIn(
+        accessToken: String,
+        storeId: Int,
+        scheduleId: Int,
+        memberId: Int,
+    ): Boolean {
+        return dataSource.acceptFillIn(accessToken, storeId, scheduleId, memberId)
     }
 
     override suspend fun getMonthlyPossibleTimes(
-        storeId: Int, dateYM: String,
+        accessToken: String,
+        storeId: Int,
+        dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>> {
-        return dataSource.getMonthlyPossibleTimes(storeId, dateYM)
+        return dataSource.getMonthlyPossibleTimes(accessToken, storeId, dateYM)
     }
 
     override suspend fun addPossibleTime(
+        accessToken: String,
         memberId: Int,
         storeId: Int,
         dateYMD: String,
         startTime: String,
         endTime: String,
     ): Int {
-        return dataSource.addPossibleTime(memberId, storeId, dateYMD, startTime, endTime)
+        return dataSource.addPossibleTime(
+            accessToken,
+            memberId,
+            storeId,
+            dateYMD,
+            startTime,
+            endTime
+        )
     }
 
     override suspend fun deletePossibleTime(
+        accessToken: String,
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
     ): String {
-        return dataSource.deletePossibleTime(memberId, storeId, storeMemberAvailableTimeId)
+        return dataSource.deletePossibleTime(
+            accessToken,
+            memberId,
+            storeId,
+            storeMemberAvailableTimeId
+        )
     }
 
     override suspend fun changeSchedule(
+        accessToken: String,
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
         return dataSource.changedSchedule(
+            accessToken,
             storeId, scheduleUpdate
         )
     }
 
-    override suspend fun deleteSchedule(scheduleId: Int): Boolean {
-        return dataSource.deleteSchedule(scheduleId)
+    override suspend fun deleteSchedule(accessToken: String, scheduleId: Int): Boolean {
+        return dataSource.deleteSchedule(accessToken, scheduleId)
     }
 
-    override suspend fun addSchedule(storeId: Int, scheduleUpdate: ScheduleUpdate): Boolean {
-        return dataSource.addSchedule(storeId, scheduleUpdate)
+    override suspend fun addSchedule(
+        accessToken: String,
+        storeId: Int,
+        scheduleUpdate: ScheduleUpdate,
+    ): Boolean {
+        return dataSource.addSchedule(accessToken, storeId, scheduleUpdate)
     }
 
 

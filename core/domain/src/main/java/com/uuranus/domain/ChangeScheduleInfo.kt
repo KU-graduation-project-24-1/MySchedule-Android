@@ -12,9 +12,10 @@ class ChangeScheduleInfo @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        accessToken:String,
         storeId: Int,
         scheduleInfo: ScheduleUpdate,
     ): Boolean {
-        return repository.changeSchedule(storeId, scheduleInfo)
+        return repository.changeSchedule(accessToken,storeId, scheduleInfo)
     }
 }

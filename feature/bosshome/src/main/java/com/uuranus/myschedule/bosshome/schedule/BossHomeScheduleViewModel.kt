@@ -10,10 +10,12 @@ import com.uuranus.designsystem.calendar.getDashYMDDate
 import com.uuranus.domain.AddSchedule
 import com.uuranus.domain.DeleteSchedule
 import com.uuranus.domain.GetAllWorkersInfo
+import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.domain.UpdateSchedule
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.ScheduleUpdate
+import com.uuranus.model.UserData
 import com.uuranus.model.WorkerInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BossHomeScheduleViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getUserDataUseCase: GetUserDataUseCase,
     val getAllWorkersInfo: GetAllWorkersInfo,
     val updateSchedule: UpdateSchedule,
     val deleteSchedule: DeleteSchedule,
@@ -58,8 +61,22 @@ class BossHomeScheduleViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    private val _userData =
+        MutableStateFlow(
+            UserData(
+                -1,
+                0,
+                "",
+                "",
+                false
+            )
+        )
+
     init {
         viewModelScope.launch {
+            getUserDataUseCase().map {
+                _userData.value = it
+            }
             scheduleInfo.filterNotNull().flatMapLatest { scheduleInfo ->
                 flow {
                     emit(
@@ -101,6 +118,7 @@ class BossHomeScheduleViewModel @Inject constructor(
     fun editSchedule() {
         viewModelScope.launch {
             updateSchedule(
+                _userData.value.accessToken,
                 _myScheduleInfo.value.storeId,
                 ScheduleUpdate(
                     _myScheduleInfo.value.scheduleId,
@@ -116,6 +134,7 @@ class BossHomeScheduleViewModel @Inject constructor(
     fun deleteSchedule() {
         viewModelScope.launch {
             deleteSchedule(
+                _userData.value.accessToken,
                 _myScheduleInfo.value.scheduleId
             )
         }
@@ -124,6 +143,7 @@ class BossHomeScheduleViewModel @Inject constructor(
     fun addSchedule() {
         viewModelScope.launch {
             addSchedule(
+                _userData.value.accessToken,
                 _myScheduleInfo.value.storeId,
                 ScheduleUpdate(
                     -1,

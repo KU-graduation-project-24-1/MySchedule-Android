@@ -80,6 +80,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     getMonthlyScheduleUseCase(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         getDashYMDDate(_currentDate.value)
                     )
@@ -115,6 +116,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     requestFillIn(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         scheduleId,
                         _userData.value.memberId,
@@ -124,7 +126,7 @@ class HomeViewModel @Inject constructor(
                 val state = _homeUiState.value as HomeUiState.ScheduleSuccess
 
                 HomeUiState.ScheduleSuccess(
-                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
+                    schedules = state.schedules.mapValues { (_, scheduleInfo) ->
                         val schedules = scheduleInfo.schedules.map {
                             if (it.detail.scheduleId == scheduleId) {
                                 it.copy(
@@ -155,6 +157,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     acceptFillIn(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         scheduleId,
                         _userData.value.memberId
@@ -195,6 +198,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     getMonthlyPossibleTimesUseCase(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
                         getDashYMDDate(_currentDate.value)
                     )
@@ -230,6 +234,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     addPossibleTimesUseCase(
+                        _userData.value.accessToken,
                         _userData.value.memberId,
                         _userData.value.storeId,
                         getDashYMDDate(dateInfo),
@@ -281,6 +286,7 @@ class HomeViewModel @Inject constructor(
             flow {
                 emit(
                     deletePossibleTimeUseCase(
+                        _userData.value.accessToken,
                         _userData.value.memberId,
                         _userData.value.storeId,
                         storeMemberAvailableTimeId

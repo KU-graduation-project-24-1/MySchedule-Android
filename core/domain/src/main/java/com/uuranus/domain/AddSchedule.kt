@@ -9,9 +9,10 @@ class AddSchedule @Inject constructor(
     private val repository: HomeRepository,
 ) {
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
-        return repository.addSchedule(storeId, scheduleUpdate)
+        return repository.addSchedule(accessToken, storeId, scheduleUpdate)
     }
 }

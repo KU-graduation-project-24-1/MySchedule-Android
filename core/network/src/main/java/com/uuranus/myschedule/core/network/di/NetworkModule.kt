@@ -1,5 +1,6 @@
 package com.uuranus.myschedule.core.network.di
 
+import com.squareup.moshi.Moshi
 import com.uuranus.myschedule.core.network.service.MyScheduleService
 import dagger.Module
 import dagger.Provides
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -17,6 +19,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal object NetworkModule {
 
+    val moshi: Moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -24,27 +30,6 @@ internal object NetworkModule {
             .connectTimeout(10, TimeUnit.SECONDS) // 연결 시간 초과 설정
             .readTimeout(10, TimeUnit.SECONDS) // 읽기 시간 초과 설정
             .writeTimeout(10, TimeUnit.SECONDS)
-            .addInterceptor { chain ->
-                val request = chain.request()
-
-                try {
-                    val response = chain.proceed(request)
-                    val bodyString = response.body!!.string()
-                    return@addInterceptor response.newBuilder()
-                        .body(bodyString.toResponseBody(response.body?.contentType()))
-                        .build()
-                } catch (e: Exception) {
-                    when (e) {
-                        is SocketTimeoutException -> {
-                            throw SocketTimeoutException()
-                        }
-
-                        else -> throw e
-                        // Add additional errors... //
-
-                    }
-                }
-            }
             .build()
     }
 
@@ -54,7 +39,7 @@ internal object NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("http://3.39.59.95:9000")
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 

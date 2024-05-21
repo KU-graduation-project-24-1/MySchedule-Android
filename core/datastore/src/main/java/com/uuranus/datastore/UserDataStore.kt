@@ -19,14 +19,20 @@ class UserDataStore @Inject constructor(
 //                memberId = preferences.memberId,
 //                name = preferences.name,
 //                workerType = preferences.workerType,
-//                isLoggedIn = preferences.isLoggedIn
+//                isLoggedIn = preferences.isLoggedIn,
+//                storeName = preferences.storeName,
+//                accessToken = preferences.accessToken,
+//                refreshToken = preferences.refreshToken
 //            )
             UserData(
-                storeId = 1,
+                storeId = 2,
                 memberId = 1,
                 name = "김알바",
                 workerType = "사장",
-                isLoggedIn = true
+                isLoggedIn = true,
+                storeName = "ㅁㅁ 떡볶이 건대입구점",
+                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwiaWF0IjoxNzE2MjE3NDE5LCJleHAiOjE3NDc3NTM0MTl9.3Etu1SIueL83j5SQ0ClXPM2gF97HP1Q-l-SwFL5nCBU",
+                refreshToken = ""
             )
         }
 
@@ -39,6 +45,9 @@ class UserDataStore @Inject constructor(
                     name = userData.name
                     workerType = userData.workerType
                     isLoggedIn = userData.isLoggedIn
+                    storeName = userData.storeName
+                    accessToken = userData.accessToken
+                    refreshToken = userData.refreshToken
                 }
             }
         } catch (ioException: IOException) {
