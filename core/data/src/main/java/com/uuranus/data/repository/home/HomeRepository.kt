@@ -55,6 +55,7 @@ interface HomeRepository {
 
     suspend fun deleteSchedule(
         accessToken: String,
+        storeId: Int,
         scheduleId: Int,
     ): Boolean
 

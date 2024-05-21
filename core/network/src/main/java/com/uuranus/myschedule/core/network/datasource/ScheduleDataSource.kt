@@ -54,6 +54,7 @@ interface ScheduleDataSource {
 
     suspend fun deleteSchedule(
         accessToken: String,
+        storeId: Int,
         scheduleId: Int,
     ): Boolean
 

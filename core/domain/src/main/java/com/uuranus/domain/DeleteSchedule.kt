@@ -10,7 +10,8 @@ class DeleteSchedule @Inject constructor(
     suspend operator fun invoke(
         accessToken: String,
         storeId: Int,
+        scheduleId: Int,
     ): Boolean {
-        return repository.deleteSchedule(accessToken, storeId)
+        return repository.deleteSchedule(accessToken, storeId, scheduleId)
     }
 }

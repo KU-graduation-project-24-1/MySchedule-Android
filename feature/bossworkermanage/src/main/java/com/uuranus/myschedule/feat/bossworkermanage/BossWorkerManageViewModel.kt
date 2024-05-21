@@ -48,6 +48,7 @@ class BossWorkerManageViewModel @Inject constructor(
                 flow {
                     emit(
                         getAllWorkersInfo(
+                            userData.accessToken,
                             userData.storeId
                         )
                     )
@@ -66,12 +67,20 @@ class BossWorkerManageViewModel @Inject constructor(
 
     fun deleteWorker(workerId: Int) {
         viewModelScope.launch {
-            flow { emit(deleteWorker(_userData.value.storeId, workerId)) }
+            flow {
+                emit(
+                    deleteWorker(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        workerId
+                    )
+                )
+            }
                 .map {
                     val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
                     BossWorkerMangeUiState.Success(
                         state.workers.filterNot {
-                            it.memeberId == workerId
+                            it.memberId == workerId
                         }
                     )
                 }.catch {
@@ -84,12 +93,21 @@ class BossWorkerManageViewModel @Inject constructor(
 
     fun editWorker(workerId: Int, workerType: String) {
         viewModelScope.launch {
-            flow { emit(editWorkerType(_userData.value.storeId, workerId, workerType)) }
+            flow {
+                emit(
+                    editWorkerType(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        workerId,
+                        workerType
+                    )
+                )
+            }
                 .map {
                     val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
                     BossWorkerMangeUiState.Success(
                         state.workers.map {
-                            if (it.memeberId == workerId) {
+                            if (it.memberId == workerId) {
                                 it.copy(workerType = workerType)
                             } else {
                                 it

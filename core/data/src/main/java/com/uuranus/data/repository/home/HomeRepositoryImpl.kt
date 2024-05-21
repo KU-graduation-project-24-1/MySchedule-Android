@@ -86,8 +86,11 @@ class HomeRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteSchedule(accessToken: String, scheduleId: Int): Boolean {
-        return dataSource.deleteSchedule(accessToken, scheduleId)
+    override suspend fun deleteSchedule(
+        accessToken: String,
+        storeId: Int, scheduleId: Int,
+    ): Boolean {
+        return dataSource.deleteSchedule(accessToken, storeId, scheduleId)
     }
 
     override suspend fun addSchedule(

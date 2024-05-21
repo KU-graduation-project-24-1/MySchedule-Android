@@ -1,6 +1,9 @@
 package com.uuranus.myschedule.core.network.model.mapper
 
 import com.uuranus.model.MyScheduleInfo
+import com.uuranus.model.WorkerInfo
+import com.uuranus.myschedule.core.network.model.Employee
+import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
 import com.uuranus.myschedule.core.network.model.WorkData
 
@@ -27,3 +30,15 @@ internal fun WorkData.toData(): MyScheduleInfo {
         isFillInNeeded = coverRequested
     )
 }
+
+internal fun GetAllWorkersResult.toData(): List<WorkerInfo> {
+    return employees.map {
+        it.toData()
+    }
+}
+
+internal fun Employee.toData(): WorkerInfo = WorkerInfo(
+    memberId = memberId,
+    workerName = name,
+    workerType = memberGrade
+)

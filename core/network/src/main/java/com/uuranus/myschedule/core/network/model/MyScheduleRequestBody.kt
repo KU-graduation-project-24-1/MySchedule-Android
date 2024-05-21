@@ -2,8 +2,8 @@ package com.uuranus.myschedule.core.network.model
 
 data class PostPossibleTimeBody(
     val storeId: Int,
-    val dateDashYMDString: String,
-    val starTime: String,
+    val date: String,
+    val startTime: String,
     val endTime: String,
 )
 
@@ -26,15 +26,15 @@ data class DeleteWorkerBody(
 data class PostScheduleBody(
     val storeId: Int,
     val employeeId: Int,
-    val dateDashYMDString: String,
-    val starTime: String,
+    val date: String,
+    val startTime: String,
     val endTime: String,
 )
 
 data class PatchScheduleBody(
     val scheduleId: Int,
     val employeeId: Int,
-    val starTime: String,
+    val startTime: String,
     val endTime: String,
 )
 

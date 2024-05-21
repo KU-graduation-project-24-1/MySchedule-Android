@@ -84,9 +84,9 @@ interface MyScheduleService {
     suspend fun postSchedule(
         @Header("Authorization") authorization: String,
         @Body body: PostScheduleBody,
-    ): Response<ApiResponse<PostScheduleResult>>
+    ): Response<ApiResponse<Any>>
 
-    @PATCH("/executive/employee/grade")
+    @PATCH("/executive/schedule")
     suspend fun patchSchedule(
         @Header("Authorization") authorization: String,
         @Body body: PatchScheduleBody,

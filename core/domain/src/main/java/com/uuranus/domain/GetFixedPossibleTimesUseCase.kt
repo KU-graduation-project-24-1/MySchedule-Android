@@ -8,7 +8,8 @@ class GetFixedPossibleTimesUseCase @Inject constructor(
     private val repository: MyPageRepository,
 ) {
     suspend operator fun invoke(
+        accessToken:String,
     ): List<List<TimeRange>> {
-        return repository.getFixedPossibleTimes()
+        return repository.getFixedPossibleTimes(accessToken)
     }
 }

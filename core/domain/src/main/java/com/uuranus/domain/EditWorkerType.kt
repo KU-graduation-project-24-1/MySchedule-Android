@@ -7,10 +7,11 @@ class EditWorkerType @Inject constructor(
     private val repository: WorkerManageRepository,
 ) {
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
         memberId: Int,
         workerType: String,
     ): Boolean {
-        return repository.changeWorkerType(storeId, memberId, workerType)
+        return repository.changeWorkerType(accessToken, storeId, memberId, workerType)
     }
 }

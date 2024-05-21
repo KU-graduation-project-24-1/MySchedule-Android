@@ -147,7 +147,7 @@ fun WorkerInfoListItem(
                     contentDescription = "직원 고용형태 수정",
                     modifier = Modifier.clickable {
                         showEditDialog = true
-                        selectedWorker = workerInfo.memeberId
+                        selectedWorker = workerInfo.memberId
                     }
                 )
 
@@ -158,7 +158,7 @@ fun WorkerInfoListItem(
             contentDescription = "직원 삭제",
             modifier = Modifier.clickable {
                 showDeleteDialog = true
-                selectedWorker = workerInfo.memeberId
+                selectedWorker = workerInfo.memberId
             }
         )
 

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class MyPageDataSourceImpl @Inject constructor(
 //    private val service: MyScheduleService,
 ) : MyPageDataSource {
-    override suspend fun getFixedPossibleTimes(): List<List<TimeRange>> {
+    override suspend fun getFixedPossibleTimes(accessToken: String): List<List<TimeRange>> {
         return listOf(
             emptyList(),
             emptyList(),
@@ -19,11 +19,11 @@ class MyPageDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun addFixedPossibleTime(): String {
+    override suspend fun addFixedPossibleTime(accessToken: String): String {
         return "고정 시간 추가 성공"
     }
 
-    override suspend fun getStoreSalesInformation(): List<StoreSalesInformation> {
+    override suspend fun getStoreSalesInformation(accessToken: String): List<StoreSalesInformation> {
         return listOf(
             StoreSalesInformation(1, emptyList()),
             StoreSalesInformation(2, emptyList()),
@@ -35,9 +35,7 @@ class MyPageDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun addStoreOpeningHourTime(
-        storeId: Int,
-    ): Boolean {
+    override suspend fun addStoreOpeningHourTime(accessToken: String, storeId: Int): Boolean {
         return true
     }
 }

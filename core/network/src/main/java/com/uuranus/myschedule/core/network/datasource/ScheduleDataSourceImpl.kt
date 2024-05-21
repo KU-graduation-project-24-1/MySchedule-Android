@@ -1,105 +1,15 @@
 package com.uuranus.myschedule.core.network.datasource
 
+import android.util.Log
 import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.ScheduleUpdate
 import com.uuranus.model.WorkerInfo
+import com.uuranus.myschedule.core.network.model.PatchScheduleBody
+import com.uuranus.myschedule.core.network.model.PostScheduleBody
 import com.uuranus.myschedule.core.network.model.mapper.toData
 import com.uuranus.myschedule.core.network.service.MyScheduleService
 import javax.inject.Inject
-
-private var schedules = hashMapOf(
-    "2024-05-16" to listOf(
-        MyScheduleInfo(
-            scheduleId = 9,
-            startTime = "18:00",
-            endTime = "23:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        )
-    ),
-    "2024-05-20" to listOf(
-        MyScheduleInfo(
-            scheduleId = 8,
-            startTime = "18:00",
-            endTime = "23:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        )
-    ),
-    "2024-05-23" to listOf(
-        MyScheduleInfo(
-            scheduleId = 7,
-            startTime = "18:00",
-            endTime = "23:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        )
-    ),
-    "2024-05-27" to listOf(
-        MyScheduleInfo(
-            scheduleId = 6,
-            startTime = "18:00",
-            endTime = "23:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        )
-    ),
-    "2024-06-30" to listOf(
-        MyScheduleInfo(
-            scheduleId = 5,
-            startTime = "08:00",
-            endTime = "13:00",
-            memberId = 1,
-            workerName = "이직원",
-            workerType = "매니저",
-            isMine = false,
-            isFillInNeeded = false
-        ),
-        MyScheduleInfo(
-            scheduleId = 3,
-            startTime = "12:00",
-            endTime = "15:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        ),
-        MyScheduleInfo(
-            scheduleId = 4,
-            startTime = "15:00",
-            endTime = "23:59",
-            memberId = 1,
-            workerName = "이직원",
-            workerType = "매니저",
-            isMine = false,
-            isFillInNeeded = true
-        ),
-        MyScheduleInfo(
-            scheduleId = 2,
-            startTime = "18:00",
-            endTime = "23:00",
-            memberId = 2,
-            workerName = "김알바",
-            workerType = "아르바이트",
-            isMine = true,
-            isFillInNeeded = false
-        )
-    )
-)
 
 private val possibleSchedules = hashMapOf(
     "2024-05-13" to listOf(
@@ -223,31 +133,41 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
-        schedules = schedules.mapValues { (dateInfo, schedules) ->
-            //List<MyScheduleInfo>
-            schedules.map { schedule: MyScheduleInfo ->
-                if (schedule.scheduleId == scheduleUpdate.scheduleId) {
-                    schedule.copy(
-                        startTime = scheduleUpdate.startTime,
-                        endTime = scheduleUpdate.endTime,
-                        memberId = scheduleUpdate.memberId
-                    )
-                } else {
-                    schedule
-                }
-            }
-        } as HashMap<String, List<MyScheduleInfo>>
-        return true
+        println("change $scheduleUpdate")
+        val response = service.patchSchedule(
+            "Bearer $accessToken",
+            PatchScheduleBody(
+                scheduleId = scheduleUpdate.scheduleId,
+                employeeId = scheduleUpdate.memberId,
+                startTime = scheduleUpdate.startTime,
+                endTime = scheduleUpdate.endTime
+            )
+        )
+        println("Response ${response.body()}")
+        if (response.isSuccessful) {
+            return true
+        } else {
+            Log.e("마이스케줄", response.body()?.code.toString())
+            throw Exception(response.body()?.message ?: "")
+        }
     }
 
-    override suspend fun deleteSchedule(accessToken: String, scheduleId: Int): Boolean {
-        schedules = schedules.mapValues { (dateInfo, schedules) ->
-            //List<MyScheduleInfo>
-            schedules.filterNot { schedule: MyScheduleInfo ->
-                schedule.scheduleId == scheduleId
-            }
-        } as HashMap<String, List<MyScheduleInfo>>
-        return true
+    override suspend fun deleteSchedule(
+        accessToken: String,
+        storeId: Int,
+        scheduleId: Int,
+    ): Boolean {
+        val response = service.deleteSchedule(
+            "Bearer $accessToken",
+            storeId = storeId,
+            scheduleId = scheduleId
+        )
+        if (response.isSuccessful) {
+            return true
+        } else {
+            Log.e("마이스케줄", response.body()?.code.toString())
+            throw Exception(response.body()?.message ?: "")
+        }
     }
 
     override suspend fun addSchedule(
@@ -255,7 +175,22 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         scheduleUpdate: ScheduleUpdate,
     ): Boolean {
-        val response =
+        val response = service.postSchedule(
+            "Bearer $accessToken",
+            PostScheduleBody(
+                storeId,
+                scheduleUpdate.memberId,
+                scheduleUpdate.dateDashString,
+                scheduleUpdate.startTime,
+                scheduleUpdate.endTime
+            )
+        )
+        println("addschedule ${response.body()}")
+        if (response.isSuccessful) {
             return true
+        } else {
+            Log.e("마이스케줄", response.body()?.code.toString())
+            throw Exception(response.body()?.message ?: "")
+        }
     }
 }

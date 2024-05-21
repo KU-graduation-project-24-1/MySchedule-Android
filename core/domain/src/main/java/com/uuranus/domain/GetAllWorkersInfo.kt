@@ -10,8 +10,9 @@ class GetAllWorkersInfo @Inject constructor(
     private val repository: WorkerManageRepository,
 ) {
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
     ): List<WorkerInfo> {
-        return repository.getAllWorkers(storeId)
+        return repository.getAllWorkers(accessToken, storeId)
     }
 }

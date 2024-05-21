@@ -1,7 +1,7 @@
 package com.uuranus.model
 
 data class WorkerInfo(
-    val memeberId: Int,
+    val memberId: Int,
     val workerName: String,
     val workerType: String,
 )

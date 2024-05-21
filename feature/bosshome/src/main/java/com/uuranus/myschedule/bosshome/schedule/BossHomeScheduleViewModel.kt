@@ -1,6 +1,5 @@
 package com.uuranus.myschedule.bosshome.schedule
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,25 +11,21 @@ import com.uuranus.domain.DeleteSchedule
 import com.uuranus.domain.GetAllWorkersInfo
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.domain.UpdateSchedule
-import com.uuranus.model.MyScheduleInfo
 import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.ScheduleUpdate
 import com.uuranus.model.UserData
 import com.uuranus.model.WorkerInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +37,10 @@ class BossHomeScheduleViewModel @Inject constructor(
     val deleteSchedule: DeleteSchedule,
     val addSchedule: AddSchedule,
 ) : ViewModel() {
+
+    private val _errorFlow = MutableSharedFlow<Throwable>()
+    val errorFlow: SharedFlow<Throwable> get() = _errorFlow
+
     private val scheduleInfo =
         savedStateHandle.getStateFlow<MyScheduleNavType?>("scheduleInfo", null)
 
@@ -50,16 +49,8 @@ class BossHomeScheduleViewModel @Inject constructor(
 
     val myScheduleInfo: StateFlow<BossScheduleEditInfo> = _myScheduleInfo.asStateFlow()
 
-    val workers: StateFlow<List<WorkerInfo>> =
-        scheduleInfo.filterNotNull().flatMapLatest { scheduleInfo ->
-            flow { emit(getAllWorkersInfo(scheduleInfo.storeId)) }
-        }.catch {
-
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList()
-        )
+    private val _workers: MutableStateFlow<List<WorkerInfo>> = MutableStateFlow(emptyList())
+    val workers: StateFlow<List<WorkerInfo>> = _workers
 
     private val _userData =
         MutableStateFlow(
@@ -74,24 +65,32 @@ class BossHomeScheduleViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserDataUseCase().map {
-                _userData.value = it
-            }
-            scheduleInfo.filterNotNull().flatMapLatest { scheduleInfo ->
+            getUserDataUseCase().flatMapLatest { userData ->
+                _userData.value = userData
+
+                scheduleInfo.filterNotNull()
+            }.flatMapLatest { myScheduleNavType ->
+                _myScheduleInfo.value = BossScheduleEditInfo(
+                    storeId = myScheduleNavType.storeId,
+                    scheduleId = myScheduleNavType.scheduleId,
+                    dateInfo = myScheduleNavType.dateDashString.dashToDateInfo(),
+                    startTime = myScheduleNavType.startTime,
+                    endTime = myScheduleNavType.endTime,
+                    memberId = myScheduleNavType.memberId,
+                )
+                println("myscheduleInfo ${_myScheduleInfo.value}")
                 flow {
                     emit(
-                        BossScheduleEditInfo(
-                            storeId = scheduleInfo.storeId,
-                            scheduleId = scheduleInfo.scheduleId,
-                            dateInfo = scheduleInfo.dateDashString.dashToDateInfo(),
-                            startTime = scheduleInfo.startTime,
-                            endTime = scheduleInfo.endTime,
-                            memberId = scheduleInfo.memberId,
+                        getAllWorkersInfo(
+                            _userData.value.accessToken,
+                            myScheduleNavType.storeId
                         )
                     )
                 }
+            }.catch {
+                _errorFlow.emit(it)
             }.collect {
-                _myScheduleInfo.value = it
+                _workers.value = it
             }
         }
 
@@ -135,6 +134,7 @@ class BossHomeScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             deleteSchedule(
                 _userData.value.accessToken,
+                _userData.value.storeId,
                 _myScheduleInfo.value.scheduleId
             )
         }

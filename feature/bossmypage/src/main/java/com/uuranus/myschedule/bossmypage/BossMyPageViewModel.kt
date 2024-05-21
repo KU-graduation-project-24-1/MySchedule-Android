@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -51,18 +52,13 @@ class BossMyPageViewModel @Inject constructor(
     val bossMypageUiState: StateFlow<BossMyPageUiState> = _bossMypageUiState
 
     init {
-        viewModelScope.launch {
 
-            getUserDataUseCase().catch {
-                _errorFlow.emit(it)
-            }.collect {
+        viewModelScope.launch {
+            getUserDataUseCase().flatMapLatest {
                 _userData.value = it
-            }
-        }
-
-        viewModelScope.launch {
-            flow {
-                emit(getSalesInformationUseCase())
+                flow {
+                    emit(getSalesInformationUseCase(it.accessToken))
+                }
             }.map {
                 BossMyPageUiState.Success(
                     salesInformation = it
@@ -125,7 +121,7 @@ class BossMyPageViewModel @Inject constructor(
         }
     }
 
-    fun quit(){
+    fun quit() {
         viewModelScope.launch {
 
         }
