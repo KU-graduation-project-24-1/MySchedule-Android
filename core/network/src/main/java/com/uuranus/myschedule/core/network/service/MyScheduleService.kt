@@ -12,7 +12,7 @@ interface MyScheduleService {
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
         @Path("dateYM") dateYM: String,
-    ): Response<MonthlyScheduleResponse>
+    ): Response<Any>
 
 
     @GET("/executive/{storeId}/employee")

@@ -53,7 +53,7 @@ internal object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("http://3.39.59.95:9000/")
+            .baseUrl("http://3.39.59.95:9000")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }
