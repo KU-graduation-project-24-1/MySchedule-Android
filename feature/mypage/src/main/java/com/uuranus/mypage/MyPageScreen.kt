@@ -11,25 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,19 +31,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.designsystem.component.DeleteDialog
 import com.uuranus.designsystem.component.LoadingScreen
 import com.uuranus.designsystem.component.MyScheduleAppBar
-import com.uuranus.designsystem.component.NetworkImage
 import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.TimeRange
 import com.uuranus.myschedule.core.common.mypage.MyInfo
 import com.uuranus.myschedule.core.designsystem.R
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 
 @Composable
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onShowSnackbar: suspend (Throwable) -> Unit,
 ) {
 
     val myPageUiState by myPageViewModel.mypageUiState.collectAsStateWithLifecycle()
@@ -59,20 +51,9 @@ fun MyPageScreen(
         mutableStateOf(false)
     }
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val snackBarHostState = remember { SnackbarHostState() }
-
     LaunchedEffect(true) {
         myPageViewModel.errorFlow.collectLatest { throwable ->
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(
-                    when (throwable) {
-                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
-                        else -> "알 수 없는 오류가 발생했습니다"
-                    }
-                )
-            }
+            onShowSnackbar(throwable)
         }
     }
 

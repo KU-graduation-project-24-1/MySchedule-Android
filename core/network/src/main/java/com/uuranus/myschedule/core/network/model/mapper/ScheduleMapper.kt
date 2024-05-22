@@ -9,6 +9,7 @@ import com.uuranus.myschedule.core.network.model.Employee
 import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyPossibleTimesResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
+import com.uuranus.myschedule.core.network.model.PatchScheduleResult
 import com.uuranus.myschedule.core.network.model.WorkData
 
 internal fun GetMonthlyScheduleResult.toData(): HashMap<String, List<MyScheduleInfo>> {
@@ -63,3 +64,4 @@ internal fun AvailableTimesInDay.toData(): MyPossibleTimeInfo = MyPossibleTimeIn
     startTime = startTime,
     endTime = endTime
 )
+

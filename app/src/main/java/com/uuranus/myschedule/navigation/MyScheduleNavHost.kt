@@ -24,12 +24,13 @@ fun LoginNavHost(
 @Composable
 fun MyScheduleNavHost(
     navHostController: NavHostController,
+    onShowSnackbar: suspend (Throwable) -> Unit
 ) {
     NavHost(
         navController = navHostController,
         startDestination = MyScheduleScreens.Home.route,
     ) {
-        myScheduleNavigation()
+        myScheduleNavigation(onShowSnackbar)
     }
 
 }
@@ -37,12 +38,13 @@ fun MyScheduleNavHost(
 @Composable
 fun BossNavHost(
     navHostController: NavHostController,
+    onShowSnackbar: suspend (Throwable) -> Unit
 ) {
     NavHost(
         navController = navHostController,
         startDestination = MyScheduleScreens.BossHome.route,
     ) {
-        bossNavigation()
+        bossNavigation(onShowSnackbar)
     }
 
 }

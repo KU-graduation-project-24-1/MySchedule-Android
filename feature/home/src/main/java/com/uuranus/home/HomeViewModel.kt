@@ -164,28 +164,46 @@ class HomeViewModel @Inject constructor(
                         _userData.value.memberId
                     )
                 )
-            }.map {
+            }.map { result ->
                 val state = _homeUiState.value as HomeUiState.ScheduleSuccess
 
-                HomeUiState.ScheduleSuccess(
-                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
-                        val schedules = scheduleInfo.schedules.map {
-                            if (it.detail.scheduleId == scheduleId) {
-                                it.copy(
-                                    detail = it.detail.copy(
-                                        isFillInNeeded = false
+                if (result) {
+                    HomeUiState.ScheduleSuccess(
+                        schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                            val schedules = scheduleInfo.schedules.map {
+                                if (it.detail.scheduleId == scheduleId) {
+                                    it.copy(
+                                        detail = it.detail.copy(
+                                            memberId = _userData.value.memberId,
+                                            workerName = _userData.value.name,
+                                            workerType = _userData.value.workerType,
+                                            isFillInNeeded = false
+                                        )
                                     )
-                                )
-                            } else {
-                                it
+                                } else {
+                                    it
+                                }
                             }
+                            scheduleInfo.copy(
+                                isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                                schedules = schedules
+                            )
                         }
-                        scheduleInfo.copy(
-                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
-                            schedules = schedules
-                        )
-                    }
-                )
+                    )
+                } else {
+                    HomeUiState.ScheduleSuccess(
+                        schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                            val schedules = scheduleInfo.schedules.filterNot {
+                                it.detail.scheduleId == scheduleId
+                            }
+                            scheduleInfo.copy(
+                                isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                                schedules = schedules
+                            )
+                        }
+                    )
+                }
+
             }.catch {
                 _errorFlow.emit(it)
             }.collect {
@@ -242,8 +260,9 @@ class HomeViewModel @Inject constructor(
                         endTime
                     )
                 )
-            }.map {
+            }.map { storeAvailableScheduleId ->
                 val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
+
                 if (cur.schedules.containsKey(dateInfo)) {
                     HomeUiState.PossibleTimeSuccess(
                         schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
@@ -254,7 +273,7 @@ class HomeViewModel @Inject constructor(
                                             startTime,
                                             Color.White,
                                             MyPossibleTimeInfo(
-                                                it, startTime, endTime
+                                                storeAvailableScheduleId, startTime, endTime
                                             )
                                         )
                                     ).sortedBy { it.detail.startTime }
@@ -262,21 +281,31 @@ class HomeViewModel @Inject constructor(
                             } else {
                                 scheduleInfo
                             }
-                        }
+                        } as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
                     )
                 } else {
+                    val newScheduleData = ScheduleData(
+                        startTime,
+                        Color.White,
+                        MyPossibleTimeInfo(
+                            storeAvailableScheduleId, startTime, endTime
+                        )
+                    )
+
+                    val updatedSchedules = HashMap(cur.schedules)
+
+                    val existingSchedules = updatedSchedules[dateInfo]?.schedules ?: emptyList()
+
+                    val updatedScheduleList =
+                        existingSchedules.plus(newScheduleData).sortedBy { it.detail.startTime }
+
+                    updatedSchedules[dateInfo] = ScheduleInfo(
+                        isCheckNeeded = false,
+                        schedules = updatedScheduleList
+                    )
+
                     HomeUiState.PossibleTimeSuccess(
-                        schedules = cur.schedules.plus(
-                            dateInfo to listOf(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
-                                    )
-                                )
-                            ).sortedBy { it.detail.startTime }
-                        ) as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
+                        schedules = updatedSchedules
                     )
                 }
 

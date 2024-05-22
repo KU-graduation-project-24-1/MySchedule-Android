@@ -18,6 +18,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -49,11 +50,11 @@ interface MyScheduleService {
         @Body body: PostPossibleTimeBody,
     ): Response<ApiResponse<PostPossibleTime>>
 
-    @DELETE("/store/schedule/available")
+    @HTTP(method = "DELETE", path = "/store/schedule/available", hasBody = true)
     suspend fun deletePossibleTime(
         @Header("Authorization") authorization: String,
         @Body body: DeletePossibleTimeBody,
-    ): Response<ApiResponse<PostPossibleTime>>
+    ): Response<ApiResponse<String>>
 
     @POST("/store/schedule/{scheduleId}/cover")
     suspend fun postScheduleCover(
@@ -80,7 +81,7 @@ interface MyScheduleService {
         @Body body: PatchWorkerTypeBody,
     ): Response<ApiResponse<String>>
 
-    @DELETE("/executive/employee")
+    @HTTP(method = "DELETE", path = "/executive/employee", hasBody = true)
     suspend fun deleteWorker(
         @Header("Authorization") authorization: String,
         @Body body: DeleteWorkerBody,
