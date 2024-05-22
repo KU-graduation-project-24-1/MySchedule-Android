@@ -30,6 +30,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
 import androidx.compose.runtime.CompositionLocalProvider
 import com.uuranus.myschedule.ui.LoginMain
+import com.uuranus.myschedule.ui.StoreListMain
 import com.uuranus.navigation.AppComposeNavigator
 import javax.inject.Inject
 
@@ -78,16 +79,27 @@ class LoginActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 loginViewModel.userData.collectLatest {data ->
-                    if (data.isLoggedIn && data.name.isNotEmpty()) {
-                        startActivity(
-                            Intent(
-                                this@LoginActivity,
-                                MainActivity::class.java,
-                            ).apply {
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    if(data.isLoggedIn)  //카톡 로그인함
+                    {
+                        if(data.name.isNotEmpty())  // 기존계정
+                        {
+                            setContent {
+                                CompositionLocalProvider {
+                                    StoreListMain(composeNavigator = composeNavigator)
+                                }
                             }
-                        )
-                        finish()
+                        }
+                        else if(data.storeId>-1){  // 기존 계정이고 가게를 고른경우
+                            startActivity(
+                                Intent(
+                                    this@LoginActivity,
+                                    MainActivity::class.java,
+                                ).apply {
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                }
+                            )
+                            finish()
+                        }
                     } else {
                         setContent {
                             CompositionLocalProvider {
@@ -129,7 +141,6 @@ fun onClickLogin(context: Context) {
         } else if (token != null) {
             Log.i("로그인", "카카오계정으로 로그인 성공 ${token.idToken}")
             // 서버에 idToken과 Fcm토큰 로그인 API - 요청에 성공하면 그때서야 viewmodel.updateLoginStatus(true)
-            // 저 값이 바뀌면 바로 홈화면이라 안되는데 변수를 하나 따로 둬야할거같은데
         }
     }
 

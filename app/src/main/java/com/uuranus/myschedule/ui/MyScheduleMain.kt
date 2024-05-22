@@ -17,6 +17,7 @@ import com.uuranus.login.LoginViewModel
 import com.uuranus.myschedule.navigation.BossNavHost
 import com.uuranus.myschedule.navigation.LoginNavHost
 import com.uuranus.myschedule.navigation.MyScheduleNavHost
+import com.uuranus.myschedule.navigation.StoreListNavHost
 import com.uuranus.navigation.AppComposeNavigator
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
@@ -34,6 +35,21 @@ fun LoginMain(
         }
 
         LoginNavHost(navHostController = navHostController, viewModel, onClickLogin)
+    }
+}
+
+@Composable
+fun StoreListMain(
+    composeNavigator: AppComposeNavigator,
+) {
+    MyScheduleTheme {
+        val navHostController = rememberNavController()
+
+        LaunchedEffect(Unit) {
+            composeNavigator.handleNavigationCommands(navHostController)
+        }
+
+        StoreListNavHost(navHostController = navHostController)
     }
 }
 

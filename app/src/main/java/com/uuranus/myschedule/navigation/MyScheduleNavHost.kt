@@ -22,6 +22,19 @@ fun LoginNavHost(
 }
 
 @Composable
+fun StoreListNavHost(
+    navHostController: NavHostController
+) {
+    NavHost(
+        navController = navHostController,
+        startDestination = MyScheduleScreens.StoreList.route,
+    ) {
+        storeListNavigation()
+    }
+
+}
+
+@Composable
 fun MyScheduleNavHost(
     navHostController: NavHostController,
     onShowSnackbar: suspend (Throwable) -> Unit
