@@ -32,6 +32,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.uuranus.myschedule.ui.LoginMain
 import com.uuranus.myschedule.ui.StoreListMain
 import com.uuranus.navigation.AppComposeNavigator
+import com.uuranus.navigation.LocalComposeNavigator
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -84,7 +85,8 @@ class LoginActivity : ComponentActivity() {
                         if(data.name.isNotEmpty())  // 기존계정
                         {
                             setContent {
-                                CompositionLocalProvider {
+                                CompositionLocalProvider (LocalComposeNavigator provides composeNavigator
+                                ){
                                     StoreListMain(composeNavigator = composeNavigator)
                                 }
                             }
@@ -102,7 +104,8 @@ class LoginActivity : ComponentActivity() {
                         }
                     } else {
                         setContent {
-                            CompositionLocalProvider {
+                            CompositionLocalProvider(LocalComposeNavigator provides composeNavigator
+                            ) {
                                 LoginMain(composeNavigator = composeNavigator,loginViewModel, onClickLogin= ::onClickLogin)
                             }
                         }

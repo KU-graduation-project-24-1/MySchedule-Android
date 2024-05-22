@@ -94,7 +94,7 @@ fun StoreItem(store: Store) {
             }
             Row {
                 IconButton(onClick = {
-                    //clipboardManager.setText(AnnotatedString(store.name))
+                    //copy
                 }) {
                     Icon(Icons.Filled.ContentCopy, contentDescription = "Copy")
                 }
