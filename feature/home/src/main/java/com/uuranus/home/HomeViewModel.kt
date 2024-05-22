@@ -8,11 +8,14 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
+import com.uuranus.designsystem.calendar.getDashYMDate
+import com.uuranus.domain.AcceptFillInUseCase
 import com.uuranus.domain.AddPossibleTimeUseCase
 import com.uuranus.domain.DeletePossibleTimeUseCase
 import com.uuranus.domain.GetMonthlyPossibleTimesUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
+import com.uuranus.domain.RequestFillInUseCase
 import com.uuranus.model.MyPossibleTimeInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -31,6 +35,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
+    private val requestFillIn: RequestFillInUseCase,
+    private val acceptFillIn: AcceptFillInUseCase,
     private val getMonthlyPossibleTimesUseCase: GetMonthlyPossibleTimesUseCase,
     private val addPossibleTimesUseCase: AddPossibleTimeUseCase,
     private val deletePossibleTimeUseCase: DeletePossibleTimeUseCase,
@@ -42,7 +48,7 @@ class HomeViewModel @Inject constructor(
     private val _userData =
         MutableStateFlow(
             com.uuranus.model.UserData(
-                0,
+                -1,
                 0,
                 "",
                 "",
@@ -56,15 +62,10 @@ class HomeViewModel @Inject constructor(
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-
-            getUserDataUseCase().map {
-                _userData.value = it
-            }
-        }
         getMonthlySchedules()
     }
 
+    fun getUserData() = _userData.value
     fun setCurrentDate(dateInfo: DateInfo) {
         _currentDate.value = dateInfo
     }
@@ -73,13 +74,18 @@ class HomeViewModel @Inject constructor(
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
-            flow {
-                emit(
-                    getMonthlyScheduleUseCase(
-                        _userData.value.storeId,
-                        getDashYMDDate(_currentDate.value)
+            getUserDataUseCase().flatMapLatest {
+                _userData.value = it
+
+                flow {
+                    emit(
+                        getMonthlyScheduleUseCase(
+                            _userData.value.accessToken,
+                            _userData.value.storeId,
+                            getDashYMDate(_currentDate.value)
+                        )
                     )
-                )
+                }
             }.map { schedules ->
 
                 HomeUiState.ScheduleSuccess(
@@ -106,13 +112,96 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun requestFillIn(scheduleId: Int) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    requestFillIn(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        scheduleId,
+                        _userData.value.memberId,
+                    )
+                )
+            }.map {
+                val state = _homeUiState.value as HomeUiState.ScheduleSuccess
+
+                HomeUiState.ScheduleSuccess(
+                    schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                        val schedules = scheduleInfo.schedules.map {
+                            if (it.detail.scheduleId == scheduleId) {
+                                it.copy(
+                                    detail = it.detail.copy(
+                                        isFillInNeeded = true
+                                    )
+                                )
+                            } else {
+                                it
+                            }
+                        }
+                        scheduleInfo.copy(
+                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                            schedules = schedules
+                        )
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _homeUiState.value = it
+            }
+        }
+    }
+
+    fun acceptFillIn(scheduleId: Int) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    acceptFillIn(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        scheduleId,
+                        _userData.value.memberId
+                    )
+                )
+            }.map {
+                val state = _homeUiState.value as HomeUiState.ScheduleSuccess
+
+                HomeUiState.ScheduleSuccess(
+                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
+                        val schedules = scheduleInfo.schedules.map {
+                            if (it.detail.scheduleId == scheduleId) {
+                                it.copy(
+                                    detail = it.detail.copy(
+                                        isFillInNeeded = false
+                                    )
+                                )
+                            } else {
+                                it
+                            }
+                        }
+                        scheduleInfo.copy(
+                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                            schedules = schedules
+                        )
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _homeUiState.value = it
+            }
+        }
+    }
+
     fun getMonthlyPossibleTimes() {
         viewModelScope.launch {
             flow {
                 emit(
                     getMonthlyPossibleTimesUseCase(
+                        _userData.value.accessToken,
                         _userData.value.storeId,
-                        getDashYMDDate(_currentDate.value)
+                        getDashYMDate(_currentDate.value)
                     )
                 )
             }.map { schedules ->
@@ -142,10 +231,10 @@ class HomeViewModel @Inject constructor(
 
     fun addPossibleTime(dateInfo: DateInfo, startTime: String, endTime: String) {
         viewModelScope.launch {
-
             flow {
                 emit(
                     addPossibleTimesUseCase(
+                        _userData.value.accessToken,
                         _userData.value.memberId,
                         _userData.value.storeId,
                         getDashYMDDate(dateInfo),
@@ -155,32 +244,41 @@ class HomeViewModel @Inject constructor(
                 )
             }.map {
                 val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
-                HomeUiState.PossibleTimeSuccess(
-                    schedules = cur.schedules.plus(
-                        //scheduleInfo
-                        dateInfo to ScheduleInfo(
-                            false,
-                            (cur.schedules[dateInfo]?.schedules?.plus(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
-                                    )
+                if (cur.schedules.containsKey(dateInfo)) {
+                    HomeUiState.PossibleTimeSuccess(
+                        schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
+                            if (di == dateInfo) {
+                                scheduleInfo.copy(
+                                    schedules = scheduleInfo.schedules.plus(
+                                        ScheduleData(
+                                            startTime,
+                                            Color.White,
+                                            MyPossibleTimeInfo(
+                                                it, startTime, endTime
+                                            )
+                                        )
+                                    ).sortedBy { it.detail.startTime }
                                 )
-
-                            ) ?: listOf(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
-                                    )
-                                )
-                            )).sortedBy { sort -> sort.detail.startTime }
-                        )
+                            } else {
+                                scheduleInfo
+                            }
+                        }
                     )
-                )
+                } else {
+                    HomeUiState.PossibleTimeSuccess(
+                        schedules = cur.schedules.plus(
+                            dateInfo to listOf(
+                                ScheduleData(
+                                    startTime,
+                                    Color.White,
+                                    MyPossibleTimeInfo(
+                                        it, startTime, endTime
+                                    )
+                                )
+                            ).sortedBy { it.detail.startTime }
+                        ) as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
+                    )
+                }
 
             }.catch {
                 _errorFlow.emit(it)
@@ -193,10 +291,10 @@ class HomeViewModel @Inject constructor(
 
     fun deletePossibleTime(dateInfo: DateInfo, storeMemberAvailableTimeId: Int) {
         viewModelScope.launch {
-
             flow {
                 emit(
                     deletePossibleTimeUseCase(
+                        _userData.value.accessToken,
                         _userData.value.memberId,
                         _userData.value.storeId,
                         storeMemberAvailableTimeId
@@ -215,8 +313,7 @@ class HomeViewModel @Inject constructor(
                         } else {
                             scheduleInfo
                         }
-                    }
-                )
+                    })
             }.catch {
                 _errorFlow.emit(it)
             }.collect {

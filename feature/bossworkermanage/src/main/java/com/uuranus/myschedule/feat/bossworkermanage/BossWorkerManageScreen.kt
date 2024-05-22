@@ -1,7 +1,6 @@
 package com.uuranus.myschedule.feat.bossworkermanage
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,20 +15,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,7 +41,9 @@ import com.uuranus.designsystem.component.MyScheduleAppBar
 import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.WorkerInfo
-import com.uuranus.myschedule.feature.bossmypage.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 val screenPadding = 16.dp
 
@@ -50,33 +54,55 @@ fun BossWorkerManageScreen(
 
     val uiState by viewModel.bossWorkerManageUiState.collectAsStateWithLifecycle()
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    val coroutineScope = rememberCoroutineScope()
 
-            MyScheduleAppBar(
-                title = {
-                    Text("직원 관리", style = MyScheduleTheme.typography.bold16)
-                },
-            )
-            when (uiState) {
-                is BossWorkerMangeUiState.Loading -> LoadingScreen()
-                is BossWorkerMangeUiState.Success ->
+    val snackBarHostState = remember { SnackbarHostState() }
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 21.dp)
-                    ) {
-                        val workers = (uiState as BossWorkerMangeUiState.Success).workers
-                        items(workers.size) { index ->
-                            WorkerInfoListItem(viewModel, workers[index])
-                        }
+    LaunchedEffect(true) {
+        viewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> throwable.message ?: "알 수 없는 오류가 발생했습니다"
                     }
+                )
             }
+        }
+    }
 
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+
+                MyScheduleAppBar(
+                    title = {
+                        Text("직원 관리", style = MyScheduleTheme.typography.bold16)
+                    },
+                )
+                when (uiState) {
+                    is BossWorkerMangeUiState.Loading -> LoadingScreen()
+                    is BossWorkerMangeUiState.Success ->
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 21.dp)
+                        ) {
+                            val workers = (uiState as BossWorkerMangeUiState.Success).workers
+                            items(workers.size) { index ->
+                                WorkerInfoListItem(viewModel, workers[index])
+                            }
+                        }
+                }
+
+            }
         }
     }
 }
@@ -124,7 +150,7 @@ fun WorkerInfoListItem(
                     contentDescription = "직원 고용형태 수정",
                     modifier = Modifier.clickable {
                         showEditDialog = true
-                        selectedWorker = workerInfo.memeberId
+                        selectedWorker = workerInfo.memberId
                     }
                 )
 
@@ -135,11 +161,12 @@ fun WorkerInfoListItem(
             contentDescription = "직원 삭제",
             modifier = Modifier.clickable {
                 showDeleteDialog = true
-                selectedWorker = workerInfo.memeberId
+                selectedWorker = workerInfo.memberId
             }
         )
 
     }
+
 
     if (showEditDialog) {
         EditWorkerTypeDialog(

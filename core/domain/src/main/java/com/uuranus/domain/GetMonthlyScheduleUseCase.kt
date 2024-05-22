@@ -12,9 +12,10 @@ class GetMonthlyScheduleUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyScheduleInfo>> {
-        return repository.getMonthlySchedules(storeId, dateYM)
+        return repository.getMonthlySchedules(accessToken, storeId, dateYM)
     }
 }

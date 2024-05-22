@@ -8,12 +8,20 @@ class AddPossibleTimeUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        accessToken: String,
         memberId: Int,
         storeId: Int,
         dateYMD: String,
         starTime: String,
         endTime: String,
     ): Int {
-        return repository.addPossibleTime(memberId, storeId, dateYMD, starTime, endTime)
+        return repository.addPossibleTime(
+            accessToken,
+            memberId,
+            storeId,
+            dateYMD,
+            starTime,
+            endTime
+        )
     }
 }

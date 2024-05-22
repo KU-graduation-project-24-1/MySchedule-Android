@@ -7,22 +7,28 @@ import javax.inject.Inject
 class WorkerManageRepositoryImpl @Inject constructor(
     private val dataSource: WorkerDataSource,
 ) : WorkerManageRepository {
-    override suspend fun getAllWorkers(storeId: Int): List<WorkerInfo> {
-        return dataSource.getAllWorkers(storeId)
+    override suspend fun getAllWorkers(
+        accessToken: String, storeId: Int,
+    ): List<WorkerInfo> {
+        return dataSource.getAllWorkers(accessToken, storeId)
     }
 
     override suspend fun changeWorkerType(
+        accessToken: String,
         storeId: Int,
         memberId: Int,
         workerType: String,
     ): Boolean {
         return dataSource.changeWorkerType(
-            storeId, memberId, workerType
+            accessToken, storeId, memberId, workerType
         )
     }
 
-    override suspend fun deleteWorker(storeId: Int, memberId: Int): Boolean {
+    override suspend fun deleteWorker(
+        accessToken: String, storeId: Int, memberId: Int,
+    ): Boolean {
         return dataSource.deleteWorker(
+            accessToken,
             storeId, memberId
         )
     }

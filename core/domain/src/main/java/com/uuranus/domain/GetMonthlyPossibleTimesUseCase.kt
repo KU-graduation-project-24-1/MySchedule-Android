@@ -10,9 +10,10 @@ class GetMonthlyPossibleTimesUseCase @Inject constructor(
     private val repository: HomeRepository,
 ) {
     suspend operator fun invoke(
+        accessToken: String,
         storeId: Int,
         dateYM: String,
     ): HashMap<String, List<MyPossibleTimeInfo>> {
-        return repository.getMonthlyPossibleTimes(storeId, dateYM)
+        return repository.getMonthlyPossibleTimes(accessToken, storeId, dateYM)
     }
 }

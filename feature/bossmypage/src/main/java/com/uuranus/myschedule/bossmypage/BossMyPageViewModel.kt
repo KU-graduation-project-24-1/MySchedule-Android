@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.domain.AddFixedPossibleTimesUseCase
-import com.uuranus.domain.GetFixedPossibleTimesUseCase
+import com.uuranus.domain.DeleteStoreUseCase
 import com.uuranus.domain.GetSalesInformationUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.TimeRange
@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -25,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BossMyPageViewModel @Inject constructor(
+    private val deleteStore: DeleteStoreUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getSalesInformationUseCase: GetSalesInformationUseCase,
     private val addFixedPossibleTimesUseCase: AddFixedPossibleTimesUseCase,
@@ -51,18 +51,13 @@ class BossMyPageViewModel @Inject constructor(
     val bossMypageUiState: StateFlow<BossMyPageUiState> = _bossMypageUiState
 
     init {
-        viewModelScope.launch {
 
-            getUserDataUseCase().catch {
-                _errorFlow.emit(it)
-            }.collect {
+        viewModelScope.launch {
+            getUserDataUseCase().flatMapLatest {
                 _userData.value = it
-            }
-        }
-
-        viewModelScope.launch {
-            flow {
-                emit(getSalesInformationUseCase())
+                flow {
+                    emit(getSalesInformationUseCase(it.accessToken))
+                }
             }.map {
                 BossMyPageUiState.Success(
                     salesInformation = it
@@ -121,11 +116,20 @@ class BossMyPageViewModel @Inject constructor(
 
     fun deleteStore() {
         viewModelScope.launch {
-
+            flow {
+                emit(deleteStore())
+            }.flatMapLatest {
+                flow {
+                    emit("!")
+//                    emit(logOut())
+                }
+            }.catch {
+                _errorFlow.emit(it)
+            }
         }
     }
 
-    fun quit(){
+    fun quit() {
         viewModelScope.launch {
 
         }

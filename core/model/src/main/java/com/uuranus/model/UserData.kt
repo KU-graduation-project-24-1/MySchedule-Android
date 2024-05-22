@@ -1,9 +1,12 @@
 package com.uuranus.model
 
 data class UserData(
-    val storeId: Int,
-    val memberId: Int,
-    val name: String,
-    val workerType: String,
-    val isLoggedIn: Boolean,
+    val storeId: Int = -1,
+    val memberId: Int = -1,
+    val name: String = "",
+    val workerType: String = "",
+    val isLoggedIn: Boolean = false,
+    val storeName: String = "",
+    val accessToken: String = "",
+    val refreshToken: String = "",
 )

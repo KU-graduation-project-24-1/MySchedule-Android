@@ -41,14 +41,21 @@ fun TimePickerDialog(
     val starTime: MutableState<String> = remember {
         mutableStateOf("")
     }
+    val startTimeError: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }
 
     val endTime: MutableState<String> = remember {
         mutableStateOf("")
     }
+    val endTimeError: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }
+
 
     Dialog(onDismissRequest = onDismissDialog) {
         Card(
-            shape = RoundedCornerShape(8.dp), // Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
+            shape = RoundedCornerShape(8.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -70,8 +77,10 @@ fun TimePickerDialog(
 
                 OutlinedTextField(
                     value = starTime.value,
+                    maxLines = 1,
                     onValueChange = {
                         starTime.value = it
+                        startTimeError.value = isValidTimeFormat((starTime.value)).not()
                     },
                     colors = TextFieldDefaults.colors().copy(
                         focusedIndicatorColor = MyScheduleTheme.colors.primary,
@@ -79,7 +88,18 @@ fun TimePickerDialog(
                         unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
                         focusedContainerColor = MyScheduleTheme.colors.background,
                         unfocusedContainerColor = MyScheduleTheme.colors.background,
+                        errorIndicatorColor = MyScheduleTheme.colors.errorColor,
                     ),
+                    isError = startTimeError.value,
+                    supportingText = {
+                        if (startTimeError.value) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "00:00 형식으로 입력해야합니다",
+                                color = MyScheduleTheme.colors.errorColor
+                            )
+                        }
+                    },
                     textStyle = MyScheduleTheme.typography.regular16,
                     placeholder = {
                         Text(text = "00:00")
@@ -95,16 +115,30 @@ fun TimePickerDialog(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                OutlinedTextField(value = endTime.value, onValueChange = {
-                    endTime.value = it
-                },
+                OutlinedTextField(value = endTime.value,
+                    maxLines = 1,
+                    onValueChange = {
+                        endTime.value = it
+                        endTimeError.value = isValidTimeFormat(endTime.value).not()
+                    },
                     colors = TextFieldDefaults.colors().copy(
                         focusedIndicatorColor = MyScheduleTheme.colors.primary,
 
                         unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
                         focusedContainerColor = MyScheduleTheme.colors.background,
                         unfocusedContainerColor = MyScheduleTheme.colors.background,
+                        errorIndicatorColor = MyScheduleTheme.colors.errorColor,
                     ),
+                    isError = endTimeError.value,
+                    supportingText = {
+                        if (endTimeError.value) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "00:00 형식으로 입력해야합니다",
+                                color = MyScheduleTheme.colors.errorColor
+                            )
+                        }
+                    },
                     textStyle = MyScheduleTheme.typography.regular16,
                     placeholder = {
                         Text(text = "00:00")
@@ -122,7 +156,7 @@ fun TimePickerDialog(
                         onClick = {
                             onTimeSelected(starTime.value, endTime.value)
                         },
-                        buttonState = true,
+                        buttonState = (startTimeError.value.not() && (endTimeError.value.not())),
                         color = MyScheduleTheme.colors.primary,
                         content = {
                             Text(text = "확인", style = MyScheduleTheme.typography.semiBold16)
@@ -141,6 +175,10 @@ fun TimePickerSingleDialog(
 ) {
     val time: MutableState<String> = remember {
         mutableStateOf("")
+    }
+
+    val timeError: MutableState<Boolean> = remember {
+        mutableStateOf(false)
     }
 
     Dialog(onDismissRequest = onDismissDialog) {
@@ -167,8 +205,10 @@ fun TimePickerSingleDialog(
 
                 OutlinedTextField(
                     value = time.value,
+                    maxLines = 1,
                     onValueChange = {
                         time.value = it
+                        timeError.value = isValidTimeFormat((time.value)).not()
                     },
                     colors = TextFieldDefaults.colors().copy(
                         focusedIndicatorColor = MyScheduleTheme.colors.primary,
@@ -176,7 +216,18 @@ fun TimePickerSingleDialog(
                         unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
                         focusedContainerColor = MyScheduleTheme.colors.background,
                         unfocusedContainerColor = MyScheduleTheme.colors.background,
+                        errorIndicatorColor = MyScheduleTheme.colors.errorColor,
                     ),
+                    isError = timeError.value,
+                    supportingText = {
+                        if (timeError.value) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "00:00 형식으로 입력해야합니다",
+                                color = MyScheduleTheme.colors.errorColor
+                            )
+                        }
+                    },
                     textStyle = MyScheduleTheme.typography.regular16,
                     placeholder = {
                         Text(text = "00:00")
@@ -195,7 +246,7 @@ fun TimePickerSingleDialog(
                         onClick = {
                             onTimeSelected(time.value)
                         },
-                        buttonState = true,
+                        buttonState = timeError.value.not(),
                         color = MyScheduleTheme.colors.primary,
                         content = {
                             Text(text = "확인", style = MyScheduleTheme.typography.semiBold16)
@@ -205,4 +256,10 @@ fun TimePickerSingleDialog(
             }
         }
     }
+}
+
+internal fun isValidTimeFormat(time: String): Boolean {
+    if (time.isEmpty()) return false
+    val timeRegex = Regex("^([01]\\d|2[0-3]):([0-5]\\d)$")
+    return timeRegex.matches(time)
 }

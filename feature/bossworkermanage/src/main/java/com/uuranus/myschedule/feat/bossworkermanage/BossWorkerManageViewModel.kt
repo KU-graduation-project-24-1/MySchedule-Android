@@ -2,9 +2,9 @@ package com.uuranus.myschedule.feat.bossworkermanage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uuranus.domain.DeleteWorker
-import com.uuranus.domain.EditWorkerType
-import com.uuranus.domain.GetAllWorkersInfo
+import com.uuranus.domain.DeleteWorkerUseCase
+import com.uuranus.domain.EditWorkerTypeUseCase
+import com.uuranus.domain.GetAllWorkersInfoUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,16 +17,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BossWorkerManageViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
-    private val getAllWorkersInfo: GetAllWorkersInfo,
-    private val deleteWorker: DeleteWorker,
-    private val editWorkerType: EditWorkerType,
+    private val getAllWorkersInfo: GetAllWorkersInfoUseCase,
+    private val deleteWorker: DeleteWorkerUseCase,
+    private val editWorkerType: EditWorkerTypeUseCase,
 ) : ViewModel() {
 
 
@@ -48,6 +47,7 @@ class BossWorkerManageViewModel @Inject constructor(
                 flow {
                     emit(
                         getAllWorkersInfo(
+                            userData.accessToken,
                             userData.storeId
                         )
                     )
@@ -66,12 +66,25 @@ class BossWorkerManageViewModel @Inject constructor(
 
     fun deleteWorker(workerId: Int) {
         viewModelScope.launch {
-            flow { emit(deleteWorker(_userData.value.storeId, workerId)) }
+            if (workerId == _userData.value.memberId) {
+                _errorFlow.emit(Exception("고용인은 삭제할 수 없습니다."))
+                return@launch
+            }
+
+            flow {
+                emit(
+                    deleteWorker(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        workerId
+                    )
+                )
+            }
                 .map {
                     val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
                     BossWorkerMangeUiState.Success(
                         state.workers.filterNot {
-                            it.memeberId == workerId
+                            it.memberId == workerId
                         }
                     )
                 }.catch {
@@ -83,13 +96,28 @@ class BossWorkerManageViewModel @Inject constructor(
     }
 
     fun editWorker(workerId: Int, workerType: String) {
+
         viewModelScope.launch {
-            flow { emit(editWorkerType(_userData.value.storeId, workerId, workerType)) }
+            if (workerId == _userData.value.memberId) {
+                _errorFlow.emit(Exception("고용인은 고용 형태를 수정할 수 없습니다."))
+                return@launch
+            }
+
+            flow {
+                emit(
+                    editWorkerType(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        workerId,
+                        workerType
+                    )
+                )
+            }
                 .map {
                     val state = _bossWorkerManageUiState.value as BossWorkerMangeUiState.Success
                     BossWorkerMangeUiState.Success(
                         state.workers.map {
-                            if (it.memeberId == workerId) {
+                            if (it.memberId == workerId) {
                                 it.copy(workerType = workerType)
                             } else {
                                 it

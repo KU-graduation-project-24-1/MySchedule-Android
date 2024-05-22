@@ -9,7 +9,8 @@ class GetSalesInformationUseCase @Inject constructor(
     private val repository: MyPageRepository,
 ) {
     suspend operator fun invoke(
+        accessToken:String,
     ): List<StoreSalesInformation> {
-        return repository.getStoreSalesInformation()
+        return repository.getStoreSalesInformation(accessToken)
     }
 }

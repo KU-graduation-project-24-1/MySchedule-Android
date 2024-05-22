@@ -27,7 +27,9 @@ dependencies {
     implementation(libs.okhttp.interceptor)
     testImplementation(libs.okhttp.mockserver)
     testImplementation(libs.androidx.arch.core)
+    implementation(libs.moshi.kotlin)
 
     // json parsing
     implementation(libs.moshi)
+    ksp(libs.moshi.codegen)
 }

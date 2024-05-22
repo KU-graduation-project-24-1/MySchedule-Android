@@ -23,15 +23,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +58,9 @@ import com.uuranus.myschedule.core.common.mypage.MyInfo
 import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.LocalLoginIntent
 import com.uuranus.navigation.MyScheduleScreens
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 @Composable
 fun BossMyPageScreen(
@@ -66,41 +74,63 @@ fun BossMyPageScreen(
         mutableStateOf(false)
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            MyScheduleAppBar(title = {
-                Text(text = "마이 페이지", style = MyScheduleTheme.typography.bold20)
-            },
-                actions = {
-                    Text("탈퇴", style = MyScheduleTheme.typography.semiBold16,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .clickable {
-                                showQuitDialog = true
-                            })
-                })
+    val coroutineScope = rememberCoroutineScope()
 
-            when (bossMyPageUiState) {
-                is BossMyPageUiState.Loading -> LoadingScreen()
-                is BossMyPageUiState.Success -> Column {
-                    val state = bossMyPageUiState as BossMyPageUiState.Success
-                    MyInfo(userData)
-                    Spacer(modifier = Modifier.height(58.dp))
-                    StoreSalesInfo(
-                        viewModel = bossMyPageViewModel,
-                        salesInfo = state.salesInformation
-                    )
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        bossMyPageViewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
+                    }
+                )
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                MyScheduleAppBar(title = {
+                    Text(text = "마이 페이지", style = MyScheduleTheme.typography.bold20)
+                },
+                    actions = {
+                        Text("탈퇴", style = MyScheduleTheme.typography.semiBold16,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .clickable {
+                                    showQuitDialog = true
+                                })
+                    })
+
+                when (bossMyPageUiState) {
+                    is BossMyPageUiState.Loading -> LoadingScreen()
+                    is BossMyPageUiState.Success -> Column {
+                        val state = bossMyPageUiState as BossMyPageUiState.Success
+                        MyInfo(userData)
+                        Spacer(modifier = Modifier.height(58.dp))
+                        StoreSalesInfo(
+                            viewModel = bossMyPageViewModel,
+                            salesInfo = state.salesInformation
+                        )
+                    }
                 }
+
             }
 
         }
-
     }
 
     val context = LocalContext.current
@@ -292,48 +322,15 @@ fun StoreSalesInfo(
         }
     }
 
-
     if (showWorkerNumDialog.value) {
-        AlertDialog(onDismissRequest = {
+        WorkerNumDialog(onNumSelected = {
             showWorkerNumDialog.value = false
-        }, confirmButton = {
-            MyScheduleFilledButton(
-                modifier = Modifier.fillMaxWidth(),
-                paddingValues = PaddingValues(13.dp),
-                buttonState = true,
-                color = MyScheduleTheme.colors.primary,
-                content = {
-                    Text(
-                        "확인",
-                        style = MyScheduleTheme.typography.semiBold16,
-                        color = MyScheduleTheme.colors.textColor
-                    )
-                },
-                onClick = {
-
-                    showWorkerNumDialog.value = false
-                }
-            )
-        }, title = {
-            Text("근무 인원", style = MyScheduleTheme.typography.semiBold16)
-        }, text = {
-            OutlinedTextField(
-                value = "",
-                onValueChange = {
-                },
-                colors = TextFieldDefaults.colors().copy(
-                    focusedIndicatorColor = MyScheduleTheme.colors.primary,
-
-                    unfocusedIndicatorColor = MyScheduleTheme.colors.gray,
-                    focusedContainerColor = MyScheduleTheme.colors.background,
-                    unfocusedContainerColor = MyScheduleTheme.colors.background,
-                ),
-                textStyle = MyScheduleTheme.typography.regular16,
-                placeholder = {
-                    Text(text = "0(명)")
-                }
-            )
-        }, containerColor = MyScheduleTheme.colors.background)
+            if (it.isNotEmpty()) {
+                viewModel.addWorkerNum(selectedWeekNum.value, it.toInt())
+            }
+        }, onDismissDialog = {
+            showWorkerNumDialog.value = false
+        })
     }
 
     val context = LocalContext.current
@@ -357,7 +354,10 @@ fun StoreSalesInfo(
     if (showTimePicker.value) {
 
         TimePickerDialog(onTimeSelected = { start, end ->
-            viewModel.addOpeningHourTime(selectedWeekNum.value, start, end)
+
+            if (start.isNotEmpty() && end.isNotEmpty()) {
+                viewModel.addOpeningHourTime(selectedWeekNum.value, start, end)
+            }
             showTimePicker.value = false
         }, onDismissDialog = {
             showTimePicker.value = false

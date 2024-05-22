@@ -8,10 +8,11 @@ class DeletePossibleTimeUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        accessToken:String,
         memberId: Int,
         storeId: Int,
         storeMemberAvailableTimeId: Int,
-    ): String {
-        return repository.deletePossibleTime(memberId, storeId, storeMemberAvailableTimeId)
+    ): Boolean {
+        return repository.deletePossibleTime(accessToken,memberId, storeId, storeMemberAvailableTimeId)
     }
 }

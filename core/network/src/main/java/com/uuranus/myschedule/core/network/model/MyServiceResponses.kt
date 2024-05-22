@@ -5,34 +5,89 @@ import com.squareup.moshi.JsonClass
 
 
 @JsonClass(generateAdapter = true)
-data class MonthlyScheduleResponse(
-    @field:Json(name = "code") val code: Int,
-    @field:Json(name = "status") val status: Int,
-    @field:Json(name = "message") val message: String,
-    @field:Json(name = "result") val result: MonthlyScheduleResultResponse,
+data class ApiResponse<T>(
+    val code: Int,
+    val status: Int,
+    val message: String,
+    val result: T,
 )
 
 @JsonClass(generateAdapter = true)
-data class MonthlyScheduleResultResponse(
-    @field:Json(name = "daySchedules") val daySchedules: List<MonthlyScheduleDayScheduleResponse>,
+data class GetMonthlyScheduleResult(
+    val daySchedules: List<DaySchedule>,
+)
+
+@JsonClass(generateAdapter = true)
+data class DaySchedule(
+    val date: String,
+    val workDatas: List<WorkData>,
+)
+
+@JsonClass(generateAdapter = true)
+data class WorkData(
+    val scheduleId: Int,
+    val memberId: Int,
+    val memberName: String,
+    val memberGrade: String,
+    val startTime: String,
+    val endTime: String,
+    val coverRequested: Boolean,
+    val mine: Boolean,
+)
+
+@JsonClass(generateAdapter = true)
+data class GetMonthlyPossibleTimesResult(
+    val memberGrade: String,
+    val dailyAvailableSchehdules: List<DailyAvailableSchedule>,
+)
+
+@JsonClass(generateAdapter = true)
+data class DailyAvailableSchedule(
+    val date: String,
+    val availableTimesInDay: List<AvailableTimesInDay>,
+)
+
+@JsonClass(generateAdapter = true)
+data class AvailableTimesInDay(
+    val storeAvailableScheduleId: Int,
+    val startTime: String,
+    val endTime: String,
 )
 
 
 @JsonClass(generateAdapter = true)
-data class MonthlyScheduleDayScheduleResponse(
-    @field:Json(name = "date") val date: String,
-    @field:Json(name = "workDatas") val workDatas: List<MonthlyScheduleWorkDataResponse>,
+data class PostPossibleTime(
+    val storeAvailableScheduleId: Int,
 )
-
 
 @JsonClass(generateAdapter = true)
-data class MonthlyScheduleWorkDataResponse(
-    @field:Json(name = "memberWorkingTimeId") val memberWorkingTimeId: Int,
-    @field:Json(name = "memberId") val memberId: Int,
-    @field:Json(name = "memberName") val memberName: String,
-    @field:Json(name = "memberGrade") val memberGrade: String,
-    @field:Json(name = "startTime") val startTime: String,
-    @field:Json(name = "endTime") val endTime: String,
-    @field:Json(name = "coverRequested") val coverRequested: Boolean,
-    @field:Json(name = "mine") val mine: Boolean,
+data class GetAllWorkersResult(
+    val employees: List<Employee>,
 )
+
+@JsonClass(generateAdapter = true)
+data class Employee(
+    val name: String,
+    val memberId: Int,
+    val memberGrade: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class PostScheduleResult(
+    val scheduleId: Int,
+    val employeeId: Int,
+    val date: String,
+    val startTime: String,
+    val endTime: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchScheduleResult(
+    val scheduleId: Int?,
+    val employeeId: Int?,
+    val date: String?,
+    val startTime: String?,
+    val endTime: String?,
+    val deleted: Boolean?,
+)
+

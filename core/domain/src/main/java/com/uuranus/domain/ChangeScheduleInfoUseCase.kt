@@ -1,15 +1,18 @@
 package com.uuranus.domain
 
 import com.uuranus.data.repository.home.HomeRepository
-import com.uuranus.model.WorkerInfo
+import com.uuranus.model.ScheduleUpdate
 import javax.inject.Inject
 
-class DeleteSchedule @Inject constructor(
+class ChangeScheduleInfoUseCase @Inject constructor(
     private val repository: HomeRepository,
 ) {
+
     suspend operator fun invoke(
+        accessToken:String,
         storeId: Int,
+        scheduleInfo: ScheduleUpdate,
     ): Boolean {
-        return repository.deleteSchedule(storeId)
+        return repository.changeSchedule(accessToken,storeId, scheduleInfo)
     }
 }

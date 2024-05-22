@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -20,10 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,8 +47,12 @@ import com.uuranus.myschedule.core.common.home.RequestFillInDialog
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
 import com.uuranus.myschedule.core.designsystem.R
+import com.uuranus.navigation.LocalLoginIntent
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 internal val calendarColors = listOf(
     Color(0xFFF3A8A8),
@@ -61,7 +70,7 @@ fun BossHomeScreen(
 
     val composeNavigator = currentComposeNavigator
 
-    val bossHomUnknownError by bossHomeViewModel.bossHomeUiState.collectAsStateWithLifecycle()
+    val bossHomeUiState by bossHomeViewModel.bossHomeUiState.collectAsStateWithLifecycle()
 
     val memberIdColorMap = remember {
         mutableMapOf<Int, Color>()
@@ -71,80 +80,103 @@ fun BossHomeScreen(
         mutableIntStateOf(0)
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            MyScheduleAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.clickable {
+    val coroutineScope = rememberCoroutineScope()
 
-                            },
-                            contentDescription = "가게 목록으로 이동",
-                            painter = painterResource(
-                                id = R.drawable.arrow_left_icon
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "000 떡볶이 건대입구점",
-                            style = MyScheduleTheme.typography.bold16
-                        )
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        bossHomeViewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
                     }
-                },
-                actions = {
-                    Image(
-                        painter = painterResource(id = R.drawable.person_outline_icon),
-                        contentDescription = "직원 관리",
-                        modifier = Modifier.clickable {
-                            composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
-                        },
-                    )
-                    Spacer(modifier = Modifier.width(18.dp))
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        CircularImageComponent(
-                            painter = painterResource(id = R.drawable.baseline_person_24),
-                            size = 30,
-                            onClick = {
-                                composeNavigator.navigate(MyScheduleScreens.BossMyPage.route)
-                            }
-                        )
-                    }
-                },
-            )
+                )
+            }
+        }
+    }
 
-            when (bossHomUnknownError) {
-                BossHomeUiState.Loading -> LoadingScreen()
-                is BossHomeUiState.Success ->
 
-                    BossHomeContent(
-                        viewModel = bossHomeViewModel,
-                        schedules = (bossHomUnknownError as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
-                            scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
-                                if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
-                                        .not()
-                                ) {
-                                    memberIdColorMap.put(
-                                        scheduleData.detail.memberId,
-                                        calendarColors[currentColorIndex.intValue]
-                                    )
-                                    currentColorIndex.intValue += 1
-                                }
+    val context = LocalContext.current
+    val intent = LocalLoginIntent.current
 
-                                scheduleData.copy(
-                                    color = memberIdColorMap[scheduleData.detail.memberId]
-                                        ?: MyScheduleTheme.colors.primary
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                MyScheduleAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                modifier = Modifier.clickable {
+                                    context.startActivity(intent)
+                                },
+                                contentDescription = "가게 목록으로 이동",
+                                painter = painterResource(
+                                    id = R.drawable.arrow_left_icon
                                 )
-                            }
                             )
-                        },
-                    )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = bossHomeViewModel.getUserData().storeName,
+                                style = MyScheduleTheme.typography.bold16
+                            )
+                        }
+                    },
+                    actions = {
+                        Image(
+                            painter = painterResource(id = R.drawable.person_outline_icon),
+                            contentDescription = "직원 관리",
+                            modifier = Modifier.clickable {
+                                composeNavigator.navigate(MyScheduleScreens.BossWorkerManage.route)
+                            },
+                        )
+                        Spacer(modifier = Modifier.width(18.dp))
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            CircularImageComponent(
+                                painter = painterResource(id = R.drawable.baseline_person_24),
+                                size = 30,
+                                onClick = {
+                                    composeNavigator.navigate(MyScheduleScreens.BossMyPage.route)
+                                }
+                            )
+                        }
+                    },
+                )
+
+                when (bossHomeUiState) {
+                    BossHomeUiState.Loading -> LoadingScreen()
+                    is BossHomeUiState.Success ->
+
+                        BossHomeContent(
+                            viewModel = bossHomeViewModel,
+                            schedules = (bossHomeUiState as BossHomeUiState.Success).schedules.mapValues { (_, scheduleInfo) ->
+                                scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
+                                    if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
+                                            .not()
+                                    ) {
+                                        memberIdColorMap[scheduleData.detail.memberId] =
+                                            calendarColors[currentColorIndex.intValue]
+                                        currentColorIndex.intValue += 1
+                                    }
+
+                                    scheduleData.copy(
+                                        color = memberIdColorMap[scheduleData.detail.memberId]
+                                            ?: MyScheduleTheme.colors.primary
+                                    )
+                                })
+                            },
+                        )
+                }
             }
         }
     }
@@ -273,7 +305,7 @@ fun BossHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewmodel.requestFillIn()
+                        viewModel.requestFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )
@@ -285,7 +317,7 @@ fun BossHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.acceptFillIn()
+                        viewModel.acceptFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )

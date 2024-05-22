@@ -13,18 +13,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,8 +47,12 @@ import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.MyPossibleTimeInfo
 import com.uuranus.model.MyScheduleInfo
 import com.uuranus.myschedule.core.common.home.MyScheduleBottomSheet
+import com.uuranus.navigation.LocalLoginIntent
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 internal val calendarColors = listOf(
     Color(0xFFF3A8A8),
@@ -76,90 +86,114 @@ fun HomeScreen(
         mutableStateOf(0)
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MyScheduleTheme.colors.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            MyScheduleAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.clickable {
+    val coroutineScope = rememberCoroutineScope()
 
-                            },
-                            contentDescription = "가게 목록으로 이동",
-                            painter = painterResource(
-                                id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "000 떡볶이 건대입구점",
-                            style = MyScheduleTheme.typography.bold16
-                        )
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        homeViewModel.errorFlow.collectLatest { throwable ->
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    when (throwable) {
+                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
+                        else -> "알 수 없는 오류가 발생했습니다"
                     }
-                },
-                actions = {
-                    Image(
-                        painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.calendar_icon),
-                        contentDescription = "캘린더 종류 보기",
-                        modifier = Modifier.clickable {
-                            showCalendarChooseDialog = true
+                )
+            }
+        }
+    }
+
+    val context = LocalContext.current
+    val intent = LocalLoginIntent.current
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { padding ->
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MyScheduleTheme.colors.background
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                MyScheduleAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                modifier = Modifier.clickable {
+                                    context.startActivity(intent)
+                                },
+                                contentDescription = "가게 목록으로 이동",
+                                painter = painterResource(
+                                    id = com.uuranus.myschedule.core.designsystem.R.drawable.arrow_left_icon
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = homeViewModel.getUserData().storeName,
+                                style = MyScheduleTheme.typography.bold16
+                            )
                         }
-                    )
-                    Spacer(modifier = Modifier.width(18.dp))
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        CircularImageComponent(
-                            painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
-                            size = 30,
-                            onClick = {
-                                composeNavigator.navigate(MyScheduleScreens.MyPage.route)
+                    },
+                    actions = {
+                        Image(
+                            painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.calendar_icon),
+                            contentDescription = "캘린더 종류 보기",
+                            modifier = Modifier.clickable {
+                                showCalendarChooseDialog = true
                             }
                         )
-                    }
-                },
-            )
-
-            when (homeUiState) {
-                is HomeUiState.Loading -> LoadingScreen()
-                is HomeUiState.ScheduleSuccess ->
-                    ScheduleHomeContent(
-                        homeViewModel = homeViewModel,
-                        schedules = (homeUiState as HomeUiState.ScheduleSuccess).schedules.mapValues { (_, scheduleInfo) ->
-                            scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
-                                if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
-                                        .not()
-                                ) {
-                                    memberIdColorMap[scheduleData.detail.memberId] =
-                                        calendarColors[currentColorIndex.intValue]
-                                    currentColorIndex.intValue += 1
+                        Spacer(modifier = Modifier.width(18.dp))
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            CircularImageComponent(
+                                painter = painterResource(id = com.uuranus.myschedule.core.designsystem.R.drawable.baseline_person_24),
+                                size = 30,
+                                onClick = {
+                                    composeNavigator.navigate(MyScheduleScreens.MyPage.route)
                                 }
-
-                                scheduleData.copy(
-                                    color = memberIdColorMap[scheduleData.detail.memberId]
-                                        ?: MyScheduleTheme.colors.primary
-                                )
-                            }
                             )
-                        },
-                    )
+                        }
+                    },
+                )
 
-                is HomeUiState.PossibleTimeSuccess ->
-                    PossibleTimeHomeContent(
-                        homeViewModel = homeViewModel,
-                        possibleTimes = (homeUiState as HomeUiState.PossibleTimeSuccess).schedules.mapValues { (_, scheduleInfo) ->
-                            scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
-                                scheduleData.copy(
-                                    color = MyScheduleTheme.colors.primary
+                when (homeUiState) {
+                    is HomeUiState.Loading -> LoadingScreen()
+                    is HomeUiState.ScheduleSuccess ->
+                        ScheduleHomeContent(
+                            homeViewModel = homeViewModel,
+                            schedules = (homeUiState as HomeUiState.ScheduleSuccess).schedules.mapValues { (_, scheduleInfo) ->
+                                scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
+                                    if (memberIdColorMap.containsKey(scheduleData.detail.memberId)
+                                            .not()
+                                    ) {
+                                        memberIdColorMap[scheduleData.detail.memberId] =
+                                            calendarColors[currentColorIndex.intValue]
+                                        currentColorIndex.intValue += 1
+                                    }
+
+                                    scheduleData.copy(
+                                        color = memberIdColorMap[scheduleData.detail.memberId]
+                                            ?: MyScheduleTheme.colors.primary
+                                    )
+                                })
+                            },
+                        )
+
+                    is HomeUiState.PossibleTimeSuccess ->
+                        PossibleTimeHomeContent(
+                            homeViewModel = homeViewModel,
+                            possibleTimes = (homeUiState as HomeUiState.PossibleTimeSuccess).schedules.mapValues { (_, scheduleInfo) ->
+                                scheduleInfo.copy(schedules = scheduleInfo.schedules.map { scheduleData ->
+                                    scheduleData.copy(
+                                        color = MyScheduleTheme.colors.primary
+                                    )
+                                }
                                 )
-                            }
-                            )
-                        },
-                    )
+                            },
+                        )
+                }
             }
         }
     }
@@ -266,7 +300,7 @@ fun ScheduleHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.request()
+                        homeViewModel.requestFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )
@@ -278,7 +312,7 @@ fun ScheduleHomeContent(
                         showDialog = false
                     },
                     onConfirmClick = {
-                        //viewModel.accept()
+                        homeViewModel.acceptFillIn(selectedScheduleItem.second.detail.scheduleId)
                         showDialog = false
                     }
                 )

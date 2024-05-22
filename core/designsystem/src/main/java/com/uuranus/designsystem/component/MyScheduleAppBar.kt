@@ -27,7 +27,7 @@ fun MyScheduleAppBar(
     actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     Surface(
-        shadowElevation = 4.dp // elevation 추가
+        shadowElevation = 4.dp
     ) {
         TopAppBar(
             modifier = Modifier
