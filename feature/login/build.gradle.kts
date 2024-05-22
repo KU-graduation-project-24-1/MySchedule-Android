@@ -12,4 +12,6 @@ android {
 dependencies {
     implementation(libs.androidx.material3.android)
     implementation(projects.core.domain)
+    implementation(projects.core.model)
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
 }

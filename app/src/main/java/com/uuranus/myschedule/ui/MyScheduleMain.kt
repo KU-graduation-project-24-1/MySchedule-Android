@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -12,11 +13,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.uuranus.designsystem.theme.MyScheduleTheme
+import com.uuranus.login.LoginViewModel
 import com.uuranus.myschedule.navigation.BossNavHost
+import com.uuranus.myschedule.navigation.LoginNavHost
 import com.uuranus.myschedule.navigation.MyScheduleNavHost
 import com.uuranus.navigation.AppComposeNavigator
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+
+@Composable
+fun LoginMain(
+    composeNavigator: AppComposeNavigator,
+    viewModel: LoginViewModel, onClickLogin: (Context) -> Unit,
+) {
+    MyScheduleTheme {
+        val navHostController = rememberNavController()
+
+        LaunchedEffect(Unit) {
+            composeNavigator.handleNavigationCommands(navHostController)
+        }
+
+        LoginNavHost(navHostController = navHostController, viewModel, onClickLogin)
+    }
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -37,7 +56,7 @@ fun MyScheduleMain(
         Scaffold(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             modifier = Modifier.fillMaxSize()
-        ) { padding ->
+        ) { _ ->
             MyScheduleNavHost(
                 navHostController = navHostController,
                 onShowSnackbar = { throwable ->
@@ -74,7 +93,7 @@ fun BossMain(
         Scaffold(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             modifier = Modifier.fillMaxSize()
-        ) { padding ->
+        ) { _ ->
             BossNavHost(
                 navHostController = navHostController,
                 onShowSnackbar = { throwable ->
@@ -87,7 +106,6 @@ fun BossMain(
                         )
                     }
                 })
-
         }
     }
 }
