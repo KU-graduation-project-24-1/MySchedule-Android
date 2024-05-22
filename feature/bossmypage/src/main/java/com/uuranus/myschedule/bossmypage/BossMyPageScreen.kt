@@ -325,7 +325,9 @@ fun StoreSalesInfo(
     if (showWorkerNumDialog.value) {
         WorkerNumDialog(onNumSelected = {
             showWorkerNumDialog.value = false
-            viewModel.addWorkerNum(selectedWeekNum.value, it.toInt())
+            if (it.isNotEmpty()) {
+                viewModel.addWorkerNum(selectedWeekNum.value, it.toInt())
+            }
         }, onDismissDialog = {
             showWorkerNumDialog.value = false
         })
@@ -352,7 +354,10 @@ fun StoreSalesInfo(
     if (showTimePicker.value) {
 
         TimePickerDialog(onTimeSelected = { start, end ->
-            viewModel.addOpeningHourTime(selectedWeekNum.value, start, end)
+
+            if (start.isNotEmpty() && end.isNotEmpty()) {
+                viewModel.addOpeningHourTime(selectedWeekNum.value, start, end)
+            }
             showTimePicker.value = false
         }, onDismissDialog = {
             showTimePicker.value = false

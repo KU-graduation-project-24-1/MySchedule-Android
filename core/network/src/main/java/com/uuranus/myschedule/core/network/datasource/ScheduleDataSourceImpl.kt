@@ -30,6 +30,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.message())
         }
     }
@@ -40,7 +41,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         scheduleId: Int,
         memberId: Int,
     ): Boolean {
-        println("request $scheduleId")
+
         val response = service.postScheduleCover(
             "Bearer $accessToken",
             scheduleId
@@ -49,6 +50,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return true
         } else {
+            Log.e("마이스케줄", response.body().toString())
             throw Exception(response.message())
         }
 
@@ -60,7 +62,17 @@ class ScheduleDataSourceImpl @Inject constructor(
         scheduleId: Int,
         memberId: Int,
     ): Boolean {
-        return true
+        val response = service.patchScheduleCover(
+            "Bearer $accessToken",
+            scheduleId
+        )
+
+        if (response.isSuccessful) {
+            return true
+        } else {
+            Log.e("마이스케줄", response.body().toString())
+            throw Exception(response.message())
+        }
     }
 
     override suspend fun getMonthlyPossibleTimes(
@@ -77,6 +89,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.message())
         }
     }
@@ -102,6 +115,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return response.body()?.result?.storeAvailableScheduleId ?: -1
         } else {
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.message())
         }
     }
@@ -112,7 +126,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         storeMemberAvailableTimeId: Int,
     ): Boolean {
-println("deletE! $storeMemberAvailableTimeId")
+
         val response = service.deletePossibleTime(
             "Bearer $accessToken",
             DeletePossibleTimeBody(
@@ -120,11 +134,11 @@ println("deletE! $storeMemberAvailableTimeId")
                 storeAvailableScheduleId = storeMemberAvailableTimeId
             )
         )
-        println("delete ${response.body()}")
+
         if (response.isSuccessful) {
             return true
         } else {
-            println("delete error ${response.errorBody()}")
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.message())
         }
     }
@@ -146,7 +160,7 @@ println("deletE! $storeMemberAvailableTimeId")
         if (response.isSuccessful) {
             return true
         } else {
-            Log.e("마이스케줄", response.body()?.code.toString())
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.body()?.message ?: "")
         }
     }
@@ -164,7 +178,7 @@ println("deletE! $storeMemberAvailableTimeId")
         if (response.isSuccessful) {
             return true
         } else {
-            Log.e("마이스케줄", response.body()?.code.toString())
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.body()?.message ?: "")
         }
     }
@@ -188,7 +202,7 @@ println("deletE! $storeMemberAvailableTimeId")
         if (response.isSuccessful) {
             return true
         } else {
-            Log.e("마이스케줄", response.body()?.code.toString())
+            Log.e("마이스케줄", response.body()?.message ?: "")
             throw Exception(response.body()?.message ?: "")
         }
     }

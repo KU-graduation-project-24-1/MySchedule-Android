@@ -68,7 +68,6 @@ class BossHomeViewModel @Inject constructor(
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
-
             getUserDataUseCase().flatMapLatest {
                 _userData.value = it
                 flow {

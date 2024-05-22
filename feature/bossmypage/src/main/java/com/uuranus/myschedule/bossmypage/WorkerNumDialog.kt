@@ -87,6 +87,7 @@ fun WorkerNumDialog(
 
 
 internal fun isValidWorkerNumFormat(time: String): Boolean {
+    if (time.isEmpty()) return false
     val timeRegex = Regex("^[0-9]+$")
     return timeRegex.matches(time)
 }

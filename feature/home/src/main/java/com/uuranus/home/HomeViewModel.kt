@@ -257,7 +257,7 @@ class HomeViewModel @Inject constructor(
                                                 it, startTime, endTime
                                             )
                                         )
-                                    )
+                                    ).sortedBy { it.detail.startTime }
                                 )
                             } else {
                                 scheduleInfo
@@ -275,7 +275,7 @@ class HomeViewModel @Inject constructor(
                                         it, startTime, endTime
                                     )
                                 )
-                            )
+                            ).sortedBy { it.detail.startTime }
                         ) as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
                     )
                 }

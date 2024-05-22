@@ -38,3 +38,11 @@ data class PatchScheduleBody(
     val endTime: String,
 )
 
+data class PatchScheduleCover(
+    val scheduleId: Int,
+    val employeeId: Int,
+    val date: String,
+    val startTime: String,
+    val endTime: String,
+    val deleted: Boolean,
+)

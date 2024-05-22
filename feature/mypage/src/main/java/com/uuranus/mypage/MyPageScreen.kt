@@ -211,7 +211,10 @@ fun DayPossibleTimeListItem(
     if (showTimePicker) {
 
         TimePickerDialog(onTimeSelected = { start, end ->
-            onEditButtonClick(start, end)
+
+            if (start.isNotEmpty() && end.isNotEmpty()) {
+                onEditButtonClick(start, end)
+            }
             showTimePicker = false
         }, onDismissDialog = {
             showTimePicker = false

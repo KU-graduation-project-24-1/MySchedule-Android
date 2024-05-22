@@ -7,6 +7,7 @@ import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyPossibleTimesResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
 import com.uuranus.myschedule.core.network.model.PatchScheduleBody
+import com.uuranus.myschedule.core.network.model.PatchScheduleCover
 import com.uuranus.myschedule.core.network.model.PatchScheduleResult
 import com.uuranus.myschedule.core.network.model.PatchWorkerTypeBody
 import com.uuranus.myschedule.core.network.model.PostPossibleTime
@@ -23,6 +24,11 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface MyScheduleService {
+
+    /*
+        로그인 api 자리
+     */
+
     @GET("/store/{storeId}/schedule/{dateYM}")
     suspend fun getMonthlySchedules(
         @Header("Authorization") authorization: String,
@@ -49,11 +55,17 @@ interface MyScheduleService {
         @Body body: DeletePossibleTimeBody,
     ): Response<ApiResponse<PostPossibleTime>>
 
-    @POST("/schedule/{scheduleId}/cover")
+    @POST("/store/schedule/{scheduleId}/cover")
     suspend fun postScheduleCover(
         @Header("Authorization") authorization: String,
         @Path("scheduleId") scheduleId: Int,
-    ): Response<ApiResponse<String>>
+    ): Response<Any>
+
+    @PATCH("/store/schedule/{scheduleId}/cover")
+    suspend fun patchScheduleCover(
+        @Header("Authorization") authorization: String,
+        @Path("scheduleId") scheduleId: Int,
+    ): Response<ApiResponse<PatchScheduleCover>>
 
     //고용인 한정 기능
     @GET("/executive/{storeId}/employee")
