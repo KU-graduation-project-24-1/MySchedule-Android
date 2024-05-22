@@ -5,7 +5,7 @@ data class UserData(
     val memberId: Int = -1,
     val name: String = "",
     val workerType: String = "",
-    val isLoggedIn: Boolean = false,
+    var isLoggedIn: Boolean = false,
     val storeName: String = "",
     val accessToken: String = "",
     val refreshToken: String = "",
