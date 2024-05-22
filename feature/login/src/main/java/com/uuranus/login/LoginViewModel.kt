@@ -31,12 +31,12 @@ class LoginViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             checkLoginStatusUseCase().collect { isLoggedIn ->
-                userData.value.isLoggedIn = isLoggedIn
+                _userData.value = _userData.value.copy(isLoggedIn = isLoggedIn)
             }
         }
     }
 
     fun updateLoginStatus(loggedIn: Boolean) {
-        userData.value.isLoggedIn = loggedIn
+        _userData.value = _userData.value.copy(isLoggedIn = loggedIn)
     }
 }

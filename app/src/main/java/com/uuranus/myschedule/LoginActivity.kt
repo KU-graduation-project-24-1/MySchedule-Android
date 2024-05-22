@@ -149,6 +149,7 @@ fun onClickLogin(context: Context) {
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             } else if (token != null) {
                 Log.i("로그인", "카카오톡으로 로그인 성공 ${token.idToken}")
+
             }
         }
     } else {

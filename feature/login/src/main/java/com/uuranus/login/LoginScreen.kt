@@ -59,7 +59,7 @@ fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
                 contentDescription = "Login button",
                 modifier = Modifier.fillMaxSize().clickable (onClick = {
                     viewModel.updateLoginStatus(true)
-//                    onClickLogin(context)
+                    onClickLogin(context)
                 })
 
 
