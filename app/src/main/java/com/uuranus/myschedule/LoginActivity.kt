@@ -77,8 +77,8 @@ class LoginActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.loginData.collectLatest {loginData ->
-                    if (loginData.isLoggedIn && loginData.name.isNotEmpty()) {
+                loginViewModel.userData.collectLatest {data ->
+                    if (data.isLoggedIn && data.name.isNotEmpty()) {
                         startActivity(
                             Intent(
                                 this@LoginActivity,
