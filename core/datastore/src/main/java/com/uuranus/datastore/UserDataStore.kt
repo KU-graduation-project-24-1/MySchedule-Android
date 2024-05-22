@@ -25,27 +25,27 @@ class UserDataStore @Inject constructor(
 //                refreshToken = preferences.refreshToken
 //            )
 
-            UserData(
-                storeId = 1,
-                memberId = 2,
-                name = "최사장",
-                workerType = "사장",
-                isLoggedIn = true,
-                storeName = "ㅁㅁ 떡볶이 건대입구점",
-                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2MzQ3NDM3LCJleHAiOjE3NDc4ODM0Mzd9.LNJp9aVkXEoQn_ZKKxqU2PtH9PRrk6_E_m5FPI7G-lI",
-                refreshToken = ""
-            )
-
 //            UserData(
 //                storeId = 1,
-//                memberId = 3,
-//                name = "박직원",
-//                workerType = "직원",
+//                memberId = 2,
+//                name = "최사장",
+//                workerType = "사장",
 //                isLoggedIn = true,
 //                storeName = "ㅁㅁ 떡볶이 건대입구점",
-//                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiaWF0IjoxNzE2MzUwNzE3LCJleHAiOjE3NDc4ODY3MTd9.6gEs28OXrVPCzQid8t5hlm83I2GYMTn3NRxImNE1Cm8",
+//                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2MzQ3NDM3LCJleHAiOjE3NDc4ODM0Mzd9.LNJp9aVkXEoQn_ZKKxqU2PtH9PRrk6_E_m5FPI7G-lI",
 //                refreshToken = ""
 //            )
+
+            UserData(
+                storeId = 1,
+                memberId = 3,
+                name = "박직원",
+                workerType = "직원",
+                isLoggedIn = true,
+                storeName = "ㅁㅁ 떡볶이 건대입구점",
+                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiaWF0IjoxNzE2MzUwNzE3LCJleHAiOjE3NDc4ODY3MTd9.6gEs28OXrVPCzQid8t5hlm83I2GYMTn3NRxImNE1Cm8",
+                refreshToken = ""
+            )
         }
 
     suspend fun setUserData(userData: UserData) {

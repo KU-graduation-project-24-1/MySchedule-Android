@@ -4,8 +4,6 @@ ADDED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage
 INJECTED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage/src/main/AndroidManifest.xml:2:1-4:12
 	package
 		INJECTED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage/src/main/AndroidManifest.xml
-	xmlns:android
-		ADDED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage/src/main/AndroidManifest.xml:2:11-69
 uses-sdk
 INJECTED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/uran/AndroidStudioProjects/MySchedule/feature/bossworkermanage/src/main/AndroidManifest.xml

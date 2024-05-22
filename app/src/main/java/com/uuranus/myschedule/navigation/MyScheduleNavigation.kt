@@ -11,50 +11,50 @@ import com.uuranus.myschedule.bossmypage.BossMyPageScreen
 import com.uuranus.myschedule.feat.bossworkermanage.BossWorkerManageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
-fun NavGraphBuilder.myScheduleNavigation() {
+fun NavGraphBuilder.myScheduleNavigation(onShowSnackbar: suspend (Throwable) -> Unit) {
     composable(route = MyScheduleScreens.Home.name) {
-        HomeScreen(this)
+        HomeScreen(onShowSnackbar = onShowSnackbar)
     }
 
     composable(
         route = MyScheduleScreens.MyPage.name,
         arguments = MyScheduleScreens.MyPage.navArguments,
     ) {
-        MyPageScreen()
+        MyPageScreen(onShowSnackbar = onShowSnackbar)
     }
 }
 
-fun NavGraphBuilder.bossNavigation() {
+fun NavGraphBuilder.bossNavigation(onShowSnackbar: suspend (Throwable) -> Unit) {
     composable(
         route = MyScheduleScreens.BossHome.name
     ) {
-        BossHomeScreen()
+        BossHomeScreen(onShowSnackbar = onShowSnackbar)
     }
 
     composable(
         route = MyScheduleScreens.BossEditSchedule.name,
         arguments = MyScheduleScreens.BossEditSchedule.navArguments,
     ) {
-        BossHomeEditScheduleScreen()
+        BossHomeEditScheduleScreen(onShowSnackbar = onShowSnackbar)
     }
 
     composable(
         route = MyScheduleScreens.BossAddSchedule.name,
         arguments = MyScheduleScreens.BossAddSchedule.navArguments
     ) {
-        BossHomeAddScheduleScreen()
+        BossHomeAddScheduleScreen(onShowSnackbar = onShowSnackbar)
     }
 
     composable(
         route = MyScheduleScreens.BossWorkerManage.name,
     ) {
-        BossWorkerManageScreen()
+        BossWorkerManageScreen(onShowSnackbar = onShowSnackbar)
     }
 
     composable(
         route = MyScheduleScreens.BossMyPage.name,
         arguments = MyScheduleScreens.BossMyPage.navArguments,
     ) {
-        BossMyPageScreen()
+        BossMyPageScreen(onShowSnackbar = onShowSnackbar)
     }
 }

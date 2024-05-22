@@ -164,28 +164,46 @@ class HomeViewModel @Inject constructor(
                         _userData.value.memberId
                     )
                 )
-            }.map {
+            }.map { result ->
                 val state = _homeUiState.value as HomeUiState.ScheduleSuccess
 
-                HomeUiState.ScheduleSuccess(
-                    schedules = state.schedules.mapValues { (dateInfo, scheduleInfo) ->
-                        val schedules = scheduleInfo.schedules.map {
-                            if (it.detail.scheduleId == scheduleId) {
-                                it.copy(
-                                    detail = it.detail.copy(
-                                        isFillInNeeded = false
+                if (result) {
+                    HomeUiState.ScheduleSuccess(
+                        schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                            val schedules = scheduleInfo.schedules.map {
+                                if (it.detail.scheduleId == scheduleId) {
+                                    it.copy(
+                                        detail = it.detail.copy(
+                                            memberId = _userData.value.memberId,
+                                            workerName = _userData.value.name,
+                                            workerType = _userData.value.workerType,
+                                            isFillInNeeded = false
+                                        )
                                     )
-                                )
-                            } else {
-                                it
+                                } else {
+                                    it
+                                }
                             }
+                            scheduleInfo.copy(
+                                isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                                schedules = schedules
+                            )
                         }
-                        scheduleInfo.copy(
-                            isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
-                            schedules = schedules
-                        )
-                    }
-                )
+                    )
+                } else {
+                    HomeUiState.ScheduleSuccess(
+                        schedules = state.schedules.mapValues { (_, scheduleInfo) ->
+                            val schedules = scheduleInfo.schedules.filterNot {
+                                it.detail.scheduleId == scheduleId
+                            }
+                            scheduleInfo.copy(
+                                isCheckNeeded = (schedules.count { it.detail.isFillInNeeded } != 0),
+                                schedules = schedules
+                            )
+                        }
+                    )
+                }
+
             }.catch {
                 _errorFlow.emit(it)
             }.collect {

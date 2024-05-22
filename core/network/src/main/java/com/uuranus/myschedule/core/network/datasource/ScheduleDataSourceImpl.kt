@@ -68,7 +68,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         )
 
         if (response.isSuccessful) {
-            return true
+            return response.body()?.result?.scheduleId != null
         } else {
             Log.e("마이스케줄", response.body().toString())
             throw Exception(response.message())

@@ -15,9 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,69 +38,53 @@ import com.uuranus.designsystem.component.MyScheduleOutlinedButton
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.WorkerInfo
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 
 val screenPadding = 16.dp
 
 @Composable
 fun BossWorkerManageScreen(
     viewModel: BossWorkerManageViewModel = hiltViewModel(),
+    onShowSnackbar: suspend (Throwable) -> Unit,
 ) {
 
     val uiState by viewModel.bossWorkerManageUiState.collectAsStateWithLifecycle()
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val snackBarHostState = remember { SnackbarHostState() }
-
     LaunchedEffect(true) {
         viewModel.errorFlow.collectLatest { throwable ->
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(
-                    when (throwable) {
-                        is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
-                        else -> throwable.message ?: "알 수 없는 오류가 발생했습니다"
-                    }
-                )
-            }
+            onShowSnackbar(throwable)
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-        modifier = Modifier.fillMaxSize()
-    ) { padding ->
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MyScheduleTheme.colors.background
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MyScheduleTheme.colors.background
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-                MyScheduleAppBar(
-                    title = {
-                        Text("직원 관리", style = MyScheduleTheme.typography.bold16)
-                    },
-                )
-                when (uiState) {
-                    is BossWorkerMangeUiState.Loading -> LoadingScreen()
-                    is BossWorkerMangeUiState.Success ->
+            MyScheduleAppBar(
+                title = {
+                    Text("직원 관리", style = MyScheduleTheme.typography.bold16)
+                },
+            )
+            when (uiState) {
+                is BossWorkerMangeUiState.Loading -> LoadingScreen()
+                is BossWorkerMangeUiState.Success ->
 
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 21.dp)
-                        ) {
-                            val workers = (uiState as BossWorkerMangeUiState.Success).workers
-                            items(workers.size) { index ->
-                                WorkerInfoListItem(viewModel, workers[index])
-                            }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 21.dp)
+                    ) {
+                        val workers = (uiState as BossWorkerMangeUiState.Success).workers
+                        items(workers.size) { index ->
+                            WorkerInfoListItem(viewModel, workers[index])
                         }
-                }
-
+                    }
             }
+
         }
     }
+
 }
 
 @Composable
