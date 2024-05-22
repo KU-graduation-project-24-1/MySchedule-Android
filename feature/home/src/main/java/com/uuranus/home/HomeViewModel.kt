@@ -260,8 +260,9 @@ class HomeViewModel @Inject constructor(
                         endTime
                     )
                 )
-            }.map {
+            }.map { storeAvailableScheduleId ->
                 val cur = (_homeUiState.value) as HomeUiState.PossibleTimeSuccess
+
                 if (cur.schedules.containsKey(dateInfo)) {
                     HomeUiState.PossibleTimeSuccess(
                         schedules = cur.schedules.mapValues { (di, scheduleInfo) ->
@@ -272,7 +273,7 @@ class HomeViewModel @Inject constructor(
                                             startTime,
                                             Color.White,
                                             MyPossibleTimeInfo(
-                                                it, startTime, endTime
+                                                storeAvailableScheduleId, startTime, endTime
                                             )
                                         )
                                     ).sortedBy { it.detail.startTime }
@@ -280,21 +281,31 @@ class HomeViewModel @Inject constructor(
                             } else {
                                 scheduleInfo
                             }
-                        }
+                        } as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
                     )
                 } else {
+                    val newScheduleData = ScheduleData(
+                        startTime,
+                        Color.White,
+                        MyPossibleTimeInfo(
+                            storeAvailableScheduleId, startTime, endTime
+                        )
+                    )
+
+                    val updatedSchedules = HashMap(cur.schedules)
+
+                    val existingSchedules = updatedSchedules[dateInfo]?.schedules ?: emptyList()
+
+                    val updatedScheduleList =
+                        existingSchedules.plus(newScheduleData).sortedBy { it.detail.startTime }
+
+                    updatedSchedules[dateInfo] = ScheduleInfo(
+                        isCheckNeeded = false,
+                        schedules = updatedScheduleList
+                    )
+
                     HomeUiState.PossibleTimeSuccess(
-                        schedules = cur.schedules.plus(
-                            dateInfo to listOf(
-                                ScheduleData(
-                                    startTime,
-                                    Color.White,
-                                    MyPossibleTimeInfo(
-                                        it, startTime, endTime
-                                    )
-                                )
-                            ).sortedBy { it.detail.startTime }
-                        ) as HashMap<DateInfo, ScheduleInfo<MyPossibleTimeInfo>>
+                        schedules = updatedSchedules
                     )
                 }
 

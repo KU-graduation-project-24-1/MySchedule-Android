@@ -30,7 +30,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
-            Log.e("마이스케줄", response.body()?.message ?: "")
+            Log.e("마이스케줄", response.body().toString())
             throw Exception(response.message())
         }
     }

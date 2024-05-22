@@ -306,17 +306,4 @@ fun BossHomeContent(
         }
 
     }
-
-}
-
-
-@Preview
-@Composable
-fun HomePreview() {
-    MyScheduleTheme {
-        Column {
-            Text(text = "마이 스케줄", style = MyScheduleTheme.typography.regular14)
-            Text(text = "마이 스케줄", fontSize = 14.sp)
-        }
-    }
 }

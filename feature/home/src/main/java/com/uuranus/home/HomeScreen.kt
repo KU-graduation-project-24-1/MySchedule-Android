@@ -167,8 +167,7 @@ fun HomeScreen(
                                 scheduleData.copy(
                                     color = MyScheduleTheme.colors.primary
                                 )
-                            }
-                            )
+                            })
                         },
                     )
             }
