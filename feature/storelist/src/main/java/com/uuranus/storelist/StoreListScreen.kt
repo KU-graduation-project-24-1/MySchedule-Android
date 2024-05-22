@@ -1,4 +1,4 @@
-package com.uuranus.login
+package com.uuranus.storelist
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
