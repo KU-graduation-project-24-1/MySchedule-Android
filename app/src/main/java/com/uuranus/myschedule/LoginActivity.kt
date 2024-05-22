@@ -10,14 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,34 +17,26 @@ import com.uuranus.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import androidx.compose.material3.Text
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
-import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.myschedule.main.MainActivity
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
-import com.uuranus.login.LoginScreen
+import androidx.compose.runtime.CompositionLocalProvider
+import com.uuranus.myschedule.ui.LoginMain
+import com.uuranus.navigation.AppComposeNavigator
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
+    @Inject
+    internal lateinit var composeNavigator: AppComposeNavigator
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -93,8 +77,8 @@ class LoginActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.isLoggedIn.collectLatest {
-                    if (it) {
+                loginViewModel.loginData.collectLatest {loginData ->
+                    if (loginData.isLoggedIn && loginData.name.isNotEmpty()) {
                         startActivity(
                             Intent(
                                 this@LoginActivity,
@@ -106,8 +90,8 @@ class LoginActivity : ComponentActivity() {
                         finish()
                     } else {
                         setContent {
-                            MyScheduleTheme {
-                                LoginScreen(viewModel = loginViewModel, onClickLogin = ::onClickLogin)
+                            CompositionLocalProvider {
+                                LoginMain(composeNavigator = composeNavigator,loginViewModel, onClickLogin= ::onClickLogin)
                             }
                         }
                     }
@@ -144,7 +128,8 @@ fun onClickLogin(context: Context) {
             Log.e("로그인", "카카오계정으로 로그인 실패", error)
         } else if (token != null) {
             Log.i("로그인", "카카오계정으로 로그인 성공 ${token.idToken}")
-            //saveIsLoggedIn(true)
+            // 서버에 idToken과 Fcm토큰 로그인 API - 요청에 성공하면 그때서야 viewmodel.updateLoginStatus(true)
+            // 저 값이 바뀌면 바로 홈화면이라 안되는데 변수를 하나 따로 둬야할거같은데
         }
     }
 
@@ -164,7 +149,6 @@ fun onClickLogin(context: Context) {
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             } else if (token != null) {
                 Log.i("로그인", "카카오톡으로 로그인 성공 ${token.idToken}")
-                //saveIsLoggedIn(true)
             }
         }
     } else {
