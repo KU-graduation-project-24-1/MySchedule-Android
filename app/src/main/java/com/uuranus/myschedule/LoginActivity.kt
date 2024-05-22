@@ -89,7 +89,7 @@ class LoginActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        else if(data.storeId>-1){  // 기존 계정이고 가게를 고른경우
+                        else if(data.storeId>111){  // 기존 계정이고 가게를 고른경우
                             startActivity(
                                 Intent(
                                     this@LoginActivity,
