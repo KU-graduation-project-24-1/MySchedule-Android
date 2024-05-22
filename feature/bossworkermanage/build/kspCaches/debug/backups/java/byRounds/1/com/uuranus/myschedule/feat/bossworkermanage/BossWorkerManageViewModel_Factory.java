@@ -1,8 +1,8 @@
 package com.uuranus.myschedule.feat.bossworkermanage;
 
-import com.uuranus.domain.DeleteWorker;
-import com.uuranus.domain.EditWorkerType;
-import com.uuranus.domain.GetAllWorkersInfo;
+import com.uuranus.domain.DeleteWorkerUseCase;
+import com.uuranus.domain.EditWorkerTypeUseCase;
+import com.uuranus.domain.GetAllWorkersInfoUseCase;
 import com.uuranus.domain.GetUserDataUseCase;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -27,16 +27,16 @@ import javax.inject.Provider;
 public final class BossWorkerManageViewModel_Factory implements Factory<BossWorkerManageViewModel> {
   private final Provider<GetUserDataUseCase> getUserDataUseCaseProvider;
 
-  private final Provider<GetAllWorkersInfo> getAllWorkersInfoProvider;
+  private final Provider<GetAllWorkersInfoUseCase> getAllWorkersInfoProvider;
 
-  private final Provider<DeleteWorker> deleteWorkerProvider;
+  private final Provider<DeleteWorkerUseCase> deleteWorkerProvider;
 
-  private final Provider<EditWorkerType> editWorkerTypeProvider;
+  private final Provider<EditWorkerTypeUseCase> editWorkerTypeProvider;
 
   public BossWorkerManageViewModel_Factory(Provider<GetUserDataUseCase> getUserDataUseCaseProvider,
-      Provider<GetAllWorkersInfo> getAllWorkersInfoProvider,
-      Provider<DeleteWorker> deleteWorkerProvider,
-      Provider<EditWorkerType> editWorkerTypeProvider) {
+      Provider<GetAllWorkersInfoUseCase> getAllWorkersInfoProvider,
+      Provider<DeleteWorkerUseCase> deleteWorkerProvider,
+      Provider<EditWorkerTypeUseCase> editWorkerTypeProvider) {
     this.getUserDataUseCaseProvider = getUserDataUseCaseProvider;
     this.getAllWorkersInfoProvider = getAllWorkersInfoProvider;
     this.deleteWorkerProvider = deleteWorkerProvider;
@@ -50,15 +50,15 @@ public final class BossWorkerManageViewModel_Factory implements Factory<BossWork
 
   public static BossWorkerManageViewModel_Factory create(
       Provider<GetUserDataUseCase> getUserDataUseCaseProvider,
-      Provider<GetAllWorkersInfo> getAllWorkersInfoProvider,
-      Provider<DeleteWorker> deleteWorkerProvider,
-      Provider<EditWorkerType> editWorkerTypeProvider) {
+      Provider<GetAllWorkersInfoUseCase> getAllWorkersInfoProvider,
+      Provider<DeleteWorkerUseCase> deleteWorkerProvider,
+      Provider<EditWorkerTypeUseCase> editWorkerTypeProvider) {
     return new BossWorkerManageViewModel_Factory(getUserDataUseCaseProvider, getAllWorkersInfoProvider, deleteWorkerProvider, editWorkerTypeProvider);
   }
 
   public static BossWorkerManageViewModel newInstance(GetUserDataUseCase getUserDataUseCase,
-      GetAllWorkersInfo getAllWorkersInfo, DeleteWorker deleteWorker,
-      EditWorkerType editWorkerType) {
+      GetAllWorkersInfoUseCase getAllWorkersInfo, DeleteWorkerUseCase deleteWorker,
+      EditWorkerTypeUseCase editWorkerType) {
     return new BossWorkerManageViewModel(getUserDataUseCase, getAllWorkersInfo, deleteWorker, editWorkerType);
   }
 }

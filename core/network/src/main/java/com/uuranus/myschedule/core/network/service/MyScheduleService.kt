@@ -37,13 +37,13 @@ interface MyScheduleService {
         @Path("dateYM") dateYM: String,
     ): Response<ApiResponse<GetMonthlyPossibleTimesResult>>
 
-    @POST("/store/available-schedule")
+    @POST("/store/schedule/available")
     suspend fun postPossibleTime(
         @Header("Authorization") authorization: String,
         @Body body: PostPossibleTimeBody,
     ): Response<ApiResponse<PostPossibleTime>>
 
-    @DELETE("/store/available-schedule")
+    @DELETE("/store/schedule/available")
     suspend fun deletePossibleTime(
         @Header("Authorization") authorization: String,
         @Body body: DeletePossibleTimeBody,

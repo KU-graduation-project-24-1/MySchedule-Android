@@ -8,10 +8,10 @@ import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDate
-import com.uuranus.domain.AcceptFillIn
+import com.uuranus.domain.AcceptFillInUseCase
 import com.uuranus.domain.GetMonthlyScheduleUseCase
 import com.uuranus.domain.GetUserDataUseCase
-import com.uuranus.domain.RequestFillIn
+import com.uuranus.domain.RequestFillInUseCase
 import com.uuranus.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +31,8 @@ import javax.inject.Inject
 class BossHomeViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
-    private val requestFillIn: RequestFillIn,
-    private val acceptFillIn: AcceptFillIn,
+    private val requestFillIn: RequestFillInUseCase,
+    private val acceptFillIn: AcceptFillInUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()

@@ -40,6 +40,7 @@ class ScheduleDataSourceImpl @Inject constructor(
         scheduleId: Int,
         memberId: Int,
     ): Boolean {
+        println("request $scheduleId")
         val response = service.postScheduleCover(
             "Bearer $accessToken",
             scheduleId
@@ -111,20 +112,19 @@ class ScheduleDataSourceImpl @Inject constructor(
         storeId: Int,
         storeMemberAvailableTimeId: Int,
     ): Boolean {
-        println("delete $storeId $storeMemberAvailableTimeId")
-
+println("deletE! $storeMemberAvailableTimeId")
         val response = service.deletePossibleTime(
             "Bearer $accessToken",
-            body = DeletePossibleTimeBody(
+            DeletePossibleTimeBody(
                 storeId = storeId,
                 storeAvailableScheduleId = storeMemberAvailableTimeId
             )
         )
-        println("response ${response}")
+        println("delete ${response.body()}")
         if (response.isSuccessful) {
             return true
         } else {
-            println("error")
+            println("delete error ${response.errorBody()}")
             throw Exception(response.message())
         }
     }

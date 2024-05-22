@@ -1,17 +1,16 @@
 package com.uuranus.domain
 
-import com.uuranus.data.repository.home.HomeRepository
 import com.uuranus.data.repository.workermanage.WorkerManageRepository
+import com.uuranus.model.WorkerInfo
 import javax.inject.Inject
 
-class DeleteWorker @Inject constructor(
+class GetAllWorkersInfoUseCase @Inject constructor(
     private val repository: WorkerManageRepository,
 ) {
     suspend operator fun invoke(
-        accessToken:String,
+        accessToken: String,
         storeId: Int,
-        memberId: Int,
-    ): Boolean {
-        return repository.deleteWorker(accessToken,storeId, memberId)
+    ): List<WorkerInfo> {
+        return repository.getAllWorkers(accessToken, storeId)
     }
 }

@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDDate
-import com.uuranus.domain.AddSchedule
-import com.uuranus.domain.DeleteSchedule
-import com.uuranus.domain.GetAllWorkersInfo
+import com.uuranus.domain.AddScheduleUseCase
+import com.uuranus.domain.DeleteScheduleUseCase
+import com.uuranus.domain.GetAllWorkersInfoUseCase
 import com.uuranus.domain.GetUserDataUseCase
-import com.uuranus.domain.UpdateSchedule
+import com.uuranus.domain.UpdateScheduleUseCase
 import com.uuranus.model.MyScheduleNavType
 import com.uuranus.model.ScheduleUpdate
 import com.uuranus.model.UserData
@@ -32,10 +32,10 @@ import javax.inject.Inject
 class BossHomeScheduleViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUserDataUseCase: GetUserDataUseCase,
-    val getAllWorkersInfo: GetAllWorkersInfo,
-    val updateSchedule: UpdateSchedule,
-    val deleteSchedule: DeleteSchedule,
-    val addSchedule: AddSchedule,
+    val getAllWorkersInfo: GetAllWorkersInfoUseCase,
+    val updateSchedule: UpdateScheduleUseCase,
+    val deleteSchedule: DeleteScheduleUseCase,
+    val addScheduleUseCase: AddScheduleUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -78,7 +78,7 @@ class BossHomeScheduleViewModel @Inject constructor(
                     endTime = myScheduleNavType.endTime,
                     memberId = myScheduleNavType.memberId,
                 )
-                println("myscheduleInfo ${_myScheduleInfo.value}")
+
                 flow {
                     emit(
                         getAllWorkersInfo(
@@ -142,7 +142,7 @@ class BossHomeScheduleViewModel @Inject constructor(
 
     fun addSchedule() {
         viewModelScope.launch {
-            addSchedule(
+            addScheduleUseCase(
                 _userData.value.accessToken,
                 _myScheduleInfo.value.storeId,
                 ScheduleUpdate(

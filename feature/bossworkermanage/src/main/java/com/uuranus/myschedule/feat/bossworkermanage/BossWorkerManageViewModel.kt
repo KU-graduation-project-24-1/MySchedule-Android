@@ -2,9 +2,9 @@ package com.uuranus.myschedule.feat.bossworkermanage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uuranus.domain.DeleteWorker
-import com.uuranus.domain.EditWorkerType
-import com.uuranus.domain.GetAllWorkersInfo
+import com.uuranus.domain.DeleteWorkerUseCase
+import com.uuranus.domain.EditWorkerTypeUseCase
+import com.uuranus.domain.GetAllWorkersInfoUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,16 +17,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BossWorkerManageViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
-    private val getAllWorkersInfo: GetAllWorkersInfo,
-    private val deleteWorker: DeleteWorker,
-    private val editWorkerType: EditWorkerType,
+    private val getAllWorkersInfo: GetAllWorkersInfoUseCase,
+    private val deleteWorker: DeleteWorkerUseCase,
+    private val editWorkerType: EditWorkerTypeUseCase,
 ) : ViewModel() {
 
 

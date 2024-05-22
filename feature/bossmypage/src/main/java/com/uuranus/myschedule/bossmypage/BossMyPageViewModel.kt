@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.domain.AddFixedPossibleTimesUseCase
-import com.uuranus.domain.DeleteStore
+import com.uuranus.domain.DeleteStoreUseCase
 import com.uuranus.domain.GetSalesInformationUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.TimeRange
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BossMyPageViewModel @Inject constructor(
-    private val deleteStore: DeleteStore,
+    private val deleteStore: DeleteStoreUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getSalesInformationUseCase: GetSalesInformationUseCase,
     private val addFixedPossibleTimesUseCase: AddFixedPossibleTimesUseCase,
