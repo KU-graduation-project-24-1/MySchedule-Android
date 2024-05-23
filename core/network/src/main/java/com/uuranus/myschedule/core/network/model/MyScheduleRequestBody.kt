@@ -55,3 +55,9 @@ data class PatchScheduleCover(
     val endTime: String?,
     val deleted: Boolean,
 )
+
+@JsonClass(generateAdapter = true)
+data class LoginRequest(val idToken: String, val fcmToken: String)
+
+@JsonClass(generateAdapter = true)
+data class SignUpRequest(val memberName: String)

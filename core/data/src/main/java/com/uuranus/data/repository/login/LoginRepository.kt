@@ -7,16 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface LoginRepository {
 
     fun isLoggedIn(): Flow<Boolean>
-    //로그인
-    suspend fun serviceLogin(
-        idToken : String,
-        fcmToken : String,
-    ): LoginResult
-
-
-    //이름입력
-    suspend fun signUp(
-        memberName : String
-    ): LoginResult
+    suspend fun serviceLogin(idToken: String, fcmToken: String): LoginResult
+    suspend fun signUp(authorization: String, memberName: String): String
 
 }

@@ -67,14 +67,14 @@ class LoginActivity : ComponentActivity() {
 
             // Get new FCM registration token
             val token = task.result
-
+            Log.d("fcm",token)
             // Log and toast
             loginViewModel.setFcmToken(token)
             //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
 
-//        var keyHash = Utility.getKeyHash(this)
-//        Log.d("hash",keyHash)
+        var keyHash = Utility.getKeyHash(this)
+        Log.d("hash",keyHash)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
