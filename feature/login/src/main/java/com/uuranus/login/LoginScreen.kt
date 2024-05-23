@@ -28,7 +28,7 @@ import com.uuranus.navigation.currentComposeNavigator
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context,()->Unit) -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context,(String)->Unit) -> Unit) {
 
     val context = LocalContext.current
     val userData by viewModel.userData.collectAsStateWithLifecycle()
@@ -75,7 +75,7 @@ fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context,()->Unit) -> U
                 contentDescription = "Login button",
                 modifier = Modifier.fillMaxSize().clickable {
                     onClickLogin(context){
-                        viewModel.updateLoginStatus(true) // 서버와 통신이후 허가시 true로 변경
+                        viewModel.serviceLogin(it, userData.fcmToken)
                     }
                 }
 

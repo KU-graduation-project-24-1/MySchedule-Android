@@ -10,5 +10,6 @@ data class UserData(
     val accessToken: String = "",
     val refreshToken: String = "",
     val email: String ="",
-    val imgUrl: String?=""
+    val imgUrl: String?="",
+    val fcmToken: String=""
 )

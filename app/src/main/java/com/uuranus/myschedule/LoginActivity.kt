@@ -69,13 +69,12 @@ class LoginActivity : ComponentActivity() {
             val token = task.result
 
             // Log and toast
-            val msg = "FCM registration token: $token"
-            Log.d("FCM", msg)
+            loginViewModel.setFcmToken(token)
             //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
 
-        var keyHash = Utility.getKeyHash(this)
-        Log.d("hash",keyHash)
+//        var keyHash = Utility.getKeyHash(this)
+//        Log.d("hash",keyHash)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -135,7 +134,7 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
-fun onClickLogin(context: Context, onSuccess: ()-> Unit) {
+fun onClickLogin(context: Context, onSuccess: (String)-> Unit) {
     // 로그인 조합 예제
 
 // 카카오계정으로 로그인 공통 callback 구성
@@ -146,7 +145,7 @@ fun onClickLogin(context: Context, onSuccess: ()-> Unit) {
         } else if (token != null) {
             Log.i("로그인", "카카오계정으로 로그인 성공 ${token.idToken}")
             // 서버에 idToken과 Fcm토큰 로그인 API - 요청에 성공하면 그때서야 viewmodel.updateLoginStatus(true)
-            onSuccess()
+            token.idToken?.let { onSuccess(it) }
         }
     }
 
@@ -166,7 +165,7 @@ fun onClickLogin(context: Context, onSuccess: ()-> Unit) {
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             } else if (token != null) {
                 Log.i("로그인", "카카오톡으로 로그인 성공 ${token.idToken}")
-                onSuccess()
+                token.idToken?.let { onSuccess(it) }
             }
         }
     } else {

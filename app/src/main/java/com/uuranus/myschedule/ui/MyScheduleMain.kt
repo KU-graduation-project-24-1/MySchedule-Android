@@ -25,7 +25,7 @@ import java.net.UnknownHostException
 @Composable
 fun LoginMain(
     composeNavigator: AppComposeNavigator,
-    viewModel: LoginViewModel, onClickLogin: (Context, ()->Unit) -> Unit,
+    viewModel: LoginViewModel, onClickLogin: (Context, (String)->Unit) -> Unit,
 ) {
     MyScheduleTheme {
         val navHostController = rememberNavController()

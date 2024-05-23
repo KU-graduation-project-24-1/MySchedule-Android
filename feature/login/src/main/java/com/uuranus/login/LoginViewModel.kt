@@ -1,5 +1,6 @@
 package com.uuranus.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.domain.CheckLoginStatusUseCase
@@ -49,6 +50,14 @@ class LoginViewModel @Inject constructor(
         _userData.value = _userData.value.copy(isLoggedIn = loggedIn)
     }
 
+    fun setIdToken(idToken: String){
+        _userData.value = _userData.value.copy(idToken = idToken)
+    }
+
+    fun setFcmToken(fcmToken: String){
+        _userData.value = _userData.value.copy(fcmToken = fcmToken)
+    }
+
     fun serviceLogin(idToken: String, fcmToken: String){
         viewModelScope.launch{
             flow{
@@ -59,8 +68,10 @@ class LoginViewModel @Inject constructor(
                     )
                 )
             }.map{loginResult ->
+                Log.d("ddd","sss")
                 if (loginResult.memberName.isNullOrEmpty()) {
                     _userData.value = _userData.value.copy(
+                        isLoggedIn = true,
                         email = loginResult.email,
                         accessToken = loginResult.accessToken,
                         refreshToken = loginResult.refreshToken,
@@ -68,6 +79,7 @@ class LoginViewModel @Inject constructor(
                     )
                 } else {
                     _userData.value = _userData.value.copy(
+                        isLoggedIn = true,
                         email = loginResult.email,
                         accessToken = loginResult.accessToken,
                         refreshToken = loginResult.refreshToken,
@@ -75,6 +87,8 @@ class LoginViewModel @Inject constructor(
                         name = loginResult.memberName!!
                     )
                 }
+                Log.d("email",_userData.value.email)
+                Log.d("username",_userData.value.name)
             }.catch {throwable ->
                 _errorFlow.emit(throwable)
             }
