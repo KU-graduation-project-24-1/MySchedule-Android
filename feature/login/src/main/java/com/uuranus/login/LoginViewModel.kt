@@ -48,7 +48,6 @@ class LoginViewModel @Inject constructor(
     fun updateLoginStatus(loggedIn: Boolean) {
         _userData.value = _userData.value.copy(isLoggedIn = loggedIn)
     }
-<<<<<<< Updated upstream
 
     fun serviceLogin(idToken: String, fcmToken: String){
         viewModelScope.launch{
@@ -60,7 +59,14 @@ class LoginViewModel @Inject constructor(
                     )
                 )
             }.map{loginResult ->
-                if (loginResult.memberName?.isNotEmpty() == true) {
+                if (loginResult.memberName.isNullOrEmpty()) {
+                    _userData.value = _userData.value.copy(
+                        email = loginResult.email,
+                        accessToken = loginResult.accessToken,
+                        refreshToken = loginResult.refreshToken,
+                        imgUrl = loginResult.imgUrl,
+                    )
+                } else {
                     _userData.value = _userData.value.copy(
                         email = loginResult.email,
                         accessToken = loginResult.accessToken,
@@ -68,21 +74,10 @@ class LoginViewModel @Inject constructor(
                         imgUrl = loginResult.imgUrl,
                         name = loginResult.memberName!!
                     )
-                } else {
-                    _userData.value = _userData.value.copy(
-                        email = loginResult.email,
-                        accessToken = loginResult.accessToken,
-                        refreshToken = loginResult.refreshToken,
-                        imgUrl = loginResult.imgUrl
-                        // Do not update name if loginResult.name is empty
-                    )
                 }
             }.catch {throwable ->
                 _errorFlow.emit(throwable)
             }
         }
     }
-=======
-    
->>>>>>> Stashed changes
 }
