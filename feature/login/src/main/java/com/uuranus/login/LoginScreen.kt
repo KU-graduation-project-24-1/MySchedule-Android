@@ -34,11 +34,9 @@ fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
     val userData by viewModel.userData.collectAsStateWithLifecycle()
     val composeNavigator = currentComposeNavigator
 
-    LaunchedEffect(true) {
-        viewModel.userData.collectLatest { data ->
-            if(data.name.isEmpty()){
-                composeNavigator.navigate(MyScheduleScreens.NameInput.route)
-            }
+    LaunchedEffect(userData) {
+        if (userData.name.isEmpty()) {
+            composeNavigator.navigate(MyScheduleScreens.NameInput.route)
         }
     }
 
