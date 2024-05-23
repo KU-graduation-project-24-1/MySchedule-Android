@@ -20,7 +20,7 @@ class LoginViewModel @Inject constructor(
             UserData(
                 0,
                 0,
-                "",
+                "김알바",
                 "",
                 false
             )

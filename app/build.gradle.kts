@@ -50,6 +50,7 @@ dependencies {
     implementation(projects.feature.bosshome)
     implementation(projects.feature.bossmypage)
     implementation(projects.feature.bossworkermanage)
+    implementation(projects.feature.storelist)
 
     // cores
     implementation(projects.core.model)

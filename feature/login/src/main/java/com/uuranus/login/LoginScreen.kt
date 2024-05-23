@@ -14,17 +14,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import com.uuranus.myschedule.feature.login.R
+import com.uuranus.navigation.MyScheduleScreens
+import com.uuranus.navigation.currentComposeNavigator
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
 
     val context = LocalContext.current
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val composeNavigator = currentComposeNavigator
+
+    LaunchedEffect(true) {
+        viewModel.userData.collectLatest { data ->
+            if(data.name.isEmpty()){
+                composeNavigator.navigate(MyScheduleScreens.NameInput.route)
+            }
+        }
+    }
+
+
 
     Column(
         modifier = Modifier

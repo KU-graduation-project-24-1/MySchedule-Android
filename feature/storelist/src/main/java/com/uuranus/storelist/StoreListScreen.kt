@@ -1,4 +1,4 @@
-package com.uuranus.login
+package com.uuranus.storelist
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -15,10 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import com.uuranus.navigation.MyScheduleScreens
+import com.uuranus.navigation.currentComposeNavigator
 
 @Composable
 fun StoreListScreen() {
     var stores by remember { mutableStateOf(sampleStores) }
+
+    val composeNavigator = currentComposeNavigator
 
     Column(
         modifier = Modifier
@@ -40,7 +44,7 @@ fun StoreListScreen() {
                 )
             )
             OutlinedButton(
-                onClick = { /* Handle add store */ },
+                onClick = { composeNavigator.navigate(MyScheduleScreens.EmploymentType.route) },
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.Black // Set text color to black
                 ),
@@ -94,7 +98,7 @@ fun StoreItem(store: Store) {
             }
             Row {
                 IconButton(onClick = {
-                    //clipboardManager.setText(AnnotatedString(store.name))
+                    //copy
                 }) {
                     Icon(Icons.Filled.ContentCopy, contentDescription = "Copy")
                 }

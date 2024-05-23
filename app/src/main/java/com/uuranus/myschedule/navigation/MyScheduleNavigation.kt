@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.uuranus.home.HomeScreen
-import com.uuranus.login.BusinessRegistrationForm
-import com.uuranus.login.EmploymentTypeScreen
-import com.uuranus.login.InviteCodeForm
-import com.uuranus.login.InviteCodeScreen
+import com.uuranus.storelist.BusinessRegistrationForm
+import com.uuranus.storelist.EmploymentTypeScreen
+import com.uuranus.storelist.InviteCodeForm
+import com.uuranus.storelist.InviteCodeScreen
 import com.uuranus.login.LoginScreen
 import com.uuranus.login.LoginViewModel
 import com.uuranus.login.NameInputScreen
-import com.uuranus.login.StoreListScreen
-import com.uuranus.login.StoreNameForm
+import com.uuranus.storelist.StoreListScreen
+import com.uuranus.storelist.StoreNameForm
 import com.uuranus.mypage.MyPageScreen
 import com.uuranus.myschedule.bosshome.schedule.BossHomeAddScheduleScreen
 import com.uuranus.myschedule.bosshome.schedule.BossHomeEditScheduleScreen
@@ -30,6 +30,10 @@ fun NavGraphBuilder.loginNavigation(viewModel: LoginViewModel, onClickLogin: (Co
         NameInputScreen()
     }
 
+}
+
+fun NavGraphBuilder.storeListNavigation()
+{
     composable(MyScheduleScreens.StoreList.name) {
         StoreListScreen()
     }
