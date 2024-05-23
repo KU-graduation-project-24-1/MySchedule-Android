@@ -37,17 +37,18 @@ class LoginViewModel @Inject constructor(
     val errorFlow: SharedFlow<Throwable> get() = _errorFlow
 
 
-    init {
-        viewModelScope.launch {
-            checkLoginStatusUseCase().collect { isLoggedIn ->
-                _userData.value = _userData.value.copy(isLoggedIn = isLoggedIn)
-            }
-        }
-    }
+//    init {
+//        viewModelScope.launch {
+//            checkLoginStatusUseCase().collect { isLoggedIn ->
+//                _userData.value = _userData.value.copy(isLoggedIn = isLoggedIn)
+//            }
+//        }
+//    }
 
     fun updateLoginStatus(loggedIn: Boolean) {
         _userData.value = _userData.value.copy(isLoggedIn = loggedIn)
     }
+<<<<<<< Updated upstream
 
     fun serviceLogin(idToken: String, fcmToken: String){
         viewModelScope.launch{
@@ -81,4 +82,7 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+=======
+    
+>>>>>>> Stashed changes
 }

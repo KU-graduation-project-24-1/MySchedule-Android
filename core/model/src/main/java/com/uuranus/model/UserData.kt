@@ -9,7 +9,12 @@ data class UserData(
     val storeName: String = "",
     val accessToken: String = "",
     val refreshToken: String = "",
+<<<<<<< Updated upstream
     val email: String = "",
     val imgUrl: String = "",
 
+=======
+    val email: String ="",
+    val imgjUrl: String?=""
+>>>>>>> Stashed changes
 )
