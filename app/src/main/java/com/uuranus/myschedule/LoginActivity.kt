@@ -106,7 +106,9 @@ class LoginActivity : ComponentActivity() {
                         setContent {
                             CompositionLocalProvider(LocalComposeNavigator provides composeNavigator
                             ) {
-                                LoginMain(composeNavigator = composeNavigator,loginViewModel, onClickLogin= ::onClickLogin)
+                                LoginMain(composeNavigator = composeNavigator,loginViewModel) { context, onSuccess ->
+                                    onClickLogin(context, onSuccess)
+                                }
                             }
                         }
                     }
@@ -133,7 +135,7 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
-fun onClickLogin(context: Context) {
+fun onClickLogin(context: Context, onSuccess: ()-> Unit) {
     // 로그인 조합 예제
 
 // 카카오계정으로 로그인 공통 callback 구성
@@ -144,6 +146,7 @@ fun onClickLogin(context: Context) {
         } else if (token != null) {
             Log.i("로그인", "카카오계정으로 로그인 성공 ${token.idToken}")
             // 서버에 idToken과 Fcm토큰 로그인 API - 요청에 성공하면 그때서야 viewmodel.updateLoginStatus(true)
+            onSuccess()
         }
     }
 
@@ -163,7 +166,7 @@ fun onClickLogin(context: Context) {
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             } else if (token != null) {
                 Log.i("로그인", "카카오톡으로 로그인 성공 ${token.idToken}")
-
+                onSuccess()
             }
         }
     } else {

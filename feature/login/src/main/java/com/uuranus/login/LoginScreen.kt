@@ -28,14 +28,14 @@ import com.uuranus.navigation.currentComposeNavigator
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context,()->Unit) -> Unit) {
 
     val context = LocalContext.current
     val userData by viewModel.userData.collectAsStateWithLifecycle()
     val composeNavigator = currentComposeNavigator
 
     LaunchedEffect(userData) {
-        if (userData.name.isEmpty()) {
+        if (userData.isLoggedIn && userData.name.isEmpty()) {
             composeNavigator.navigate(MyScheduleScreens.NameInput.route)
         }
     }
@@ -73,14 +73,13 @@ fun LoginScreen(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.kakao_login_medium_wide),
                 contentDescription = "Login button",
-                modifier = Modifier.fillMaxSize().clickable (onClick = {
-                    viewModel.updateLoginStatus(true)
-                    onClickLogin(context)
-                })
-
+                modifier = Modifier.fillMaxSize().clickable {
+                    onClickLogin(context){
+                        viewModel.updateLoginStatus(true) // 서버와 통신이후 허가시 true로 변경
+                    }
+                }
 
             )
         }
     }
 }
-

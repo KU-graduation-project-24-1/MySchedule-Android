@@ -10,7 +10,7 @@ import com.uuranus.navigation.MyScheduleScreens
 @Composable
 fun LoginNavHost(
     navHostController: NavHostController,
-    viewModel: LoginViewModel, onClickLogin: (Context) -> Unit
+    viewModel: LoginViewModel, onClickLogin: (Context, ()->Unit) -> Unit
 ) {
     NavHost(
         navController = navHostController,

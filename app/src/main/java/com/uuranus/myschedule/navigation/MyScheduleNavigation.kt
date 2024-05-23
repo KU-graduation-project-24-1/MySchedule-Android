@@ -21,7 +21,7 @@ import com.uuranus.myschedule.bossmypage.BossMyPageScreen
 import com.uuranus.myschedule.feat.bossworkermanage.BossWorkerManageScreen
 import com.uuranus.navigation.MyScheduleScreens
 
-fun NavGraphBuilder.loginNavigation(viewModel: LoginViewModel, onClickLogin: (Context) -> Unit) {
+fun NavGraphBuilder.loginNavigation(viewModel: LoginViewModel, onClickLogin: (Context, () -> Unit) -> Unit) {
     composable(route = MyScheduleScreens.Login.name) {
         LoginScreen(viewModel, onClickLogin)
     }
