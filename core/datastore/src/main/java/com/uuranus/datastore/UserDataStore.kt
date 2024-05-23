@@ -32,7 +32,7 @@ class UserDataStore @Inject constructor(
                 workerType = "사장",
                 isLoggedIn = true,
                 storeName = "ㅁㅁ 떡볶이 건대입구점",
-                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2MzQ3NDM3LCJleHAiOjE3NDc4ODM0Mzd9.LNJp9aVkXEoQn_ZKKxqU2PtH9PRrk6_E_m5FPI7G-lI",
+                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2NDI5MjMyLCJleHAiOjE3NDc5NjUyMzJ9.F1D9DjSB7GMGEJryiBt64Kl1xrxX9_t3eM14QZvg1Gg",
                 refreshToken = ""
             )
 

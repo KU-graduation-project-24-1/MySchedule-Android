@@ -22,7 +22,7 @@ fun rememberMonthInfo(currentDate: DateInfo): MonthInfo {
 data class MonthInfo(val numberOfDays: Int, val firstDayOfWeek: Int)
 
 
-data class DateInfo(val year: Int, val month: Int, val date: Int) {
+data class DateInfo (val year: Int, val month: Int, val date: Int) {
     private lateinit var calendar: Calendar
 
     fun getWeekDay(): String {
@@ -58,6 +58,16 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
 
     private fun setCalendar(calendar: Calendar) {
         this.calendar = calendar
+        println(" set calendar ${calendar.get(Calendar.MONTH)} ${calendar.get(Calendar.DATE)}")
+
+    }
+
+    fun isBefore(comCal: Calendar): Boolean {
+        val newCal = comCal.clone() as Calendar
+        println("calendar ${calendar.get(Calendar.MONTH)} ${calendar.get(Calendar.DATE)}")
+        println("calendar ${comCal.get(Calendar.MONTH)} ${comCal.get(Calendar.DATE)}")
+        println(calendar < comCal)
+        return calendar < comCal
     }
 
     companion object {

@@ -27,6 +27,7 @@ import com.uuranus.myschedule.core.common.home.MyScheduleDetailListItem
 
 @Composable
 fun MyScheduleBottomSheetContentForBoss(
+    viewModel: BossHomeViewModel,
     dateInfo: DateInfo,
     scheduleInfo: List<ScheduleData<MyScheduleInfo>>,
     onClick: (DateInfo, ScheduleData<MyScheduleInfo>) -> Unit = { _, _ -> },
@@ -49,12 +50,13 @@ fun MyScheduleBottomSheetContentForBoss(
                     modifier = Modifier.align(Alignment.Center)
                 )
 
-                MyScheduleOutlinedButton(modifier = Modifier
+                MyScheduleFilledButton(modifier = Modifier
                     .align(Alignment.CenterEnd),
                     paddingValues = PaddingValues(
                         horizontal = 14.dp,
                         vertical = 5.dp
-                    ), buttonState = true,
+                    ), buttonState = viewModel.isBeforeNext8th(dateInfo),
+                    color = MyScheduleTheme.colors.primary,
                     content = {
                         Text("추가", style = MyScheduleTheme.typography.regular14)
                     }, onClick = {

@@ -233,6 +233,7 @@ fun BossHomeContent(
                 sheetState = sheetState,
                 content = {
                     MyScheduleBottomSheetContentForBoss(
+                        viewModel = viewModel,
                         dateInfo = selectedBottomSheetItem,
                         scheduleInfo = schedules[selectedBottomSheetItem]?.schedules ?: emptyList(),
                         onClick = { dateInfo, scheduleData ->
