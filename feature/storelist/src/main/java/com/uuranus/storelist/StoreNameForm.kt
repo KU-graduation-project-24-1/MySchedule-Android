@@ -13,11 +13,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.TextFieldValue
+import com.uuranus.navigation.MyScheduleScreens
+import com.uuranus.navigation.currentComposeNavigator
 
 
 @Composable
 fun StoreNameForm() {
     var storeName by remember { mutableStateOf(TextFieldValue("")) }
+    var showDialog by remember { mutableStateOf(false) }
+    val composeNavigator = currentComposeNavigator
 
     Box(
         modifier = Modifier
@@ -58,7 +62,7 @@ fun StoreNameForm() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = { /* Handle confirmation */ },
+                onClick = { showDialog = true },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFC1DAB9)
                 ),
@@ -68,5 +72,39 @@ fun StoreNameForm() {
                 Text(text = "확인", color = Color.Black)
             }
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(text = "이 가게가 맞으신가요?")
+            },
+            text = {
+                Text(text = storeName.text)
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        composeNavigator.navigate(MyScheduleScreens.InviteCode.route)},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFC1DAB9)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("예.", color = Color.Black)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showDialog = false },
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("아니오")
+                }
+            },
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
