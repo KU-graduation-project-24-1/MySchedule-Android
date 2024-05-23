@@ -1,13 +1,9 @@
-package com.uuranus.data.repository.login
+package com.uuranus.myschedule.core.network.datasource
 
 import com.uuranus.model.LoginResult
-import kotlinx.coroutines.flow.Flow
 
 
-interface LoginRepository {
-
-    fun isLoggedIn(): Flow<Boolean>
-    //로그인
+interface LoginDataSource {
     suspend fun serviceLogin(
         idToken : String,
         fcmToken : String,
@@ -18,5 +14,4 @@ interface LoginRepository {
     suspend fun signUp(
         memberName : String
     ): LoginResult
-
 }
