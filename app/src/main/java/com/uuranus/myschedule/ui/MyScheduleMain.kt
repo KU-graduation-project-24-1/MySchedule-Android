@@ -1,11 +1,11 @@
 package com.uuranus.myschedule.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -25,7 +25,7 @@ import java.net.UnknownHostException
 @Composable
 fun LoginMain(
     composeNavigator: AppComposeNavigator,
-    viewModel: LoginViewModel, onClickLogin: (Context) -> Unit,
+    viewModel: LoginViewModel, onClickLogin: (Context, (String)->Unit) -> Unit,
 ) {
     MyScheduleTheme {
         val navHostController = rememberNavController()
