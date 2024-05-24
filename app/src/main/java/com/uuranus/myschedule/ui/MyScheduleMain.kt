@@ -80,12 +80,15 @@ fun MyScheduleMain(
                         snackBarHostState.showSnackbar(
                             when (throwable) {
                                 is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
-                                else -> throwable.message ?: "알 수 없는 오류가 발생했습니다"
-                            }
-                        )
+                                else -> throwable.message?.let {
+                                    it.ifEmpty {
+                                        "알 수 없는 오류가 발생했습니다"
+                                    }
+                                } ?: "알 수 없는 오류가 발생했습니다"
+                            })
                     }
-                })
-
+                }
+            )
         }
     }
 }
@@ -117,7 +120,11 @@ fun BossMain(
                         snackBarHostState.showSnackbar(
                             when (throwable) {
                                 is UnknownHostException -> "네트워크 연결이 원활하지 않습니다"
-                                else -> "알 수 없는 오류가 발생했습니다"
+                                else -> throwable.message?.let {
+                                    it.ifEmpty {
+                                        "알 수 없는 오류가 발생했습니다"
+                                    }
+                                } ?: "알 수 없는 오류가 발생했습니다"
                             }
                         )
                     }

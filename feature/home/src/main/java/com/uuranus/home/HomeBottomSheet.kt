@@ -132,7 +132,7 @@ fun PossibleTimeBottomSheetContent(
                     paddingValues = PaddingValues(
                         horizontal = 14.dp,
                         vertical = 5.dp
-                    ), buttonState = homeViewModel.isBeforeNext8th(dateInfo),
+                    ), buttonState = homeViewModel.isPossibleAdd(dateInfo),
                     color = MyScheduleTheme.colors.primary,
                     content = {
                         Text(

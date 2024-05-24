@@ -31,7 +31,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
             Log.e("마이스케줄", response.body().toString())
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -51,7 +51,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return true
         } else {
             Log.e("마이스케줄", response.body().toString())
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
 
     }
@@ -71,7 +71,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return response.body()?.result?.scheduleId != null
         } else {
             Log.e("마이스케줄", response.body().toString())
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -90,7 +90,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -116,7 +116,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return response.body()?.result?.storeAvailableScheduleId ?: -1
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -139,7 +139,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return true
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -161,7 +161,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return true
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.body()?.message ?: "")
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -179,7 +179,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return true
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.body()?.message ?: "")
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -203,7 +203,7 @@ class ScheduleDataSourceImpl @Inject constructor(
             return true
         } else {
             Log.e("마이스케줄", response.body()?.message ?: "")
-            throw Exception(response.body()?.message ?: "")
+            throw Exception(response.body()?.result?.toString())
         }
     }
 }

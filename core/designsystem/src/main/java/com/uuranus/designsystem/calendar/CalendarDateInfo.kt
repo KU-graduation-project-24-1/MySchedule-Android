@@ -60,8 +60,12 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
         this.calendar = calendar
     }
 
-    fun isBefore(comCal: Calendar): Boolean {
-        return calendar.get(Calendar.DATE) >=8 && calendar < comCal
+    fun isPossibleAdd(comCal: Calendar): Boolean {
+        return if (calendar.get(Calendar.DATE) < 8) {
+            comCal.get(Calendar.MONTH) <= calendar.get(Calendar.MONTH)
+        } else {
+            calendar < comCal
+        }
     }
 
     companion object {

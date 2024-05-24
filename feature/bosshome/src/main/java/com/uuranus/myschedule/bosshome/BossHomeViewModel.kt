@@ -67,12 +67,12 @@ class BossHomeViewModel @Inject constructor(
 
     fun getCurrentDate(): DateInfo = _currentDate.value
 
-    fun isBeforeNext8th(dateInfo: DateInfo): Boolean {
+    fun isPossibleAdd(dateInfo: DateInfo): Boolean {
         val today = Calendar.getInstance()
         val endDate = today.addMonth(1)
         endDate.set(Calendar.DATE, 8)
 
-        return dateInfo.isBefore(endDate)
+        return dateInfo.isPossibleAdd(endDate)
     }
 
     fun getMonthlySchedules() {

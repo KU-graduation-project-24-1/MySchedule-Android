@@ -55,7 +55,7 @@ fun MyScheduleBottomSheetContentForBoss(
                     paddingValues = PaddingValues(
                         horizontal = 14.dp,
                         vertical = 5.dp
-                    ), buttonState = viewModel.isBeforeNext8th(dateInfo),
+                    ), buttonState = viewModel.isPossibleAdd(dateInfo),
                     color = MyScheduleTheme.colors.primary,
                     content = {
                         Text("추가", style = MyScheduleTheme.typography.regular14)

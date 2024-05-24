@@ -60,7 +60,7 @@ interface MyScheduleService {
     suspend fun postScheduleCover(
         @Header("Authorization") authorization: String,
         @Path("scheduleId") scheduleId: Int,
-    ): Response<Any>
+    ): Response<ApiResponse<String>>
 
     @PATCH("/store/schedule/{scheduleId}/cover")
     suspend fun patchScheduleCover(
