@@ -18,6 +18,7 @@ import com.uuranus.myschedule.core.network.model.PostScheduleBody
 import com.uuranus.myschedule.core.network.model.PostScheduleResult
 import com.uuranus.myschedule.core.network.model.SignUpRequest
 import com.uuranus.myschedule.core.network.model.SignUpResponse
+import com.uuranus.myschedule.core.network.model.StoreResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -40,6 +41,11 @@ interface MyScheduleService {
         @Header("Authorization") authorization: String,
         @Body body: SignUpRequest
     ): SignUpResponse
+
+    @GET("member/store")
+    suspend fun getStoreList(
+        @Header("Authorization") authorization: String
+    ): StoreResponse
     /*
         로그인 api 자리
      */

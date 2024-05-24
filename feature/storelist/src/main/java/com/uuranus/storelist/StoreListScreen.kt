@@ -15,12 +15,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.uuranus.model.Store
 import com.uuranus.navigation.MyScheduleScreens
 import com.uuranus.navigation.currentComposeNavigator
 
 @Composable
-fun StoreListScreen() {
-    var stores by remember { mutableStateOf(sampleStores) }
+fun StoreListScreen(storeListViewModel: StoreListViewModel = hiltViewModel()) {
+    val userData by storeListViewModel.userData.collectAsStateWithLifecycle()
+    val authorization = "Bearer ${userData.accessToken}" // Replace with the actual token
+    LaunchedEffect(Unit) {
+        storeListViewModel.fetchStores(authorization)
+    }
+
+    val stores by storeListViewModel.stores.collectAsState()
 
     val composeNavigator = currentComposeNavigator
 
@@ -87,14 +96,13 @@ fun StoreItem(store: Store) {
         ) {
             Column {
                 Text(
-                    text = store.name,
+                    text = store.storeName,
                     style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "고용형태: ${store.employmentType}",
+                    text = "고용형태: ${store.grade}",
                     style = TextStyle(fontSize = 16.sp)
                 )
-
             }
             Row {
                 IconButton(onClick = {
@@ -109,12 +117,3 @@ fun StoreItem(store: Store) {
         }
     }
 }
-
-data class Store(val name: String, val employmentType: String)
-
-val sampleStores = listOf(
-    Store("000 떡볶이 건대입구점", "사장"),
-    Store("□□ 카페 성수점", "사장"),
-    Store("○○ 카페 건대입구점", "사장"),
-    Store("000 떡볶이 성수점", "사장")
-)
