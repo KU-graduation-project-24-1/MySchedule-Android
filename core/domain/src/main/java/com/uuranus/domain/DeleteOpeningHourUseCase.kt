@@ -12,14 +12,12 @@ class DeleteOpeningHourUseCase @Inject constructor(
     suspend operator fun invoke(
         accessToken: String,
         weekNum: Int,
-        requiredEmployees: Int,
         startTime: String,
         endTime: String,
     ): Int {
         return repository.addStoreOpeningHourTime(
             accessToken,
             weekNum,
-            requiredEmployees,
             startTime,
             endTime
         )

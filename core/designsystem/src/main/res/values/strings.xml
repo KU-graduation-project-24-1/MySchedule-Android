@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">MySchedule</string>
+    <string name="app_name">오늘알바</string>
     <string name="title_activity_login">LoginActivity</string>
 </resources>
