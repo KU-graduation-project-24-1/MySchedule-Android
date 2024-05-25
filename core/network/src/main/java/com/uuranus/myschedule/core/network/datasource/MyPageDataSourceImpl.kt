@@ -25,6 +25,16 @@ class MyPageDataSourceImpl @Inject constructor(
         return "고정 시간 추가 성공"
     }
 
+    override suspend fun deleteFixedPossibleTime(
+        accessToken: String,
+        weekNum: Int,
+        requiredEmployees: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean {
+        return true
+    }
+
     override suspend fun getStoreSalesInformation(accessToken: String): List<StoreSalesInformation> {
         return listOf(
             StoreSalesInformation(0, emptyList()),
@@ -37,7 +47,25 @@ class MyPageDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun addStoreOpeningHourTime(accessToken: String, storeId: Int): Boolean {
+    override suspend fun addWorkerNum(accessToken: String, weekNum: Int, workerNum: Int): Boolean {
+        return true
+    }
+
+    override suspend fun addStoreOpeningHourTime(
+        accessToken: String,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return -1
+    }
+
+    override suspend fun deleteStoreOpeningHourTime(
+        accessToken: String,
+        weekNum: Int,
+        requiredEmployees: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean {
         return true
     }
 

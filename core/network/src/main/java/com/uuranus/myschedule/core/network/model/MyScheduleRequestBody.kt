@@ -13,7 +13,7 @@ data class PostPossibleTimeBody(
 @JsonClass(generateAdapter = true)
 data class DeletePossibleTimeBody(
     val storeId: Int,
-    val storeAvailableScheduleId: Int
+    val storeAvailableScheduleId: Int,
 )
 
 @JsonClass(generateAdapter = true)
@@ -54,6 +54,19 @@ data class PatchScheduleCover(
     val startTime: String?,
     val endTime: String?,
     val deleted: Boolean,
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchOperationInfoBody(
+    val dayOfWeek: Int,
+    val requiredEmployees: Int,
+    val startTime: String,
+    val endTime: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class StoreOperationInfoBody(
+    val storeOperationInfoId: Int,
 )
 
 @JsonClass(generateAdapter = true)

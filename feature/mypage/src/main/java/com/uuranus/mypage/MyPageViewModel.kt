@@ -70,12 +70,6 @@ class MyPageViewModel @Inject constructor(
 
     }
 
-    fun quit() {
-        viewModelScope.launch {
-
-        }
-    }
-
     fun addFixedPossibleTime(weekDayNum: Int, startTime: String, endTime: String) {
 
         val state = _mypageUiState.value
@@ -92,8 +86,8 @@ class MyPageViewModel @Inject constructor(
                         if (index == weekDayNum) {
                             timeRanges.plus(
                                 TimeRange(
-                                    startTime,
-                                    endTime
+                                    startTime = startTime,
+                                    endTime = endTime
                                 )
                             )
                         } else {
@@ -106,6 +100,18 @@ class MyPageViewModel @Inject constructor(
             }.collect {
                 _mypageUiState.value = it
             }
+        }
+    }
+
+    fun deleteFixedPossibleTime(timeId: Int) {
+        viewModelScope.launch {
+
+        }
+    }
+
+    fun quit() {
+        viewModelScope.launch {
+
         }
     }
 }

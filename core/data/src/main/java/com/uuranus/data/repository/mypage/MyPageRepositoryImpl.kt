@@ -20,17 +20,59 @@ class MyPageRepositoryImpl @Inject constructor(
         return dataSource.addFixedPossibleTime(accessToken)
     }
 
+    override suspend fun deleteFixedPossibleTime(
+        accessToken: String,
+        weekNum: Int,
+        requiredEmployees: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean {
+        return dataSource.deleteFixedPossibleTime(
+            accessToken,
+            weekNum,
+            requiredEmployees,
+            startTime,
+            endTime
+        )
+    }
+
     override suspend fun getStoreSalesInformation(
         accessToken: String,
     ): List<StoreSalesInformation> {
         return dataSource.getStoreSalesInformation(accessToken)
     }
 
+    override suspend fun addWorkerNum(accessToken: String, weekNum: Int, workerNum: Int): Boolean {
+        return dataSource.addWorkerNum(accessToken, weekNum, workerNum)
+    }
+
     override suspend fun addStoreOpeningHourTime(
         accessToken: String,
-        storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return dataSource.addStoreOpeningHourTime(
+            accessToken,
+            startTime,
+            endTime
+        )
+    }
+
+    override suspend fun deleteStoreOpeningHourTime(
+        accessToken: String,
+        weekNum: Int,
+        requiredEmployees: Int,
+        startTime: String,
+        endTime: String,
     ): Boolean {
-        return dataSource.addStoreOpeningHourTime(accessToken, storeId)
+        return dataSource.deleteStoreOpeningHourTime(
+            accessToken,
+            weekNum,
+            requiredEmployees,
+            startTime,
+            endTime
+        )
     }
 
     override suspend fun deleteStore(accessToken: String, storeId: Int): Boolean {

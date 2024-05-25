@@ -79,6 +79,7 @@ class LoginActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 loginViewModel.userData.collectLatest {data ->
+                    println("userData $data")
                     if(data.isLoggedIn)  //카톡 로그인함
                     {
                         startActivity(

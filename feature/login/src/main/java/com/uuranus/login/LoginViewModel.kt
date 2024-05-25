@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val checkLoginStatusUseCase: CheckLoginStatusUseCase,
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
 
     private val _userData = MutableStateFlow(UserData())
@@ -29,13 +29,13 @@ class LoginViewModel @Inject constructor(
     val isLoggedIn: Flow<Boolean> = loginUseCase.isLoggedIn()
 
 
-//    init {
-//        viewModelScope.launch {
-//            checkLoginStatusUseCase().collect { isLoggedIn ->
-//                _userData.value = _userData.value.copy(isLoggedIn = isLoggedIn)
-//            }
-//        }
-//    }
+    init {
+        viewModelScope.launch {
+            checkLoginStatusUseCase().collect { isLoggedIn ->
+                _userData.value = _userData.value.copy(isLoggedIn = isLoggedIn)
+            }
+        }
+    }
 
     fun updateLoginStatus(loggedIn: Boolean) {
         _userData.value = _userData.value.copy(isLoggedIn = loggedIn)
@@ -80,7 +80,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun setFcmToken(fcmToken: String){
+    fun setFcmToken(fcmToken: String) {
         _userData.value = _userData.value.copy(fcmToken = fcmToken)
     }
 

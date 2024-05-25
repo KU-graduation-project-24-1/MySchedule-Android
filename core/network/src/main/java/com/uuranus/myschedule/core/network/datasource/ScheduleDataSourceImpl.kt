@@ -26,7 +26,6 @@ class ScheduleDataSourceImpl @Inject constructor(
             storeId,
             dateYM
         )
-
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: hashMapOf()
         } else {

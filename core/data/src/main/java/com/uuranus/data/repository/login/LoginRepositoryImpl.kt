@@ -11,7 +11,7 @@ class LoginRepositoryImpl @Inject constructor(
     private val dataSource: LoginDataSource
 ) : LoginRepository {
 
-    private val _isLoggedIn = MutableStateFlow(false)
+    private val _isLoggedIn = MutableStateFlow(true)
     override fun isLoggedIn(): Flow<Boolean> = _isLoggedIn.asStateFlow()
 
     override suspend fun serviceLogin(idToken: String, fcmToken: String): LoginResult {
