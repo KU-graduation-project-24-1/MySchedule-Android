@@ -10,29 +10,36 @@ class MyPageRepositoryImpl @Inject constructor(
 ) : MyPageRepository {
     override suspend fun getFixedPossibleTimes(
         accessToken: String,
+        storeId: Int,
     ): List<List<TimeRange>> {
-        return dataSource.getFixedPossibleTimes(accessToken)
+        return dataSource.getFixedPossibleTimes(accessToken, storeId)
     }
 
     override suspend fun addFixedPossibleTime(
         accessToken: String,
-    ): String {
-        return dataSource.addFixedPossibleTime(accessToken)
+        storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean {
+        return dataSource.addFixedPossibleTime(
+            accessToken,
+            storeId,
+            weekNum,
+            startTime,
+            endTime,
+        )
     }
 
     override suspend fun deleteFixedPossibleTime(
         accessToken: String,
         weekNum: Int,
-        requiredEmployees: Int,
-        startTime: String,
-        endTime: String,
+        storeAvailableTimeByDayId: Int,
     ): Boolean {
         return dataSource.deleteFixedPossibleTime(
             accessToken,
             weekNum,
-            requiredEmployees,
-            startTime,
-            endTime
+            storeAvailableTimeByDayId
         )
     }
 

@@ -8,8 +8,18 @@ class AddFixedPossibleTimesUseCase @Inject constructor(
     private val repository: MyPageRepository,
 ) {
     suspend operator fun invoke(
-        accessToken:String,
-    ): String {
-        return repository.addFixedPossibleTime(accessToken)
+        accessToken: String,
+        storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean {
+        return repository.addFixedPossibleTime(
+            accessToken,
+            storeId,
+            weekNum,
+            startTime,
+            endTime
+        )
     }
 }

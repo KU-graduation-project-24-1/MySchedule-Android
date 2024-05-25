@@ -7,18 +7,21 @@ interface MyPageRepository {
 
     suspend fun getFixedPossibleTimes(
         accessToken: String,
+        storeId: Int,
     ): List<List<TimeRange>>
 
     suspend fun addFixedPossibleTime(
         accessToken: String,
-    ): String
+        storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Boolean
 
     suspend fun deleteFixedPossibleTime(
         accessToken: String,
         weekNum: Int,
-        requiredEmployees: Int,
-        startTime: String,
-        endTime: String,
+        storeAvailableTimeByDayId: Int,
     ): Boolean
 
     suspend fun getStoreSalesInformation(

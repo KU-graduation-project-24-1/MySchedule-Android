@@ -55,7 +55,7 @@ class MyPageViewModel @Inject constructor(
 
                 _userData.value = it
                 flow {
-                    emit(getFixedPossibleTimesUseCase(it.accessToken))
+                    emit(getFixedPossibleTimesUseCase(it.accessToken, it.storeId))
                 }
             }.map {
                 MyPageUiState.Success(
@@ -79,7 +79,15 @@ class MyPageViewModel @Inject constructor(
 
         viewModelScope.launch {
             flow {
-                emit(addFixedPossibleTimesUseCase(_userData.value.accessToken))
+                emit(
+                    addFixedPossibleTimesUseCase(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        weekDayNum,
+                        startTime,
+                        endTime
+                    )
+                )
             }.map {
                 state.copy(
                     fixedPossibleTimes = state.fixedPossibleTimes.mapIndexed { index, timeRanges ->

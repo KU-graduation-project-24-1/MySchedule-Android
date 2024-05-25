@@ -1,6 +1,8 @@
 package com.uuranus.myschedule.core.network.service
 
 import com.uuranus.myschedule.core.network.model.ApiResponse
+import com.uuranus.myschedule.core.network.model.DeleteFixedScheduleBody
+import com.uuranus.myschedule.core.network.model.DeleteOperationInfoResponse
 import com.uuranus.myschedule.core.network.model.DeletePossibleTimeBody
 import com.uuranus.myschedule.core.network.model.DeleteWorkerBody
 import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
@@ -14,13 +16,13 @@ import com.uuranus.myschedule.core.network.model.PatchScheduleBody
 import com.uuranus.myschedule.core.network.model.PatchScheduleCover
 import com.uuranus.myschedule.core.network.model.PatchScheduleResult
 import com.uuranus.myschedule.core.network.model.PatchWorkerTypeBody
+import com.uuranus.myschedule.core.network.model.PathFixedScheduleBody
 import com.uuranus.myschedule.core.network.model.PostPossibleTime
 import com.uuranus.myschedule.core.network.model.PostPossibleTimeBody
 import com.uuranus.myschedule.core.network.model.PostScheduleBody
 import com.uuranus.myschedule.core.network.model.PostScheduleResult
 import com.uuranus.myschedule.core.network.model.SignUpRequest
 import com.uuranus.myschedule.core.network.model.SignUpResponse
-import com.uuranus.myschedule.core.network.model.StoreOperationInfoBody
 import com.uuranus.myschedule.core.network.model.StoreResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -135,30 +137,43 @@ interface MyScheduleService {
         @Path("scheduleId") scheduleId: Int,
     ): Response<ApiResponse<String>>
 
-    @PATCH("/store/schedule/{scheduleId}/operation-info")
+    @PATCH("/store/schedule/{storeId}/operation-info")
     suspend fun patchOperationInfo(
         @Header("Authorization") authorization: String,
-        @Path("scheduleId") scheduleId: Int,
+        @Path("storeId") storeId: Int,
         @Body body: PatchOperationInfoBody,
     ): Response<ApiResponse<PatchOperationInfoResponse>>
 
-    @HTTP(method = "DELETE", path = "/executive/employee", hasBody = true)
+    @HTTP(method = "DELETE", path = "/store/schedule/{storeId}/operation-info", hasBody = true)
     suspend fun deleteOperationInfo(
         @Header("Authorization") authorization: String,
-        @Body body: StoreOperationInfoBody,
+        @Path("storeId") storeId: Int,
+        @Body body: DeleteOperationInfoResponse,
     ): Response<ApiResponse<String>>
 
     //마이페이지
-    @GET("/store/1/fixed-schedule")
+    @GET("/store/{storeId}/fixed-schedule")
     suspend fun getFixedSchedule(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
     ): Response<ApiResponse<Any>>
 
-    @GET("/store/1/fixed-schedule/add")
+    @GET("/store/{storeId}/fixed-schedule/add")
     suspend fun patchFixedSchedule(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
-    ): Response<ApiResponse<GetAllWorkersResult>>
+        @Body body: PathFixedScheduleBody,
+    ): Response<ApiResponse<Any>>
+
+    @HTTP(
+        method = "DELETE",
+        path = "/store/schedule/{storeId}/fixed-schedule/delete",
+        hasBody = true
+    )
+    suspend fun deleteFixedSchedule(
+        @Header("Authorization") authorization: String,
+        @Path("storeId") storeId: Int,
+        @Body body: DeleteFixedScheduleBody,
+    ): Response<ApiResponse<String>>
 
 }

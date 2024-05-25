@@ -65,8 +65,22 @@ data class PatchOperationInfoBody(
 )
 
 @JsonClass(generateAdapter = true)
-data class StoreOperationInfoBody(
+data class DeleteOperationInfoResponse(
     val storeOperationInfoId: Int,
+)
+
+@JsonClass(generateAdapter = true)
+data class PathFixedScheduleBody(
+    val storeId: Int,
+    val dayOfWeek: Int,
+    val startTime: String,
+    val endTime: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class DeleteFixedScheduleBody(
+    val storeId: Int,
+    val storeAvailableTimeByDayId: Int,
 )
 
 @JsonClass(generateAdapter = true)
