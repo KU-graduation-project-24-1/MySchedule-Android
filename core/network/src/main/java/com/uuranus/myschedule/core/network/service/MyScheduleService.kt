@@ -6,6 +6,8 @@ import com.uuranus.myschedule.core.network.model.DeleteWorkerBody
 import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyPossibleTimesResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
+import com.uuranus.myschedule.core.network.model.LoginRequest
+import com.uuranus.myschedule.core.network.model.LoginResponse
 import com.uuranus.myschedule.core.network.model.PatchScheduleBody
 import com.uuranus.myschedule.core.network.model.PatchScheduleCover
 import com.uuranus.myschedule.core.network.model.PatchScheduleResult
@@ -14,6 +16,9 @@ import com.uuranus.myschedule.core.network.model.PostPossibleTime
 import com.uuranus.myschedule.core.network.model.PostPossibleTimeBody
 import com.uuranus.myschedule.core.network.model.PostScheduleBody
 import com.uuranus.myschedule.core.network.model.PostScheduleResult
+import com.uuranus.myschedule.core.network.model.SignUpRequest
+import com.uuranus.myschedule.core.network.model.SignUpResponse
+import com.uuranus.myschedule.core.network.model.StoreResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -26,6 +31,21 @@ import retrofit2.http.Path
 
 interface MyScheduleService {
 
+    @POST("auth/login")
+    suspend fun serviceLogin(
+        @Body body: LoginRequest
+    ): LoginResponse
+
+    @POST("auth/name")
+    suspend fun signUp(
+        @Header("Authorization") authorization: String,
+        @Body body: SignUpRequest
+    ): SignUpResponse
+
+    @GET("member/store")
+    suspend fun getStoreList(
+        @Header("Authorization") authorization: String
+    ): StoreResponse
     /*
         로그인 api 자리
      */

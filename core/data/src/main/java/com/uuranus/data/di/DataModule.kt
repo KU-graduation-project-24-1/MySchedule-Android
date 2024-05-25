@@ -10,6 +10,8 @@ import com.uuranus.data.repository.user.UserRepository
 import com.uuranus.data.repository.user.UserRepositoryImpl
 import com.uuranus.data.repository.workermanage.WorkerManageRepository
 import com.uuranus.data.repository.workermanage.WorkerManageRepositoryImpl
+import com.uuranus.myschedule.core.network.datasource.LoginDataSource
+import com.uuranus.myschedule.core.network.datasource.LoginDataSourceImpl
 import com.uuranus.myschedule.core.network.datasource.MyPageDataSource
 import com.uuranus.myschedule.core.network.datasource.MyPageDataSourceImpl
 import com.uuranus.myschedule.core.network.datasource.ScheduleDataSource
@@ -24,6 +26,11 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface DataModule {
+
+    @Binds
+    fun bindLoginDataSource(
+        loginDataSourceImpl: LoginDataSourceImpl
+    ): LoginDataSource
 
     @Binds
     fun bindScheduleDataSource(

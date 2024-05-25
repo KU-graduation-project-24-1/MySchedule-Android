@@ -2,6 +2,8 @@ package com.uuranus.myschedule.core.network.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.uuranus.model.LoginResult
+import com.uuranus.model.StoreResult
 
 
 @JsonClass(generateAdapter = true)
@@ -91,3 +93,23 @@ data class PatchScheduleResult(
     val deleted: Boolean?,
 )
 
+@JsonClass(generateAdapter = true)
+data class LoginResponse(
+    val result: LoginResult
+)
+
+@JsonClass(generateAdapter = true)
+data class SignUpResponse(
+    val code: Int,
+    val status: Int,
+    val message: String,
+    val result: String
+)
+
+@JsonClass(generateAdapter = true)
+data class StoreResponse(
+    val code: Int,
+    val status: Int,
+    val message: String,
+    val result: StoreResult
+)

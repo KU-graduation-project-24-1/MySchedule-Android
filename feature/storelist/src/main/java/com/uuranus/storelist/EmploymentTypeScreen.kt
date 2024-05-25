@@ -13,11 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import com.uuranus.navigation.MyScheduleScreens
+import com.uuranus.navigation.currentComposeNavigator
 
 
 @Composable
 fun EmploymentTypeScreen() {
     var selectedType by remember { mutableStateOf<String?>(null) }
+    val composeNavigator = currentComposeNavigator
 
     Column(
         modifier = Modifier
@@ -36,7 +39,7 @@ fun EmploymentTypeScreen() {
         )
 
         Button(
-            onClick = { selectedType = "사장" },
+            onClick = { composeNavigator.navigate(MyScheduleScreens.BusinessRegistration.route) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFC1DAB9),
                 contentColor = Color.Black
@@ -51,7 +54,7 @@ fun EmploymentTypeScreen() {
         }
 
         Button(
-            onClick = { selectedType = "직원" },
+            onClick = { composeNavigator.navigate(MyScheduleScreens.InviteRegistration.route) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Black

@@ -1,29 +1,26 @@
 package com.uuranus.data.repository.login
 
-import com.uuranus.datastore.UserDataStore
-import com.uuranus.myschedule.core.network.service.MyScheduleService
+import com.uuranus.model.LoginResult
+import com.uuranus.myschedule.core.network.datasource.LoginDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
-    private val dataStore: UserDataStore,
-    private val service: MyScheduleService,
+    private val dataSource: LoginDataSource
 ) : LoginRepository {
 
-    override fun isLoggedIn(): Flow<Boolean> {
-        return dataStore.userData.map { it.isLoggedIn }
+    private val _isLoggedIn = MutableStateFlow(false)
+    override fun isLoggedIn(): Flow<Boolean> = _isLoggedIn.asStateFlow()
+
+    override suspend fun serviceLogin(idToken: String, fcmToken: String): LoginResult {
+        val result = dataSource.serviceLogin(idToken, fcmToken)
+        _isLoggedIn.value = result.accessToken.isNotEmpty()
+        return result
     }
 
-    override fun login(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun makeRoom(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun enterRoom(): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun signUp(authorization: String, memberName: String): String {
+        return dataSource.signUp(authorization, memberName)
     }
 }
