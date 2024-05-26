@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.domain.AddFixedPossibleTimesUseCase
+import com.uuranus.domain.DeleteFixedPossibleTimeUseCase
 import com.uuranus.domain.GetFixedPossibleTimesUseCase
 import com.uuranus.domain.GetUserDataUseCase
 import com.uuranus.model.TimeRange
@@ -26,6 +27,7 @@ class MyPageViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getFixedPossibleTimesUseCase: GetFixedPossibleTimesUseCase,
     private val addFixedPossibleTimesUseCase: AddFixedPossibleTimesUseCase,
+    private val deleteFixedPossibleTimeUseCase: DeleteFixedPossibleTimeUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -55,9 +57,10 @@ class MyPageViewModel @Inject constructor(
 
                 _userData.value = it
                 flow {
-                    emit(getFixedPossibleTimesUseCase(it.accessToken))
+                    emit(getFixedPossibleTimesUseCase(it.accessToken, it.storeId))
                 }
             }.map {
+                println("it ${it.joinToString("\n")}")
                 MyPageUiState.Success(
                     fixedPossibleTimes = it
                 )
@@ -70,12 +73,6 @@ class MyPageViewModel @Inject constructor(
 
     }
 
-    fun quit() {
-        viewModelScope.launch {
-
-        }
-    }
-
     fun addFixedPossibleTime(weekDayNum: Int, startTime: String, endTime: String) {
 
         val state = _mypageUiState.value
@@ -85,15 +82,24 @@ class MyPageViewModel @Inject constructor(
 
         viewModelScope.launch {
             flow {
-                emit(addFixedPossibleTimesUseCase(_userData.value.accessToken))
-            }.map {
+                emit(
+                    addFixedPossibleTimesUseCase(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        weekDayNum,
+                        startTime,
+                        endTime
+                    )
+                )
+            }.map { storeAvailableTimeByDayId ->
                 state.copy(
                     fixedPossibleTimes = state.fixedPossibleTimes.mapIndexed { index, timeRanges ->
                         if (index == weekDayNum) {
                             timeRanges.plus(
                                 TimeRange(
-                                    startTime,
-                                    endTime
+                                    timeId = storeAvailableTimeByDayId,
+                                    startTime = startTime,
+                                    endTime = endTime
                                 )
                             )
                         } else {
@@ -106,6 +112,41 @@ class MyPageViewModel @Inject constructor(
             }.collect {
                 _mypageUiState.value = it
             }
+        }
+    }
+
+    fun deleteFixedPossibleTime(timeId: Int) {
+        viewModelScope.launch {
+            flow {
+                emit(
+                    deleteFixedPossibleTimeUseCase(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        timeId
+                    )
+                )
+            }.map {
+                val state = _mypageUiState.value as MyPageUiState.Success
+
+                MyPageUiState.Success(
+                    fixedPossibleTimes = state.fixedPossibleTimes.map { weekDayList ->
+                        weekDayList.filterNot {
+                            it.timeId == timeId
+                        }
+                    }
+                )
+
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _mypageUiState.value = it
+            }
+        }
+    }
+
+    fun quit() {
+        viewModelScope.launch {
+
         }
     }
 }

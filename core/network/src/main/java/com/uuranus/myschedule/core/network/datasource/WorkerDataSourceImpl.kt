@@ -20,7 +20,7 @@ class WorkerDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return response.body()?.result?.toData() ?: emptyList()
         } else {
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 
@@ -42,7 +42,7 @@ class WorkerDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return true
         } else {
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
 
     }
@@ -59,7 +59,7 @@ class WorkerDataSourceImpl @Inject constructor(
         if (response.isSuccessful) {
             return true
         } else {
-            throw Exception(response.message())
+            throw Exception(response.body()?.result?.toString())
         }
     }
 

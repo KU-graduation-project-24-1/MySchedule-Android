@@ -132,7 +132,7 @@ fun PossibleTimeBottomSheetContent(
                     paddingValues = PaddingValues(
                         horizontal = 14.dp,
                         vertical = 5.dp
-                    ), buttonState = true,
+                    ), buttonState = homeViewModel.isPossibleAdd(dateInfo),
                     color = MyScheduleTheme.colors.primary,
                     content = {
                         Text(
@@ -179,7 +179,7 @@ fun PossibleTimeBottomSheetContent(
     if (showTimePicker.value) {
 
         TimePickerDialog(onTimeSelected = { start, end ->
-            if(start.isNotEmpty() && end.isNotEmpty()){
+            if (start.isNotEmpty() && end.isNotEmpty()) {
                 homeViewModel.addPossibleTime(dateInfo, start, end)
             }
 

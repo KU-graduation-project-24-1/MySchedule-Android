@@ -12,4 +12,7 @@ class UserRepositoryImpl @Inject constructor(
         return userDataStore.userData
     }
 
+    override suspend fun updateUserData(newUserData: UserData) {
+        userDataStore.setUserData(newUserData)
+    }
 }

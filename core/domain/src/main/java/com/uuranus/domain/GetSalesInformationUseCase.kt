@@ -10,7 +10,8 @@ class GetSalesInformationUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         accessToken:String,
+        storeId: Int,
     ): List<StoreSalesInformation> {
-        return repository.getStoreSalesInformation(accessToken)
+        return repository.getStoreSalesInformation(accessToken,storeId)
     }
 }

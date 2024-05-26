@@ -10,27 +10,81 @@ class MyPageRepositoryImpl @Inject constructor(
 ) : MyPageRepository {
     override suspend fun getFixedPossibleTimes(
         accessToken: String,
+        storeId: Int,
     ): List<List<TimeRange>> {
-        return dataSource.getFixedPossibleTimes(accessToken)
+        return dataSource.getFixedPossibleTimes(accessToken, storeId)
     }
 
     override suspend fun addFixedPossibleTime(
         accessToken: String,
-    ): String {
-        return dataSource.addFixedPossibleTime(accessToken)
+        storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return dataSource.addFixedPossibleTime(
+            accessToken,
+            storeId,
+            weekNum,
+            startTime,
+            endTime,
+        )
+    }
+
+    override suspend fun deleteFixedPossibleTime(
+        accessToken: String,
+        storeId: Int,
+        storeAvailableTimeByDayId: Int,
+    ): Boolean {
+        return dataSource.deleteFixedPossibleTime(
+            accessToken,
+            storeId,
+            storeAvailableTimeByDayId
+        )
     }
 
     override suspend fun getStoreSalesInformation(
         accessToken: String,
+        storeId: Int,
     ): List<StoreSalesInformation> {
-        return dataSource.getStoreSalesInformation(accessToken)
+        return dataSource.getStoreSalesInformation(accessToken, storeId)
+    }
+
+    override suspend fun addWorkerNum(
+        accessToken: String,
+        storeId: Int,
+        weekNum: Int,
+        workerNum: Int,
+    ): Boolean {
+        return dataSource.addWorkerNum(accessToken, storeId, weekNum, workerNum)
     }
 
     override suspend fun addStoreOpeningHourTime(
         accessToken: String,
         storeId: Int,
+        weekNum: Int,
+        startTime: String,
+        endTime: String,
+    ): Int {
+        return dataSource.addStoreOpeningHourTime(
+            accessToken,
+            storeId,
+            weekNum,
+            startTime,
+            endTime
+        )
+    }
+
+    override suspend fun deleteStoreOpeningHourTime(
+        accessToken: String,
+        storeId: Int,
+        storeOperationInfoId: Int,
     ): Boolean {
-        return dataSource.addStoreOpeningHourTime(accessToken, storeId)
+        return dataSource.deleteStoreOpeningHourTime(
+            accessToken,
+            storeId,
+            storeOperationInfoId
+        )
     }
 
     override suspend fun deleteStore(accessToken: String, storeId: Int): Boolean {

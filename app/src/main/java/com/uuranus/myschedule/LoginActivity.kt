@@ -81,26 +81,35 @@ class LoginActivity : ComponentActivity() {
                 loginViewModel.userData.collectLatest {data ->
                     if(data.isLoggedIn)  //카톡 로그인함
                     {
-                        if(data.name.isNotEmpty())  // 기존계정
-                        {
-                            setContent {
-                                CompositionLocalProvider (LocalComposeNavigator provides composeNavigator
-                                ){
-                                    StoreListMain(composeNavigator = composeNavigator)
-                                }
+                        startActivity(
+                            Intent(
+                                this@LoginActivity,
+                                MainActivity::class.java,
+                            ).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             }
-                        }
-                        else if(data.storeId>111){  // 기존 계정이고 가게를 고른경우
-                            startActivity(
-                                Intent(
-                                    this@LoginActivity,
-                                    MainActivity::class.java,
-                                ).apply {
-                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                }
-                            )
-                            finish()
-                        }
+                        )
+                        finish()
+//                        if(data.name.isNotEmpty())  // 기존계정
+//                        {
+//                            setContent {
+//                                CompositionLocalProvider (LocalComposeNavigator provides composeNavigator
+//                                ){
+//                                    StoreListMain(composeNavigator = composeNavigator)
+//                                }
+//                            }
+//                        }
+//                        else if(data.storeId>111){  // 기존 계정이고 가게를 고른경우
+//                            startActivity(
+//                                Intent(
+//                                    this@LoginActivity,
+//                                    MainActivity::class.java,
+//                                ).apply {
+//                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                                }
+//                            )
+//                            finish()
+//                        }
                     } else {
                         setContent {
                             CompositionLocalProvider(LocalComposeNavigator provides composeNavigator

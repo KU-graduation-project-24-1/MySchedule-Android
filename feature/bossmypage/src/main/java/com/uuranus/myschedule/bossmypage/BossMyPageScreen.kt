@@ -1,10 +1,11 @@
 package com.uuranus.myschedule.bossmypage
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,7 +42,7 @@ import com.uuranus.designsystem.component.TimePickerDialog
 import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.StoreSalesInformation
 import com.uuranus.myschedule.core.common.mypage.MyInfo
-import com.uuranus.myschedule.core.designsystem.R
+import com.uuranus.myschedule.core.common.mypage.TimeInfoChip
 import com.uuranus.navigation.LocalLoginIntent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -125,6 +124,7 @@ fun BossMyPageScreen(
 
 val screenPadding = 16.dp
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StoreSalesInfo(
     viewModel: BossMyPageViewModel,
@@ -231,39 +231,52 @@ fun StoreSalesInfo(
                         }
                     } else if (index % 4 == 2) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 14.dp, horizontal = 8.dp)
                         ) {
 
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(screenPadding)
                             ) {
                                 if (scheduleInfo.salesTimeRange.isEmpty()) {
                                     Text(
                                         "-- : -- ~ -- : --",
+                                        modifier = Modifier.padding(horizontal = 2.dp),
                                         style = MyScheduleTheme.typography.regular16
                                     )
                                 } else {
-                                    Text(
-                                        scheduleInfo.salesTimeRange.joinToString(", ") {
-                                            "${it.startTime}~${it.endTime}"
-                                        }, style = MyScheduleTheme.typography.regular16
-                                    )
+                                    FlowRow {
+                                        scheduleInfo.salesTimeRange.forEach { timeRange ->
+                                            TimeInfoChip(
+                                                timeRange, onDeleteClicked = { timeId ->
+                                                    viewModel.deleteTimeRange(timeId)
+                                                }
+                                            )
+                                        }
+                                    }
+
                                 }
                             }
-
-                            Image(
-                                painter = painterResource(id = R.drawable.edit_icon),
-                                contentDescription = "영업 시간 추가하기",
-                                modifier = Modifier.clickable {
-                                    selectedWeekNum.value = index / 3
+                            MyScheduleOutlinedButton(
+                                paddingValues = PaddingValues(
+                                    horizontal = 13.dp, vertical = 5.dp
+                                ),
+                                buttonState = true,
+                                content = {
+                                    Text(
+                                        text = "추가",
+                                        style = MyScheduleTheme.typography.regular14
+                                    )
+                                },
+                                onClick = {
+                                    selectedWeekNum.value = index / 4
                                     showTimePicker.value = true
-                                }
+                                },
+                                modifier = Modifier
+                                    .padding(all = 1.dp)
                             )
-                            Spacer(modifier = Modifier.width(screenPadding))
-
                         }
                     } else {
                         Box(
@@ -273,23 +286,26 @@ fun StoreSalesInfo(
                         )
                     }
                 }
+
+                item(span = { GridItemSpan(8) }) {
+                    MyScheduleOutlinedButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(screenPadding),
+                        paddingValues = PaddingValues(all = 13.dp),
+                        buttonState = true,
+                        content = {
+                            Text("가게 식제", style = MyScheduleTheme.typography.semiBold16)
+                        }
+                    ) {
+                        showStoreDeleteDialog = true
+                    }
+                }
             }
 
         }
 
-        MyScheduleOutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(screenPadding)
-                .align(Alignment.BottomCenter),
-            paddingValues = PaddingValues(all = 13.dp),
-            buttonState = true,
-            content = {
-                Text("가게 식제", style = MyScheduleTheme.typography.semiBold16)
-            }
-        ) {
-            showStoreDeleteDialog = true
-        }
+
     }
 
     if (showWorkerNumDialog.value) {

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.uuranus.designsystem.calendar.DateInfo
 import com.uuranus.designsystem.calendar.ScheduleData
 import com.uuranus.designsystem.calendar.ScheduleInfo
+import com.uuranus.designsystem.calendar.addMonth
 import com.uuranus.designsystem.calendar.dashToDateInfo
 import com.uuranus.designsystem.calendar.getDashYMDate
 import com.uuranus.domain.AcceptFillInUseCase
@@ -65,6 +66,14 @@ class BossHomeViewModel @Inject constructor(
     }
 
     fun getCurrentDate(): DateInfo = _currentDate.value
+
+    fun isPossibleAdd(dateInfo: DateInfo): Boolean {
+        val today = Calendar.getInstance()
+        val endDate = today.addMonth(1)
+        endDate.set(Calendar.DATE, 8)
+
+        return dateInfo.isPossibleAdd(endDate)
+    }
 
     fun getMonthlySchedules() {
         viewModelScope.launch {
@@ -159,7 +168,7 @@ class BossHomeViewModel @Inject constructor(
             }.map { result ->
                 val state = _bossHomeUiState.value as BossHomeUiState.Success
 
-                if(result.not()){
+                if (result.not()) {
                     BossHomeUiState.Success(
                         schedules = state.schedules.mapValues { (_, scheduleInfo) ->
                             val schedules = scheduleInfo.schedules.filterNot {
@@ -171,8 +180,7 @@ class BossHomeViewModel @Inject constructor(
                             )
                         }
                     )
-                }
-                else{
+                } else {
                     BossHomeUiState.Success(
                         schedules = state.schedules.mapValues { (_, scheduleInfo) ->
                             val schedules = scheduleInfo.schedules.map {

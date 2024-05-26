@@ -60,6 +60,14 @@ data class DateInfo(val year: Int, val month: Int, val date: Int) {
         this.calendar = calendar
     }
 
+    fun isPossibleAdd(comCal: Calendar): Boolean {
+        return if (calendar.get(Calendar.DATE) < 8) {
+            comCal.get(Calendar.MONTH) <= calendar.get(Calendar.MONTH)
+        } else {
+            calendar < comCal
+        }
+    }
+
     companion object {
         fun create(calendar: Calendar): DateInfo {
             return DateInfo(
