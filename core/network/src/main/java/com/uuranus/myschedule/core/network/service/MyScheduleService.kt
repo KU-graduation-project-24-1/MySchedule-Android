@@ -2,21 +2,25 @@ package com.uuranus.myschedule.core.network.service
 
 import com.uuranus.myschedule.core.network.model.ApiResponse
 import com.uuranus.myschedule.core.network.model.DeleteFixedScheduleBody
-import com.uuranus.myschedule.core.network.model.DeleteOperationInfoResponse
+import com.uuranus.myschedule.core.network.model.DeleteOperationInfoBody
 import com.uuranus.myschedule.core.network.model.DeletePossibleTimeBody
 import com.uuranus.myschedule.core.network.model.DeleteWorkerBody
 import com.uuranus.myschedule.core.network.model.GetAllWorkersResult
+import com.uuranus.myschedule.core.network.model.GetFixedScheduleResponse
 import com.uuranus.myschedule.core.network.model.GetMonthlyPossibleTimesResult
 import com.uuranus.myschedule.core.network.model.GetMonthlyScheduleResult
+import com.uuranus.myschedule.core.network.model.GetOperationInfoResult
 import com.uuranus.myschedule.core.network.model.LoginRequest
 import com.uuranus.myschedule.core.network.model.LoginResponse
-import com.uuranus.myschedule.core.network.model.PatchOperationInfoBody
-import com.uuranus.myschedule.core.network.model.PatchOperationInfoResponse
+import com.uuranus.myschedule.core.network.model.PatchFixedScheduleResponse
 import com.uuranus.myschedule.core.network.model.PatchScheduleBody
 import com.uuranus.myschedule.core.network.model.PatchScheduleCover
 import com.uuranus.myschedule.core.network.model.PatchScheduleResult
+import com.uuranus.myschedule.core.network.model.PatchWorkerNumBody
 import com.uuranus.myschedule.core.network.model.PatchWorkerTypeBody
 import com.uuranus.myschedule.core.network.model.PathFixedScheduleBody
+import com.uuranus.myschedule.core.network.model.PostOperationInfoBody
+import com.uuranus.myschedule.core.network.model.PostOperationInfoResponse
 import com.uuranus.myschedule.core.network.model.PostPossibleTime
 import com.uuranus.myschedule.core.network.model.PostPossibleTimeBody
 import com.uuranus.myschedule.core.network.model.PostScheduleBody
@@ -33,6 +37,7 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MyScheduleService {
 
@@ -137,33 +142,46 @@ interface MyScheduleService {
         @Path("scheduleId") scheduleId: Int,
     ): Response<ApiResponse<String>>
 
-    @PATCH("/store/schedule/{storeId}/operation-info")
-    suspend fun patchOperationInfo(
+    @GET("/store/{storeId}/operation-info")
+    suspend fun getOperationInfo(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
-        @Body body: PatchOperationInfoBody,
-    ): Response<ApiResponse<PatchOperationInfoResponse>>
+        @Query("dayOfWeek") dayOfWeek: String,
+    ): Response<ApiResponse<List<GetOperationInfoResult>>>
+
+    @POST("/store/schedule/{storeId}/operation-info")
+    suspend fun postOperationInfo(
+        @Header("Authorization") authorization: String,
+        @Path("storeId") storeId: Int,
+        @Body body: PostOperationInfoBody,
+    ): Response<ApiResponse<PostOperationInfoResponse>>
 
     @HTTP(method = "DELETE", path = "/store/schedule/{storeId}/operation-info", hasBody = true)
     suspend fun deleteOperationInfo(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
-        @Body body: DeleteOperationInfoResponse,
+        @Body body: DeleteOperationInfoBody,
     ): Response<ApiResponse<String>>
+
+    @PATCH("/store/schedule/operation-info/required-employees")
+    suspend fun patchWorkerNum(
+        @Header("Authorization") authorization: String,
+        @Body body: PatchWorkerNumBody,
+    ): Response<ApiResponse<Any>>
 
     //마이페이지
     @GET("/store/{storeId}/fixed-schedule")
     suspend fun getFixedSchedule(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
-    ): Response<ApiResponse<Any>>
+    ): Response<ApiResponse<GetFixedScheduleResponse>>
 
-    @GET("/store/{storeId}/fixed-schedule/add")
+    @PATCH("/store/schedule/{storeId}/fixed-schedule/add")
     suspend fun patchFixedSchedule(
         @Header("Authorization") authorization: String,
         @Path("storeId") storeId: Int,
         @Body body: PathFixedScheduleBody,
-    ): Response<ApiResponse<Any>>
+    ): Response<ApiResponse<PatchFixedScheduleResponse>>
 
     @HTTP(
         method = "DELETE",

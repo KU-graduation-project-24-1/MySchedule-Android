@@ -21,7 +21,7 @@ class MyPageRepositoryImpl @Inject constructor(
         weekNum: Int,
         startTime: String,
         endTime: String,
-    ): Boolean {
+    ): Int {
         return dataSource.addFixedPossibleTime(
             accessToken,
             storeId,
@@ -33,34 +33,43 @@ class MyPageRepositoryImpl @Inject constructor(
 
     override suspend fun deleteFixedPossibleTime(
         accessToken: String,
-        weekNum: Int,
+        storeId: Int,
         storeAvailableTimeByDayId: Int,
     ): Boolean {
         return dataSource.deleteFixedPossibleTime(
             accessToken,
-            weekNum,
+            storeId,
             storeAvailableTimeByDayId
         )
     }
 
     override suspend fun getStoreSalesInformation(
         accessToken: String,
+        storeId: Int,
     ): List<StoreSalesInformation> {
-        return dataSource.getStoreSalesInformation(accessToken)
+        return dataSource.getStoreSalesInformation(accessToken, storeId)
     }
 
-    override suspend fun addWorkerNum(accessToken: String, weekNum: Int, workerNum: Int): Boolean {
-        return dataSource.addWorkerNum(accessToken, weekNum, workerNum)
+    override suspend fun addWorkerNum(
+        accessToken: String,
+        storeId: Int,
+        weekNum: Int,
+        workerNum: Int,
+    ): Boolean {
+        return dataSource.addWorkerNum(accessToken, storeId, weekNum, workerNum)
     }
 
     override suspend fun addStoreOpeningHourTime(
         accessToken: String,
+        storeId: Int,
         weekNum: Int,
         startTime: String,
         endTime: String,
     ): Int {
         return dataSource.addStoreOpeningHourTime(
             accessToken,
+            storeId,
+            weekNum,
             startTime,
             endTime
         )
@@ -68,17 +77,13 @@ class MyPageRepositoryImpl @Inject constructor(
 
     override suspend fun deleteStoreOpeningHourTime(
         accessToken: String,
-        weekNum: Int,
-        requiredEmployees: Int,
-        startTime: String,
-        endTime: String,
+        storeId: Int,
+        storeOperationInfoId: Int,
     ): Boolean {
         return dataSource.deleteStoreOpeningHourTime(
             accessToken,
-            weekNum,
-            requiredEmployees,
-            startTime,
-            endTime
+            storeId,
+            storeOperationInfoId
         )
     }
 

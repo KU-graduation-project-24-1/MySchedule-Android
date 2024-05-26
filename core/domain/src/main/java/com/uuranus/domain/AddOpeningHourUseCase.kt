@@ -11,12 +11,14 @@ class AddOpeningHourUseCase @Inject constructor(
 
     suspend operator fun invoke(
         accessToken: String,
+        storeId: Int,
         weekNum: Int,
         startTime: String,
         endTime: String,
     ): Int {
         return repository.addStoreOpeningHourTime(
             accessToken,
+            storeId,
             weekNum,
             startTime,
             endTime

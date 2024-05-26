@@ -79,7 +79,8 @@ fun WorkerNumDialog(
                 textStyle = MyScheduleTheme.typography.regular16,
                 placeholder = {
                     Text(text = "0(명)")
-                }
+                },
+                maxLines = 1
             )
         }, containerColor = MyScheduleTheme.colors.background
     )

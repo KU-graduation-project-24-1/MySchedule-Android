@@ -170,19 +170,16 @@ fun MyFixedPossibleTime(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                vertical = 5.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
+                            .padding(vertical = 14.dp, horizontal = 8.dp),
                     ) {
-                        Row(
+                        Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(16.dp)
                         ) {
                             if (possibles.isEmpty()) {
                                 Text(
                                     "-- : -- ~ -- : --",
+                                    modifier = Modifier.padding(horizontal = 2.dp),
                                     style = MyScheduleTheme.typography.regular16
                                 )
                             } else {
@@ -197,7 +194,6 @@ fun MyFixedPossibleTime(
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.width(5.dp))
                         MyScheduleOutlinedButton(
                             paddingValues = PaddingValues(
                                 horizontal = 13.dp, vertical = 5.dp
@@ -214,8 +210,8 @@ fun MyFixedPossibleTime(
                                 showTimePicker = true
                             },
                             modifier = Modifier
+                                .padding(all = 1.dp)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
                     }
                 } else {
                     Box(

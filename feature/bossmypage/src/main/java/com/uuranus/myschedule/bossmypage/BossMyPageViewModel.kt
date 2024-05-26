@@ -2,10 +2,9 @@ package com.uuranus.myschedule.bossmypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uuranus.designsystem.calendar.DateInfo
-import com.uuranus.domain.AddFixedPossibleTimesUseCase
 import com.uuranus.domain.AddOpeningHourUseCase
 import com.uuranus.domain.AddWorkerNumUserCase
+import com.uuranus.domain.DeleteOpeningHourUseCase
 import com.uuranus.domain.DeleteStoreUseCase
 import com.uuranus.domain.GetSalesInformationUseCase
 import com.uuranus.domain.GetUserDataUseCase
@@ -21,16 +20,16 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class BossMyPageViewModel @Inject constructor(
-    private val deleteStore: DeleteStoreUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val getSalesInformationUseCase: GetSalesInformationUseCase,
     private val addWorkerNumUserCase: AddWorkerNumUserCase,
     private val addOpeningHourUseCase: AddOpeningHourUseCase,
+    private val deleteOpeningHourUseCase: DeleteOpeningHourUseCase,
+    private val deleteStoreUseCase: DeleteStoreUseCase,
 
     ) : ViewModel() {
 
@@ -58,7 +57,7 @@ class BossMyPageViewModel @Inject constructor(
             getUserDataUseCase().flatMapLatest {
                 _userData.value = it
                 flow {
-                    emit(getSalesInformationUseCase(it.accessToken))
+                    emit(getSalesInformationUseCase(it.accessToken, it.storeId))
                 }
             }.map {
                 BossMyPageUiState.Success(
@@ -79,6 +78,7 @@ class BossMyPageViewModel @Inject constructor(
                 emit(
                     addWorkerNumUserCase(
                         _userData.value.accessToken,
+                        _userData.value.storeId,
                         weekDayNum,
                         workerNum
                     )
@@ -112,6 +112,7 @@ class BossMyPageViewModel @Inject constructor(
         viewModelScope.launch {
             addOpeningHourUseCase(
                 _userData.value.accessToken,
+                _userData.value.storeId,
                 weekDayNum,
                 startTime,
                 endTime
@@ -140,7 +141,32 @@ class BossMyPageViewModel @Inject constructor(
 
     fun deleteTimeRange(timeId: Int) {
         viewModelScope.launch {
+            flow {
+                emit(
+                    deleteOpeningHourUseCase(
+                        _userData.value.accessToken,
+                        _userData.value.storeId,
+                        timeId
+                    )
+                )
+            }.map {
 
+                val state = _bossMypageUiState.value as BossMyPageUiState.Success
+
+                BossMyPageUiState.Success(
+                    salesInformation = state.salesInformation.map { storeSalesInfo ->
+                        storeSalesInfo.copy(
+                            salesTimeRange = storeSalesInfo.salesTimeRange.filterNot { timeRange ->
+                                timeRange.timeId == timeId
+                            }
+                        )
+                    }
+                )
+            }.catch {
+                _errorFlow.emit(it)
+            }.collect {
+                _bossMypageUiState.value = it
+            }
         }
     }
 

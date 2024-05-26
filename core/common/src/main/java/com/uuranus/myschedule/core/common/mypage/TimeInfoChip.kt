@@ -34,7 +34,7 @@ fun TimeInfoChip(
 
     Row(
         modifier = Modifier
-            .padding(all = 5.dp)
+            .padding(all = 1.dp)
             .border(
                 1.dp, color = MyScheduleTheme.colors.primary,
                 shape = RoundedCornerShape(12.dp)

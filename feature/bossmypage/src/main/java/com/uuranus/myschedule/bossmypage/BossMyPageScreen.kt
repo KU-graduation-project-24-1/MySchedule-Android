@@ -1,6 +1,5 @@
 package com.uuranus.myschedule.bossmypage
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -33,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,7 +43,6 @@ import com.uuranus.designsystem.theme.MyScheduleTheme
 import com.uuranus.model.StoreSalesInformation
 import com.uuranus.myschedule.core.common.mypage.MyInfo
 import com.uuranus.myschedule.core.common.mypage.TimeInfoChip
-import com.uuranus.myschedule.core.designsystem.R
 import com.uuranus.navigation.LocalLoginIntent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -235,18 +231,19 @@ fun StoreSalesInfo(
                         }
                     } else if (index % 4 == 2) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 14.dp, horizontal = 8.dp)
                         ) {
 
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(screenPadding)
                             ) {
                                 if (scheduleInfo.salesTimeRange.isEmpty()) {
                                     Text(
                                         "-- : -- ~ -- : --",
+                                        modifier = Modifier.padding(horizontal = 2.dp),
                                         style = MyScheduleTheme.typography.regular16
                                     )
                                 } else {
@@ -278,9 +275,8 @@ fun StoreSalesInfo(
                                     showTimePicker.value = true
                                 },
                                 modifier = Modifier
+                                    .padding(all = 1.dp)
                             )
-                            Spacer(modifier = Modifier.width(screenPadding))
-
                         }
                     } else {
                         Box(

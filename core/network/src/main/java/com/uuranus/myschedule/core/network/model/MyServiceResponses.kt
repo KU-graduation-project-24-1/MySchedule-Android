@@ -1,6 +1,5 @@
 package com.uuranus.myschedule.core.network.model
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.uuranus.model.LoginResult
 import com.uuranus.model.StoreResult
@@ -115,6 +114,28 @@ data class StoreResponse(
 )
 
 @JsonClass(generateAdapter = true)
-data class PatchOperationInfoResponse(
+data class GetOperationInfoResult(
+    val dayOfWeek: String,
     val storeOperationInfoId: Int,
+    val startTime: String,
+    val endTime: String,
+    val requiredEmployees: Int,
+)
+
+@JsonClass(generateAdapter = true)
+data class PostOperationInfoResponse(
+    val storeOperationInfoId: Int,
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchFixedScheduleResponse(
+    val storeAvailableTimeByDayId: Int,
+)
+
+@JsonClass(generateAdapter = true)
+data class GetFixedScheduleResponse(
+    val availableTimeByDayId: List<Int>,
+    val dayOfWeeks: List<String>,
+    val startTimes: List<String>,
+    val endTimes: List<String>,
 )

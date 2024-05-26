@@ -57,22 +57,29 @@ data class PatchScheduleCover(
 )
 
 @JsonClass(generateAdapter = true)
-data class PatchOperationInfoBody(
-    val dayOfWeek: Int,
-    val requiredEmployees: Int,
+data class PostOperationInfoBody(
+    val storeId: Int,
+    val dayOfWeek: String,
     val startTime: String,
     val endTime: String,
 )
 
 @JsonClass(generateAdapter = true)
-data class DeleteOperationInfoResponse(
+data class DeleteOperationInfoBody(
     val storeOperationInfoId: Int,
+)
+
+@JsonClass(generateAdapter = true)
+data class PatchWorkerNumBody(
+    val storeId: Int,
+    val dayOfWeek: String,
+    val requiredEmployees: Int,
 )
 
 @JsonClass(generateAdapter = true)
 data class PathFixedScheduleBody(
     val storeId: Int,
-    val dayOfWeek: Int,
+    val dayOfWeek: String,
     val startTime: String,
     val endTime: String,
 )

@@ -13,7 +13,7 @@ class AddFixedPossibleTimesUseCase @Inject constructor(
         weekNum: Int,
         startTime: String,
         endTime: String,
-    ): Boolean {
+    ): Int {
         return repository.addFixedPossibleTime(
             accessToken,
             storeId,

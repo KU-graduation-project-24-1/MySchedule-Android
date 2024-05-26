@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getUserDataUseCase().flatMapLatest {
                 _userData.value = it
-                println("userData $it")
+
                 flow {
                     emit(
                         getMonthlyScheduleUseCase(

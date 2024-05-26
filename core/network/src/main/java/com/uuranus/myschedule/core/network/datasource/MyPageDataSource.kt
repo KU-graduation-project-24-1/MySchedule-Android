@@ -16,7 +16,7 @@ interface MyPageDataSource {
         weekNum: Int,
         startTime: String,
         endTime: String,
-    ): Boolean
+    ): Int
 
     suspend fun deleteFixedPossibleTime(
         accessToken: String,
@@ -26,26 +26,28 @@ interface MyPageDataSource {
 
     suspend fun getStoreSalesInformation(
         accessToken: String,
+        storeId: Int,
     ): List<StoreSalesInformation>
 
     suspend fun addWorkerNum(
         accessToken: String,
+        storeId: Int,
         weekNum: Int,
         workerNum: Int,
     ): Boolean
 
     suspend fun addStoreOpeningHourTime(
         accessToken: String,
+        storeId: Int,
+        weekNum: Int,
         startTime: String,
         endTime: String,
     ): Int
 
     suspend fun deleteStoreOpeningHourTime(
         accessToken: String,
-        weekNum: Int,
-        requiredEmployees: Int,
-        startTime: String,
-        endTime: String,
+        storeId: Int,
+        storeOperationInfoId: Int,
     ): Boolean
 
     suspend fun deleteStore(
