@@ -104,11 +104,11 @@ internal fun GetFixedScheduleResponse.toData(): List<List<TimeRange>> {
         val listIndex = when (dayOfWeeks[element]) {
             "MONDAY" -> 0
             "TUESDAY" -> 1
-            "MONDAY" -> 2
-            "MONDAY" -> 3
-            "MONDAY" -> 4
-            "MONDAY" -> 5
-            "MONDAY" -> 6
+            "WEDNESDAY" -> 2
+            "THURSDAY" -> 3
+            "FRIDAY" -> 4
+            "SATURDAY" -> 5
+            "SUNDAY" -> 6
             else -> 0
         }
 
