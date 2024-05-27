@@ -67,19 +67,19 @@ class LoginActivity : ComponentActivity() {
 
             // Get new FCM registration token
             val token = task.result
-            Log.d("fcm",token)
+            Log.d("fcm", token)
             // Log and toast
             loginViewModel.setFcmToken(token)
             //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
 
         var keyHash = Utility.getKeyHash(this)
-        Log.d("hash",keyHash)
+        Log.d("hash", keyHash)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.userData.collectLatest {data ->
-                    if(data.isLoggedIn)  //카톡 로그인함
+                loginViewModel.userData.collectLatest { data ->
+                    if (data.isLoggedIn)  //카톡 로그인함
                     {
                         startActivity(
                             Intent(
@@ -90,16 +90,16 @@ class LoginActivity : ComponentActivity() {
                             }
                         )
                         finish()
-//                        if(data.name.isNotEmpty())  // 기존계정
+//                        if (data.name.isNotEmpty())  // 기존계정
 //                        {
 //                            setContent {
-//                                CompositionLocalProvider (LocalComposeNavigator provides composeNavigator
-//                                ){
+//                                CompositionLocalProvider(
+//                                    LocalComposeNavigator provides composeNavigator
+//                                ) {
 //                                    StoreListMain(composeNavigator = composeNavigator)
 //                                }
 //                            }
-//                        }
-//                        else if(data.storeId>111){  // 기존 계정이고 가게를 고른경우
+//                        } else if (data.storeId > 111) {  // 기존 계정이고 가게를 고른경우
 //                            startActivity(
 //                                Intent(
 //                                    this@LoginActivity,
@@ -112,9 +112,13 @@ class LoginActivity : ComponentActivity() {
 //                        }
                     } else {
                         setContent {
-                            CompositionLocalProvider(LocalComposeNavigator provides composeNavigator
+                            CompositionLocalProvider(
+                                LocalComposeNavigator provides composeNavigator
                             ) {
-                                LoginMain(composeNavigator = composeNavigator,loginViewModel) { context, onSuccess ->
+                                LoginMain(
+                                    composeNavigator = composeNavigator,
+                                    loginViewModel
+                                ) { context, onSuccess ->
                                     onClickLogin(context, onSuccess)
                                 }
                             }
@@ -141,9 +145,10 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
-fun onClickLogin(context: Context, onSuccess: (String)-> Unit) {
+fun onClickLogin(context: Context, onSuccess: (String) -> Unit) {
     // 로그인 조합 예제
 
 // 카카오계정으로 로그인 공통 callback 구성

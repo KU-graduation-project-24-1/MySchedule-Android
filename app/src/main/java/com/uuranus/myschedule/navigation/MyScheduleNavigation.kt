@@ -27,7 +27,7 @@ fun NavGraphBuilder.loginNavigation(viewModel: LoginViewModel, onClickLogin: (Co
     }
 
     composable(MyScheduleScreens.NameInput.name) {
-        NameInputScreen()
+        NameInputScreen(viewModel)
     }
 
 }

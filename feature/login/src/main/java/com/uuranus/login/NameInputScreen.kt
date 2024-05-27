@@ -11,12 +11,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
-fun NameInputScreen() {
+fun NameInputScreen(
+    viewModel: LoginViewModel,
+) {
     var name by remember { mutableStateOf("") }
 
+    val userData by viewModel.userData.collectAsState()
+    println("nameInput $userData")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +51,7 @@ fun NameInputScreen() {
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFFC1DAB9),
-                    unfocusedBorderColor =Color(0xFFC1DAB9),
+                    unfocusedBorderColor = Color(0xFFC1DAB9),
                 )
             )
         }

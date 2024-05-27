@@ -115,7 +115,7 @@ internal fun GetFixedScheduleResponse.toData(): List<List<TimeRange>> {
         list[listIndex].add(
             TimeRange(
                 timeId = availableTimeByDayId[element],
-                startTime = startTimes[element].drop(3),
+                startTime = startTimes[element].dropLast(3),
                 endTime = endTimes[element].dropLast(3)
             )
         )

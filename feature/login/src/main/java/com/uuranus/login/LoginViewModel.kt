@@ -28,7 +28,6 @@ class LoginViewModel @Inject constructor(
 
     val isLoggedIn: Flow<Boolean> = loginUseCase.isLoggedIn()
 
-
     init {
         viewModelScope.launch {
             checkLoginStatusUseCase().collect { isLoggedIn ->
@@ -53,6 +52,7 @@ class LoginViewModel @Inject constructor(
                         refreshToken = loginResult.refreshToken,
                         imgUrl = loginResult.imgUrl,
                     )
+
                 } else {
                     _userData.value = _userData.value.copy(
                         isLoggedIn = true,

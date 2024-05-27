@@ -25,28 +25,40 @@ class UserDataStore @Inject constructor(
 //                refreshToken = preferences.refreshToken
 //            )
 
+//            UserData(
+//                storeId = 1,
+//                memberId = 4,
+//                name = "황유란",
+//                workerType = "아르바이트",
+//                isLoggedIn = true,
+//                storeName = "KU카페 건대입구점",
+//                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzE2ODAzNjczLCJleHAiOjE3NDgzMzk2NzN9.dLRgt99b84OEYmQ1bGio5ABj8ZOkK1HPNXdQIS5dmi0",
+//                refreshToken = ""
+//            )
+
             UserData(
-                storeId = 2,
+                storeId = 1,
                 memberId = 2,
-                name = "최사장",
-                workerType = "아르바이트",
+                name = "정경은",
+                workerType = "사장",
                 isLoggedIn = true,
                 storeName = "KU카페 건대입구점",
-                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2MzQ3NDM3LCJleHAiOjE3NDc4ODM0Mzd9.LNJp9aVkXEoQn_ZKKxqU2PtH9PRrk6_E_m5FPI7G-lI",
+                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE2ODA2NDg5LCJleHAiOjE3NDgzNDI0ODl9.K1d1mj6MFgTG3emAgrpbcbNL8iqG_p7XY3T8JcHzjl8",
                 refreshToken = ""
             )
 
 //            UserData(
-//                storeId = 2,
-//                memberId = 5,
-//                name = "박직원",
-//                workerType = "직원",
+//                storeId = 1,
+//                memberId = 1,
+//                name = "김동준",
+//                workerType = "매니저",
 //                isLoggedIn = true,
 //                storeName = "KU카페 건대입구점",
-//                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1IiwiaWF0IjoxNzE2NjEzOTIyLCJleHAiOjE3NDgxNDk5MjJ9." +
-//                        "J-bK-Pjgo--3ypuqqEwAkADvVoCCyi3qU6LABHyTIyY",
+//                accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE2ODAyNzE2LCJleHAiOjE3NDgzMzg3MTZ9.iXuQdSj1GD1el7qIWxuf2PIAldk-N8cmVgBq4g1lfBU",
 //                refreshToken = ""
 //            )
+
+
         }
 
     suspend fun setUserData(userData: UserData) {

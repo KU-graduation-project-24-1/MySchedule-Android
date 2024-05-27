@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 mainActivityViewModel.uiState.collectLatest {
                     if (it is MainActivityUiState.Success) {
                         if (it.userData.workerType == "사장"
-                            || it.userData.workerType == "매니저"
                         ) {
                             setContent {
                                 CompositionLocalProvider(
