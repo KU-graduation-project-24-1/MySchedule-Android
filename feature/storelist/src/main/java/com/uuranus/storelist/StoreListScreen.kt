@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uuranus.model.Store
@@ -77,6 +80,8 @@ fun StoreListScreen(storeListViewModel: StoreListViewModel = hiltViewModel()) {
 
 @Composable
 fun StoreItem(store: Store) {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent // Set the background color to transparent
@@ -106,11 +111,11 @@ fun StoreItem(store: Store) {
             }
             Row {
                 IconButton(onClick = {
-                    //copy
+                    clipboardManager.setText(AnnotatedString(store.storeId.toString()))
                 }) {
                     Icon(Icons.Filled.ContentCopy, contentDescription = "Copy")
                 }
-                IconButton(onClick = { /* Handle navigation */ }) {
+                IconButton(onClick = { }) {  // to save store.storeId in userData
                     Icon(Icons.Filled.SubdirectoryArrowRight, contentDescription = "Navigate")
                 }
             }

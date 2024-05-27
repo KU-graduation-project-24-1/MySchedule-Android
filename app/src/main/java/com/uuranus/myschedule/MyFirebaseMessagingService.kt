@@ -1,6 +1,5 @@
 package com.uuranus.myschedule
 
-import android.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,7 +11,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        if (remoteMessage != null && remoteMessage.getData().size > 0) {
+        if (remoteMessage.getData().isNotEmpty()) {
             sendNotification(remoteMessage)
         }
     }
@@ -37,18 +36,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             mManager.createNotificationChannel(mChannel)
         }
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-        //builder.setSmallIcon(R.drawable.ic_launcher_background)
-        builder.setAutoCancel(true)
-        builder.setDefaults(Notification.DEFAULT_ALL)
-        builder.setWhen(System.currentTimeMillis())
-        //builder.setSmallIcon(R.mipmap.ic_launcher)
-        builder.setContentTitle(title)
-        builder.setContentText(message)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)  // You can change this to your app's icon
+            .setAutoCancel(true)
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setWhen(System.currentTimeMillis())
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            builder.setContentTitle(title)
             builder.setVibrate(longArrayOf(500, 500))
         }
-        mManager.notify(0, builder.build())
+//        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+//        //builder.setSmallIcon(R.drawable.ic_launcher_background)
+//        builder.setAutoCancel(true)
+//        builder.setDefaults(Notification.DEFAULT_ALL)
+//        builder.setWhen(System.currentTimeMillis())
+//        //builder.setSmallIcon(R.mipmap.ic_launcher)
+//        builder.setContentTitle(title)
+//        builder.setContentText(message)
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+//            builder.setContentTitle(title)
+//            builder.setVibrate(longArrayOf(500, 500))
+//        }
+//        mManager.notify(0, builder.build())
     }
 
     override fun onNewToken(s: String) {

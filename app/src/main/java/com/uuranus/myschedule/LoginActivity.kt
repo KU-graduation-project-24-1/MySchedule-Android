@@ -59,6 +59,9 @@ class LoginActivity : ComponentActivity() {
 
         askNotificationPermission()
 
+        val intent = Intent(this, MyForegroundService::class.java)
+        startService(intent)
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("FCM", "Fetching FCM registration token failed", task.exception)
